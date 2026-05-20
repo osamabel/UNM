@@ -15,6 +15,7 @@ RUN pnpm --filter @unm/cms build
 
 FROM node:20-slim AS runtime
 WORKDIR /app
+RUN corepack enable && corepack prepare pnpm@8.15.0 --activate
 ENV NODE_ENV=production
 COPY --from=build /app /app
 EXPOSE 3001
