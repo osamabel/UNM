@@ -43,6 +43,7 @@ export default buildConfig({
   globals: [SiteSettings, Navigation],
   db: postgresAdapter({
     pool: { connectionString: process.env.DATABASE_URI },
+    push: true,
   }),
   cors: [
     process.env.PAYLOAD_PUBLIC_SITE_URL ?? 'http://localhost:3000',
