@@ -21,6 +21,7 @@ const nextConfig = {
     remotePatterns: [
       { protocol: 'https', hostname: 'cms.unm.ma' },
       { protocol: 'http', hostname: 'localhost' },
+      { protocol: 'http', hostname: '147.79.100.45' },
     ],
     // SVG support for partner / accreditation logos.
     // CSP locks scripts out of the SVG renderer so malicious vectors
