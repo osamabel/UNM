@@ -1,0 +1,31 @@
+{
+  "name": "@unm/cms",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "PAYLOAD_CONFIG_PATH=src/payload.config.ts ts-node src/server.ts",
+    "build": "payload build",
+    "start": "PAYLOAD_CONFIG_PATH=dist/payload.config.js node dist/server.js",
+    "seed": "PAYLOAD_CONFIG_PATH=src/payload.config.ts ts-node src/seed.ts",
+    "reindex": "PAYLOAD_CONFIG_PATH=src/payload.config.ts ts-node src/reindex.ts",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src --ext .ts"
+  },
+  "dependencies": {
+    "@payloadcms/bundler-webpack": "^1.0.7",
+    "@payloadcms/db-postgres": "^0.8.0",
+    "@payloadcms/plugin-cloud-storage": "^1.1.0",
+    "@payloadcms/richtext-slate": "^1.5.0",
+    "@unm/types": "workspace:*",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "meilisearch": "^0.38.0",
+    "payload": "^2.11.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.12.7",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
+  }
+}

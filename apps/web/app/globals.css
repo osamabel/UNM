@@ -1,0 +1,76 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ════════════════════════════════════════════════════════
+   UNM Brand foundations — institutional typography system.
+   Display:  Source Serif 4  (titles)        — NYT / Bloomberg / Wharton style.
+   UI/body:  Inter           (everything else) — Stanford GSB / INSEAD-like.
+   Background: warm.50 (#FDFAF7) — never pure white.
+   Body text:  ink     (#1A0A05) — never pure black.
+   ════════════════════════════════════════════════════════ */
+
+@layer base {
+  html {
+    @apply scroll-smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    @apply bg-warm-50 text-ink font-sans;
+    /* Inter optical features: kerning + tabular figures off by default,
+       open-quote stylistic set for editorial polish. */
+    font-feature-settings: 'cv11', 'ss01';
+    font-size: 16px;
+    line-height: 1.55;
+  }
+
+  /* Headings — serif for h1/h2/h3, sans-serif for sub-headings.
+     Tracking is set via the fontSize utility now (display-xl etc.). */
+  h1, h2, h3 {
+    @apply font-display text-secondary;
+    font-feature-settings: 'liga', 'kern';
+  }
+  h4, h5, h6 {
+    @apply font-sans text-secondary;
+    font-weight: 600;
+  }
+
+  /* Paragraph defaults — institutional sites keep generous line-heights
+     and modest body sizes (~16px), no jumbo 18-20px walls of text. */
+  p {
+    line-height: 1.6;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-primary ring-offset-2 ring-offset-warm-50;
+  }
+  ::selection {
+    @apply bg-primary text-white;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  .container-page {
+    @apply mx-auto w-full max-w-container px-4 sm:px-6 lg:px-8;
+  }
+  .link {
+    @apply text-primary underline-offset-4 hover:underline focus-visible:underline;
+  }
+  /* Editorial eyebrow — small uppercase label above a section title.
+     Used everywhere to anchor sections in an institutional rhythm. */
+  .eyebrow {
+    @apply font-sans text-xs font-semibold uppercase tracking-[0.16em] text-primary;
+  }
+  /* Card baseline — flat, bordered, no heavy shadow. */
+  .card-flat {
+    @apply rounded-card border border-warm-200 bg-white;
+  }
+}

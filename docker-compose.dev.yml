@@ -1,0 +1,28 @@
+version: "3.9"
+services:
+  postgres:
+    image: postgres:15-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: unm
+      POSTGRES_PASSWORD: unm
+      POSTGRES_DB: unm
+    ports:
+      - "5432:5432"
+    volumes:
+      - unm-pgdata:/var/lib/postgresql/data
+
+  meilisearch:
+    image: getmeili/meilisearch:v1.7
+    restart: unless-stopped
+    environment:
+      MEILI_MASTER_KEY: dev-master-key
+      MEILI_ENV: development
+    ports:
+      - "7700:7700"
+    volumes:
+      - unm-meili:/meili_data
+
+volumes:
+  unm-pgdata:
+  unm-meili:
