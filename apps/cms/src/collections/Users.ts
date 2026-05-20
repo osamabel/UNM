@@ -3,7 +3,10 @@ import { isAdmin } from '../access/isAdmin';
 
 export const Users: CollectionConfig = {
   slug: 'users',
-  auth: true,
+  auth: {
+    useAPIKey: true,
+    tokenExpiration: 7 * 24 * 60 * 60, // 7 days
+  },
   admin: {
     useAsTitle: 'email',
     group: 'Administration',
