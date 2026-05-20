@@ -12,6 +12,7 @@ RUN corepack enable && corepack prepare pnpm@8.15.0 --activate
 COPY --from=deps /app /app
 COPY . .
 RUN pnpm --filter @unm/cms build
+RUN node_modules/.bin/tsc --project apps/cms/tsconfig.json
 
 FROM node:20-slim AS runtime
 WORKDIR /app
