@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
 import type { Locale } from '@unm/types';
-import { Button } from '@/components/ui/Button';
+import { ButtonLink } from '@/components/ui/Button';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { SearchModal } from '@/components/shared/SearchModal';
 
@@ -53,9 +53,9 @@ export function TopBar() {
           <span aria-hidden="true" className="mx-1 hidden h-4 w-px bg-warm-500/40 sm:inline-block" />
           <SearchModal tone="dark" />
           <span aria-hidden="true" className="mx-1 hidden h-4 w-px bg-warm-500/40 sm:inline-block" />
-          <Link href={applyHref}>
-            <Button size="sm">{tCommon('apply')}</Button>
-          </Link>
+          <ButtonLink href={applyHref} size="sm">
+            {tCommon('apply')}
+          </ButtonLink>
         </div>
       </div>
     </div>

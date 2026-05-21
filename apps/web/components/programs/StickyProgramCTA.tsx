@@ -1,9 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
-import { Button } from '@/components/ui/Button';
+import { Button, ButtonLink } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';
 import { CallbackRequestForm } from '@/components/forms/CallbackRequestForm';
 import type { Locale, Program } from '@unm/types';
@@ -21,7 +20,7 @@ export function StickyProgramCTA({ program }: Props) {
 
   return (
     <>
-      <aside className="rounded-card border border-warm-200 bg-white p-6 shadow-card lg:sticky lg:top-32 lg:self-start">
+      <aside className="hidden rounded-card border border-warm-200 bg-white p-6 shadow-card lg:block lg:sticky lg:top-32 lg:self-start">
         <p className="font-heading text-xs font-semibold uppercase tracking-wider text-secondary-400">
           {t('tuition')}
         </p>
@@ -40,16 +39,16 @@ export function StickyProgramCTA({ program }: Props) {
           </span>
         </p>
         <div className="mt-6 flex flex-col gap-2">
-          <Link
+          <ButtonLink
             href={`${locale === 'en' ? '/en/admissions' : '/admissions'}?program=${program.slug}`}
+            fullWidth
+            size="lg"
           >
-            <Button fullWidth size="lg">{tc('apply')}</Button>
-          </Link>
-          <Link href="#brochure">
-            <Button fullWidth variant="ghost">
-              {tc('downloadBrochure')}
-            </Button>
-          </Link>
+            {tc('apply')}
+          </ButtonLink>
+          <ButtonLink href="#brochure" fullWidth variant="ghost">
+            {tc('downloadBrochure')}
+          </ButtonLink>
           {/* "Être contacté" — opens the lightweight callback modal */}
           <Button
             fullWidth

@@ -1,6 +1,6 @@
 'use client';
 
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import type { Locale } from '@unm/types';
 
 interface Props {
@@ -9,6 +9,7 @@ interface Props {
 
 export function WhatsAppButton({ programName }: Props) {
   const locale = useLocale() as Locale;
+  const t = useTranslations('common');
   const whatsapp = (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '').replace(/[^0-9]/g, '');
   const subject = programName ?? (locale === 'en' ? 'UNM programs' : 'les programmes UNM');
   const message = encodeURIComponent(
@@ -22,8 +23,8 @@ export function WhatsAppButton({ programName }: Props) {
       href={`https://wa.me/${whatsapp}?text=${message}`}
       target="_blank"
       rel="noopener noreferrer"
-      aria-label="WhatsApp"
-      className="fixed bottom-20 right-4 z-20 hidden h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-card-hover hover:scale-105 lg:flex lg:bottom-6 motion-reduce:hover:scale-100"
+      aria-label={t('whatsapp')}
+      className="fixed bottom-6 right-4 z-10 hidden h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-card-hover hover:scale-105 lg:flex motion-reduce:hover:scale-100"
     >
       <svg viewBox="0 0 32 32" className="h-7 w-7" aria-hidden="true">
         <path

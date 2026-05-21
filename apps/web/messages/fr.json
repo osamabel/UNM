@@ -20,7 +20,68 @@
     "next": "Suivant",
     "previous": "Précédent",
     "required": "Requis",
-    "optional": "Optionnel"
+    "optional": "Optionnel",
+    "whatsapp": "WhatsApp",
+    "home": "Accueil",
+    "skipToContent": "Aller au contenu"
+  },
+  "breadcrumb": {
+    "home": "Accueil"
+  },
+  "notFound": {
+    "eyebrow": "404",
+    "title": "Page introuvable",
+    "description": "La page que vous recherchez n'existe pas ou a été déplacée.",
+    "home": "Retour à l'accueil",
+    "programs": "Voir les programmes",
+    "contact": "Nous contacter"
+  },
+  "admissions": {
+    "title": "Admissions",
+    "metaDescription": "Candidatez à UNM en cinq étapes. Soumettez votre dossier en ligne.",
+    "intro": "Complétez votre candidature en cinq étapes. Documents requis : CV, diplôme, lettre de motivation.",
+    "breadcrumb": "Admissions"
+  },
+  "programsIndex": {
+    "title": "Tous les programmes",
+    "metaTitle": "Programmes",
+    "empty": "Aucun programme ne correspond à ces filtres.",
+    "breadcrumb": "Programmes"
+  },
+  "application": {
+    "steps": {
+      "identity": "Identité",
+      "academic": "Profil académique",
+      "program": "Programme",
+      "documents": "Documents",
+      "recap": "Récapitulatif"
+    },
+    "recapTitle": "Récapitulatif",
+    "referencePrefix": "Référence",
+    "faculty": "Faculté",
+    "program": "Programme",
+    "format": "Format",
+    "startDate": "Date de rentrée",
+    "cv": "CV",
+    "diploma": "Diplôme",
+    "motivation": "Lettre de motivation",
+    "attached": "Joint",
+    "notAttached": "Non joint",
+    "formatPresentiel": "Présentiel",
+    "formatDistanciel": "Distanciel",
+    "formatHybride": "Hybride"
+  },
+  "contact": {
+    "title": "Nous contacter",
+    "metaTitle": "Contact",
+    "intro": "Notre équipe Admissions vous répond sous 48 heures. Vous pouvez aussi nous appeler ou écrire sur WhatsApp.",
+    "sendMessage": "Envoyez-nous un message",
+    "requestCallback": "Demander un rappel",
+    "directLines": "Lignes directes",
+    "campusMarrakech": "Campus Marrakech",
+    "campusLaayoune": "Campus Laâyoune",
+    "faqTitle": "FAQ",
+    "breadcrumb": "Contact"
   },
   "nav": {
     "home": "Accueil",
@@ -44,10 +105,12 @@
     "organisations": "Organisations"
   },
   "home": {
+    "heroEyebrow": "UNM · Maroc",
     "heroTitle": "Construisons ensemble le leadership africain",
     "heroSubtitle": "MBA, DBA et Certificats Executive — en partenariat avec European Business School Paris. Une formation orientée action, ancrée dans les réalités africaines.",
     "heroCta1": "Découvrir nos programmes",
     "heroCta2": "Demander une brochure",
+    "facultiesEyebrow": "Facultés",
     "facultiesTitle": "Nos quatre pôles d'excellence",
     "facultiesSubtitle": "Une offre Executive structurée autour des secteurs clés de la transformation économique africaine.",
     "featuredProgramsTitle": "Programmes phares",

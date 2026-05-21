@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
 import type { Faculty, Locale } from '@unm/types';
 import { facultyPath, localized } from '@/lib/utils';
-import { Button } from '@/components/ui/Button';
+import { ButtonLink } from '@/components/ui/Button';
 
 interface Props {
   faculties: Faculty[];
@@ -125,16 +125,12 @@ function ActiveFacultyCard({ faculty: f, locale }: { faculty: Faculty; locale: L
             {localized(f.description, locale)}
           </p>
           <div className="flex flex-wrap gap-3">
-            <Link href={facultyPath(f.slug, locale)}>
-              <Button>
-                {isEn ? 'Explore the faculty' : 'Découvrir la faculté'}
-              </Button>
-            </Link>
-            <Link href={locale === 'en' ? '/en/programs' : '/programmes'}>
-              <Button variant="ghost">
-                {isEn ? 'See all programmes' : 'Voir tous les programmes'}
-              </Button>
-            </Link>
+            <ButtonLink href={facultyPath(f.slug, locale)}>
+              {isEn ? 'Explore the faculty' : 'Découvrir la faculté'}
+            </ButtonLink>
+            <ButtonLink href={locale === 'en' ? '/en/programs' : '/programmes'} variant="ghost">
+              {isEn ? 'See all programmes' : 'Voir tous les programmes'}
+            </ButtonLink>
           </div>
         </div>
       </div>

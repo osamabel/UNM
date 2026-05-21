@@ -2,9 +2,11 @@ import type { Metadata, Viewport } from 'next';
 import Script from 'next/script';
 import { notFound } from 'next/navigation';
 import { NextIntlClientProvider } from 'next-intl';
-import { getMessages, unstable_setRequestLocale } from 'next-intl/server';
+import { getMessages, getTranslations, unstable_setRequestLocale } from 'next-intl/server';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
+import { MainContent } from '@/components/layout/MainContent';
+import { MobileBottomBar } from '@/components/shared/MobileBottomBar';
 import { WhatsAppButton } from '@/components/shared/WhatsAppButton';
 import { JsonLd } from '@/components/shared/JsonLd';
 import { organizationSchema } from '@/lib/schema';
@@ -63,6 +65,7 @@ export default async function LocaleLayout({
   if (!isLocale(params.locale)) notFound();
   unstable_setRequestLocale(params.locale);
   const messages = await getMessages();
+  const tCommon = await getTranslations({ locale: params.locale, namespace: 'common' });
   const plausibleDomain = process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN;
 
   return (
@@ -87,13 +90,12 @@ export default async function LocaleLayout({
       <body>
         <NextIntlClientProvider locale={params.locale} messages={messages}>
           <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-primary focus:px-4 focus:py-2 focus:text-white">
-            {params.locale === 'en' ? 'Skip to content' : 'Aller au contenu'}
+            {tCommon('skipToContent')}
           </a>
           <Header />
-          <main id="main" className="pb-20 lg:pb-0">
-            {children}
-          </main>
+          <MainContent>{children}</MainContent>
           <Footer />
+          <MobileBottomBar />
           <WhatsAppButton />
         </NextIntlClientProvider>
         <JsonLd data={organizationSchema()} />

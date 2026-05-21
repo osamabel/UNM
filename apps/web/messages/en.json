@@ -20,7 +20,68 @@
     "next": "Next",
     "previous": "Previous",
     "required": "Required",
-    "optional": "Optional"
+    "optional": "Optional",
+    "whatsapp": "WhatsApp",
+    "home": "Home",
+    "skipToContent": "Skip to content"
+  },
+  "breadcrumb": {
+    "home": "Home"
+  },
+  "notFound": {
+    "eyebrow": "404",
+    "title": "Page not found",
+    "description": "The page you are looking for does not exist or has been moved.",
+    "home": "Back to home",
+    "programs": "View programs",
+    "contact": "Contact us"
+  },
+  "admissions": {
+    "title": "Admissions",
+    "metaDescription": "Apply to UNM in five steps. Submit your application online.",
+    "intro": "Complete the application in five steps. Required documents: CV, diploma, motivation letter.",
+    "breadcrumb": "Admissions"
+  },
+  "programsIndex": {
+    "title": "All programs",
+    "metaTitle": "Programs",
+    "empty": "No program matches these filters.",
+    "breadcrumb": "Programs"
+  },
+  "application": {
+    "steps": {
+      "identity": "Identity",
+      "academic": "Academic profile",
+      "program": "Program",
+      "documents": "Documents",
+      "recap": "Summary"
+    },
+    "recapTitle": "Summary",
+    "referencePrefix": "Reference",
+    "faculty": "Faculty",
+    "program": "Program",
+    "format": "Format",
+    "startDate": "Start date",
+    "cv": "CV",
+    "diploma": "Diploma",
+    "motivation": "Motivation letter",
+    "attached": "Attached",
+    "notAttached": "Not attached",
+    "formatPresentiel": "On campus",
+    "formatDistanciel": "Online",
+    "formatHybride": "Hybrid"
+  },
+  "contact": {
+    "title": "Contact us",
+    "metaTitle": "Contact",
+    "intro": "Our admissions team replies within 48 hours. You can also call us or use WhatsApp directly.",
+    "sendMessage": "Send us a message",
+    "requestCallback": "Request a callback",
+    "directLines": "Direct lines",
+    "campusMarrakech": "Marrakech campus",
+    "campusLaayoune": "Laâyoune campus",
+    "faqTitle": "FAQ",
+    "breadcrumb": "Contact"
   },
   "nav": {
     "home": "Home",
@@ -44,10 +105,12 @@
     "organisations": "Organizations"
   },
   "home": {
+    "heroEyebrow": "UNM · Morocco",
     "heroTitle": "Building African leadership, together",
     "heroSubtitle": "MBA, DBA and Executive Certificates — in partnership with European Business School Paris. Action-oriented training, anchored in African realities.",
     "heroCta1": "Discover our programs",
     "heroCta2": "Request a brochure",
+    "facultiesEyebrow": "Faculties",
     "facultiesTitle": "Our four centers of excellence",
     "facultiesSubtitle": "An Executive offering built around the key sectors of African economic transformation.",
     "featuredProgramsTitle": "Flagship programs",

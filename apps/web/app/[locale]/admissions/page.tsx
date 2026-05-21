@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
-import { unstable_setRequestLocale } from 'next-intl/server';
+import { Suspense } from 'react';
+import { getTranslations, unstable_setRequestLocale } from 'next-intl/server';
 import { SectionWrapper } from '@/components/ui/SectionWrapper';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
 import { ApplicationForm } from '@/components/forms/ApplicationForm';
@@ -9,36 +10,36 @@ import type { Locale } from '@unm/types';
 export const revalidate = 300;
 
 export async function generateMetadata({ params }: { params: { locale: Locale } }): Promise<Metadata> {
-  return {
-    title: 'Admissions',
-    description:
-      params.locale === 'en'
-        ? 'Apply to UNM in five steps. Submit your application online.'
-        : 'Candidatez à UNM en cinq étapes. Soumettez votre dossier en ligne.',
-  };
+  const t = await getTranslations({ locale: params.locale, namespace: 'admissions' });
+  return { title: t('title'), description: t('metaDescription') };
 }
 
 export default async function AdmissionsPage({ params }: { params: { locale: Locale } }) {
   unstable_setRequestLocale(params.locale);
-  const [faculties, programs] = await Promise.all([getFaculties(), getPrograms({ limit: 200 })]);
+  const [faculties, programs, t, tb] = await Promise.all([
+    getFaculties(),
+    getPrograms({ limit: 200 }),
+    getTranslations({ locale: params.locale, namespace: 'admissions' }),
+    getTranslations({ locale: params.locale, namespace: 'breadcrumb' }),
+  ]);
+  const homeUrl = params.locale === 'en' ? '/en' : '/';
+  const admissionsUrl = params.locale === 'en' ? '/en/admissions' : '/admissions';
   return (
     <>
       <Breadcrumb
         items={[
-          { name: params.locale === 'en' ? 'Home' : 'Accueil', url: params.locale === 'en' ? '/en' : '/' },
-          { name: 'Admissions', url: params.locale === 'en' ? '/en/admissions' : '/admissions' },
+          { name: tb('home'), url: homeUrl },
+          { name: t('breadcrumb'), url: admissionsUrl },
         ]}
       />
       <SectionWrapper>
         <div className="mx-auto max-w-3xl">
-          <h1 className="font-display text-display-lg text-secondary">Admissions</h1>
-          <p className="mt-3 text-secondary-400">
-            {params.locale === 'en'
-              ? 'Complete the application in five steps. Required documents: CV, diploma, motivation letter.'
-              : 'Complétez votre candidature en cinq étapes. Documents requis : CV, diplôme, lettre de motivation.'}
-          </p>
+          <h1 className="font-display text-display-lg text-secondary">{t('title')}</h1>
+          <p className="mt-3 text-secondary-400">{t('intro')}</p>
           <div className="mt-10">
-            <ApplicationForm faculties={faculties} programs={programs} />
+            <Suspense fallback={<p className="text-secondary-400">{t('intro')}</p>}>
+              <ApplicationForm faculties={faculties} programs={programs} />
+            </Suspense>
           </div>
         </div>
       </SectionWrapper>

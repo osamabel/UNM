@@ -17,7 +17,7 @@ export function FacultyHero({ faculty }: Props) {
       {faculty.coverImage?.url && (
         <Image
           src={faculty.coverImage.url}
-          alt=""
+          alt={faculty.coverImage.alt || localized(faculty.name, locale)}
           fill
           priority
           className="-z-10 object-cover opacity-30"

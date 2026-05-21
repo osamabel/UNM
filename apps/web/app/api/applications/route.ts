@@ -90,5 +90,7 @@ export async function POST(req: Request) {
       .catch(() => null);
   }
 
-  return NextResponse.json({ id: created?.doc?.id ?? null }, { status: 201 });
+  const id = created?.doc?.id ?? created?.id ?? null;
+  const referenceId = id ? `APP-${String(id).slice(-8).toUpperCase()}` : null;
+  return NextResponse.json({ id, referenceId }, { status: 201 });
 }

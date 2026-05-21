@@ -1,7 +1,6 @@
-import Link from 'next/link';
 import { useLocale } from 'next-intl';
 import type { Faculty, Locale } from '@unm/types';
-import { Button } from '@/components/ui/Button';
+import { ButtonLink } from '@/components/ui/Button';
 import { localized } from '@/lib/utils';
 
 // Rendered when a faculty is announced but not yet open.
@@ -34,16 +33,17 @@ export function FacultyComingSoon({ faculty }: { faculty: Faculty }) {
             : 'Ouverture à une prochaine rentrée — restez informé.'}
         </p>
         <div className="mt-6 flex flex-wrap gap-3">
-          <Link href={isEn ? '/en/contact' : '/contact'}>
-            <Button size="lg" variant="secondary">
-              {isEn ? 'Get notified' : 'Être informé'}
-            </Button>
-          </Link>
-          <Link href={isEn ? '/en/faculties' : '/facultes'}>
-            <Button size="lg" variant="ghost" className="border border-white/30 text-white hover:bg-white/10">
-              {isEn ? 'Back to faculties' : 'Voir les facultés'}
-            </Button>
-          </Link>
+          <ButtonLink href={isEn ? '/en/contact' : '/contact'} size="lg" variant="secondary">
+            {isEn ? 'Get notified' : 'Être informé'}
+          </ButtonLink>
+          <ButtonLink
+            href={isEn ? '/en/faculties' : '/facultes'}
+            size="lg"
+            variant="ghost"
+            className="border border-white/30 text-white hover:bg-white/10"
+          >
+            {isEn ? 'Back to faculties' : 'Voir les facultés'}
+          </ButtonLink>
         </div>
       </div>
     </section>

@@ -24,9 +24,7 @@ export function FacultyGrid({ faculties }: Props) {
   return (
     <SectionWrapper>
       <header className="mb-12 max-w-2xl">
-        <p className="eyebrow">
-          {locale === 'en' ? 'Faculties' : 'Facultés'}
-        </p>
+        <p className="eyebrow">{t('facultiesEyebrow')}</p>
         <h2 className="mt-3 font-display text-display-md text-secondary">
           {t('facultiesTitle')}
         </h2>

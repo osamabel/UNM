@@ -1,6 +1,5 @@
-import Link from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
-import { Button } from '@/components/ui/Button';
+import { ButtonLink } from '@/components/ui/Button';
 import { SectionWrapper } from '@/components/ui/SectionWrapper';
 import type { Locale } from '@unm/types';
 
@@ -16,14 +15,12 @@ export function FacultyCTA() {
             : 'Passez à l’étape suivante'}
         </h2>
         <div className="flex flex-wrap gap-3">
-          <Link href={locale === 'en' ? '/en/admissions' : '/admissions'}>
-            <Button size="lg">{t('apply')}</Button>
-          </Link>
-          <Link href="#brochure">
-            <Button size="lg" variant="ghost" className="text-warm-50 hover:bg-warm-50/10">
-              {t('downloadBrochure')}
-            </Button>
-          </Link>
+          <ButtonLink href={locale === 'en' ? '/en/admissions' : '/admissions'} size="lg">
+            {t('apply')}
+          </ButtonLink>
+          <ButtonLink href="#brochure" size="lg" variant="ghost" className="text-warm-50 hover:bg-warm-50/10">
+            {t('downloadBrochure')}
+          </ButtonLink>
         </div>
       </div>
     </SectionWrapper>

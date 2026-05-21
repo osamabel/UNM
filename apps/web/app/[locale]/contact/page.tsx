@@ -1,14 +1,10 @@
 import type { Metadata } from 'next';
-import { unstable_setRequestLocale } from 'next-intl/server';
+import { getTranslations, unstable_setRequestLocale } from 'next-intl/server';
 import { SectionWrapper } from '@/components/ui/SectionWrapper';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
 import { ContactForm } from '@/components/forms/ContactForm';
 import { CallbackForm } from '@/components/forms/CallbackForm';
 import type { Locale } from '@unm/types';
-
-export async function generateMetadata({ params }: { params: { locale: Locale } }): Promise<Metadata> {
-  return { title: 'Contact' };
-}
 
 const FAQS = [
   {
@@ -36,38 +32,41 @@ const FAQS = [
 const PHONE = '+212 6 62 62 62 19';
 const WHATSAPP_RAW = '212662626219';
 
-export default function ContactPage({ params }: { params: { locale: Locale } }) {
+export async function generateMetadata({ params }: { params: { locale: Locale } }): Promise<Metadata> {
+  const t = await getTranslations({ locale: params.locale, namespace: 'contact' });
+  return { title: t('metaTitle') };
+}
+
+export default async function ContactPage({ params }: { params: { locale: Locale } }) {
   unstable_setRequestLocale(params.locale);
+  const [t, tb, tc] = await Promise.all([
+    getTranslations({ locale: params.locale, namespace: 'contact' }),
+    getTranslations({ locale: params.locale, namespace: 'breadcrumb' }),
+    getTranslations({ locale: params.locale, namespace: 'common' }),
+  ]);
   const isEn = params.locale === 'en';
+  const homeUrl = isEn ? '/en' : '/';
+  const contactUrl = isEn ? '/en/contact' : '/contact';
+
   return (
     <>
       <Breadcrumb
         items={[
-          { name: isEn ? 'Home' : 'Accueil', url: isEn ? '/en' : '/' },
-          { name: 'Contact', url: isEn ? '/en/contact' : '/contact' },
+          { name: tb('home'), url: homeUrl },
+          { name: t('breadcrumb'), url: contactUrl },
         ]}
       />
       <SectionWrapper>
-        <h1 className="font-display text-display-lg text-secondary">
-          {isEn ? 'Contact us' : 'Nous contacter'}
-        </h1>
-        <p className="mt-3 max-w-2xl text-secondary-400">
-          {isEn
-            ? "Our admissions team replies within 48 hours. You can also call us or use WhatsApp directly."
-            : 'Notre équipe Admissions vous répond sous 48 heures. Vous pouvez aussi nous appeler ou écrire sur WhatsApp.'}
-        </p>
+        <h1 className="font-display text-display-lg text-secondary">{t('title')}</h1>
+        <p className="mt-3 max-w-2xl text-secondary-400">{t('intro')}</p>
 
         <div className="mt-10 grid gap-12 lg:grid-cols-[1.4fr_1fr]">
           <div>
-            <h2 className="font-display text-2xl text-secondary">
-              {isEn ? 'Send us a message' : 'Envoyez-nous un message'}
-            </h2>
+            <h2 className="font-display text-2xl text-secondary">{t('sendMessage')}</h2>
             <div className="mt-6">
               <ContactForm />
             </div>
-            <h2 className="mt-12 font-display text-2xl text-secondary">
-              {isEn ? 'Request a callback' : 'Demander un rappel'}
-            </h2>
+            <h2 className="mt-12 font-display text-2xl text-secondary">{t('requestCallback')}</h2>
             <div className="mt-6">
               <CallbackForm />
             </div>
@@ -75,16 +74,14 @@ export default function ContactPage({ params }: { params: { locale: Locale } }) 
 
           <aside className="space-y-6">
             <div className="rounded-card border border-warm-200 bg-white p-6">
-              <h3 className="font-heading font-semibold text-secondary">
-                {isEn ? 'Direct lines' : 'Lignes directes'}
-              </h3>
+              <h3 className="font-heading font-semibold text-secondary">{t('directLines')}</h3>
               <ul className="mt-4 space-y-3 text-sm">
                 <li>
                   <a
                     href={`tel:${PHONE.replace(/\s/g, '')}`}
                     className="font-medium text-primary hover:underline"
                   >
-                    📞 {PHONE}
+                    {PHONE}
                   </a>
                 </li>
                 <li>
@@ -94,24 +91,19 @@ export default function ContactPage({ params }: { params: { locale: Locale } }) 
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    💬 WhatsApp
+                    {tc('whatsapp')}
                   </a>
                 </li>
                 <li>
-                  <a
-                    href="mailto:contact@unm.ma"
-                    className="font-medium text-primary hover:underline"
-                  >
-                    ✉ contact@unm.ma
+                  <a href="mailto:contact@unm.ma" className="font-medium text-primary hover:underline">
+                    contact@unm.ma
                   </a>
                 </li>
               </ul>
             </div>
 
             <div className="rounded-card border border-warm-200 bg-white p-6">
-              <h3 className="font-heading font-semibold text-secondary">
-                {isEn ? 'Campus Marrakech' : 'Campus Marrakech'}
-              </h3>
+              <h3 className="font-heading font-semibold text-secondary">{t('campusMarrakech')}</h3>
               <p className="mt-2 text-sm text-secondary-400">
                 Borj Menara I<br />
                 Av. Abdelkrim El Khattabi<br />
@@ -120,9 +112,7 @@ export default function ContactPage({ params }: { params: { locale: Locale } }) 
             </div>
 
             <div className="rounded-card border border-warm-200 bg-white p-6">
-              <h3 className="font-heading font-semibold text-secondary">
-                {isEn ? 'Campus Laâyoune' : 'Campus Laâyoune'}
-              </h3>
+              <h3 className="font-heading font-semibold text-secondary">{t('campusLaayoune')}</h3>
               <p className="mt-2 text-sm text-secondary-400">
                 N°8, Al Bouchra<br />
                 Av. Alfourssane<br />
@@ -141,7 +131,7 @@ export default function ContactPage({ params }: { params: { locale: Locale } }) 
           </aside>
         </div>
 
-        <h2 className="mt-16 font-display text-display-md text-secondary">FAQ</h2>
+        <h2 className="mt-16 font-display text-display-md text-secondary">{t('faqTitle')}</h2>
         <ul className="mt-6 space-y-4">
           {FAQS.map((f, i) => {
             const item = isEn ? f.en : f.fr;

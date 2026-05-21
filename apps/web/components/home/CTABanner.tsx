@@ -1,6 +1,5 @@
-import Link from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
-import { Button } from '@/components/ui/Button';
+import { ButtonLink } from '@/components/ui/Button';
 import type { Locale } from '@unm/types';
 
 export function CTABanner() {
@@ -14,9 +13,9 @@ export function CTABanner() {
           <h2 className="font-display text-display-md">{t('ctaBannerTitle')}</h2>
           <p className="mt-2 text-white/90">{t('ctaBannerSubtitle')}</p>
         </div>
-        <Link href={locale === 'en' ? '/en/admissions' : '/admissions'}>
-          <Button variant="secondary" size="lg">{tc('applyNow')}</Button>
-        </Link>
+        <ButtonLink href={locale === 'en' ? '/en/admissions' : '/admissions'} variant="secondary" size="lg">
+          {tc('applyNow')}
+        </ButtonLink>
       </div>
     </section>
   );

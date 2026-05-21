@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { unstable_setRequestLocale } from 'next-intl/server';
+import { getTranslations, unstable_setRequestLocale } from 'next-intl/server';
 import Link from 'next/link';
 import { SectionWrapper } from '@/components/ui/SectionWrapper';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
@@ -20,7 +20,8 @@ interface Search {
 }
 
 export async function generateMetadata({ params }: { params: { locale: Locale } }): Promise<Metadata> {
-  return { title: params.locale === 'en' ? 'Programs' : 'Programmes' };
+  const t = await getTranslations({ locale: params.locale, namespace: 'programsIndex' });
+  return { title: t('metaTitle') };
 }
 
 export default async function ProgramsIndex({
@@ -31,22 +32,24 @@ export default async function ProgramsIndex({
   searchParams: Search;
 }) {
   unstable_setRequestLocale(params.locale);
-  const [faculties, programs] = await Promise.all([
+  const [faculties, programs, t, tb] = await Promise.all([
     getFaculties(),
     getPrograms(searchParams),
+    getTranslations({ locale: params.locale, namespace: 'programsIndex' }),
+    getTranslations({ locale: params.locale, namespace: 'breadcrumb' }),
   ]);
+  const homeUrl = params.locale === 'en' ? '/en' : '/';
+  const programsUrl = params.locale === 'en' ? '/en/programs' : '/programmes';
   return (
     <>
       <Breadcrumb
         items={[
-          { name: params.locale === 'en' ? 'Home' : 'Accueil', url: params.locale === 'en' ? '/en' : '/' },
-          { name: params.locale === 'en' ? 'Programs' : 'Programmes', url: params.locale === 'en' ? '/en/programs' : '/programmes' },
+          { name: tb('home'), url: homeUrl },
+          { name: t('breadcrumb'), url: programsUrl },
         ]}
       />
       <SectionWrapper>
-        <h1 className="font-display text-display-lg text-secondary">
-          {params.locale === 'en' ? 'All programs' : 'Tous les programmes'}
-        </h1>
+        <h1 className="font-display text-display-lg text-secondary">{t('title')}</h1>
         <div className="mt-8">
           <ProgramFilter
             faculties={faculties.map((f) => ({
@@ -71,9 +74,7 @@ export default async function ProgramsIndex({
           ))}
         </div>
         {programs.length === 0 && (
-          <p className="mt-12 text-center text-secondary-400">
-            {params.locale === 'en' ? 'No program matches these filters.' : 'Aucun programme ne correspond à ces filtres.'}
-          </p>
+          <p className="mt-12 text-center text-secondary-400">{t('empty')}</p>
         )}
       </SectionWrapper>
     </>

@@ -1,4 +1,5 @@
-import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from 'react';
+import Link from 'next/link';
+import { forwardRef, type ButtonHTMLAttributes, type ComponentProps, type ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 
 type Variant = 'primary' | 'secondary' | 'ghost' | 'danger';
@@ -73,3 +74,33 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
     </button>
   );
 });
+
+const linkBase =
+  'inline-flex items-center justify-center gap-2 rounded font-heading font-medium transition-colors';
+
+interface ButtonLinkProps extends Omit<ComponentProps<typeof Link>, 'className'> {
+  variant?: Variant;
+  size?: Size;
+  fullWidth?: boolean;
+  className?: string;
+  children: ReactNode;
+}
+
+/** Link styled as a button — avoids invalid `<a><button>` nesting. */
+export function ButtonLink({
+  variant = 'primary',
+  size = 'md',
+  fullWidth,
+  className,
+  children,
+  ...rest
+}: ButtonLinkProps) {
+  return (
+    <Link
+      className={cn(linkBase, variants[variant], sizes[size], fullWidth && 'w-full', className)}
+      {...rest}
+    >
+      <span>{children}</span>
+    </Link>
+  );
+}

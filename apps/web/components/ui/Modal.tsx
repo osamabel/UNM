@@ -6,6 +6,7 @@ import {
   useRef,
   type ReactNode,
 } from 'react';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 
 interface ModalProps {
@@ -23,6 +24,7 @@ const SIZE: Record<NonNullable<ModalProps['size']>, string> = {
 };
 
 export function Modal({ open, onClose, title, children, size = 'md' }: ModalProps) {
+  const t = useTranslations('common');
   const dialogRef = useRef<HTMLDivElement>(null);
   const previousActive = useRef<HTMLElement | null>(null);
 
@@ -88,7 +90,7 @@ export function Modal({ open, onClose, title, children, size = 'md' }: ModalProp
             </h2>
             <button
               onClick={onClose}
-              aria-label="Close"
+              aria-label={t('close')}
               className="rounded p-2 text-secondary hover:bg-warm-100"
             >
               <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true">

@@ -1,9 +1,8 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { unstable_setRequestLocale } from 'next-intl/server';
 import { SectionWrapper } from '@/components/ui/SectionWrapper';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
-import { Button } from '@/components/ui/Button';
+import { ButtonLink } from '@/components/ui/Button';
 import { JsonLd } from '@/components/shared/JsonLd';
 import { organisationsContent as c } from '@/lib/organisations-content';
 import { localized } from '@/lib/utils';
@@ -81,12 +80,12 @@ export default function OrganisationsPage({ params }: Params) {
             ))}
           </div>
           <div className="mt-10 flex flex-wrap gap-3">
-            <Link href={c.hero.ctas.primary.href}>
-              <Button>{localized(c.hero.ctas.primary.label, locale)}</Button>
-            </Link>
-            <Link href={c.hero.ctas.secondary.href}>
-              <Button variant="ghost">{localized(c.hero.ctas.secondary.label, locale)}</Button>
-            </Link>
+            <ButtonLink href={c.hero.ctas.primary.href}>
+              {localized(c.hero.ctas.primary.label, locale)}
+            </ButtonLink>
+            <ButtonLink href={c.hero.ctas.secondary.href} variant="ghost">
+              {localized(c.hero.ctas.secondary.label, locale)}
+            </ButtonLink>
           </div>
         </div>
       </section>
@@ -254,14 +253,16 @@ export default function OrganisationsPage({ params }: Params) {
             {localized(c.closing.body, locale)}
           </p>
           <div className="mt-10 flex flex-wrap gap-3">
-            <Link href={c.closing.ctas.primary.href}>
-              <Button>{localized(c.closing.ctas.primary.label, locale)}</Button>
-            </Link>
-            <Link href={c.closing.ctas.secondary.href}>
-              <Button variant="ghost" className="border border-warm-50/30 text-warm-50 hover:bg-warm-50/10">
-                {localized(c.closing.ctas.secondary.label, locale)}
-              </Button>
-            </Link>
+            <ButtonLink href={c.closing.ctas.primary.href}>
+              {localized(c.closing.ctas.primary.label, locale)}
+            </ButtonLink>
+            <ButtonLink
+              href={c.closing.ctas.secondary.href}
+              variant="ghost"
+              className="border border-warm-50/30 text-warm-50 hover:bg-warm-50/10"
+            >
+              {localized(c.closing.ctas.secondary.label, locale)}
+            </ButtonLink>
           </div>
         </div>
       </section>

@@ -25,8 +25,14 @@ export function CTABar({ programSlug, hidden }: CTABarProps) {
       : `Bonjour, je souhaite des informations sur ${programSlug ?? "les programmes UNM"}.`,
   );
 
+  const contactHref = locale === 'en' ? '/en/contact' : '/contact';
+
   return (
-    <div className="fixed inset-x-0 bottom-0 z-20 border-t border-warm-200 bg-warm-50/95 backdrop-blur lg:hidden">
+    <div
+      className="fixed inset-x-0 bottom-0 z-20 border-t border-warm-200 bg-warm-50/95 backdrop-blur pb-[env(safe-area-inset-bottom,0px)] lg:hidden"
+      role="navigation"
+      aria-label={t('apply')}
+    >
       <div className="grid grid-cols-3 divide-x divide-warm-200">
         <Link
           href={applyHref}
@@ -34,19 +40,19 @@ export function CTABar({ programSlug, hidden }: CTABarProps) {
         >
           {t('apply')}
         </Link>
-        <a
-          href={brochureAnchor}
+        <Link
+          href={programSlug ? brochureAnchor : contactHref}
           className="flex h-14 items-center justify-center font-heading text-sm font-medium text-secondary"
         >
-          {t('downloadBrochure')}
-        </a>
+          {programSlug ? t('downloadBrochure') : t('contactUs')}
+        </Link>
         <a
           href={`https://wa.me/${whatsapp.replace(/[^0-9]/g, '')}?text=${waMessage}`}
           target="_blank"
           rel="noopener noreferrer"
           className="flex h-14 items-center justify-center font-heading text-sm font-medium text-secondary"
         >
-          WhatsApp
+          {t('whatsapp')}
         </a>
       </div>
     </div>

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
-import { Button } from '@/components/ui/Button';
+import { ButtonLink } from '@/components/ui/Button';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import type { Locale } from '@unm/types';
 import { cn } from '@/lib/utils';
@@ -172,14 +172,14 @@ export function MobileNav() {
             )}
           </ul>
           <div className="mt-6 flex flex-col gap-3">
-            <Link
+            <ButtonLink
               href={locale === 'en' ? '/en/admissions' : '/admissions'}
               onClick={close}
+              size="lg"
+              fullWidth
             >
-              <Button variant="primary" size="lg" fullWidth>
-                {tCommon('apply')}
-              </Button>
-            </Link>
+              {tCommon('apply')}
+            </ButtonLink>
             <div className="flex justify-center">
               <LanguageSwitcher />
             </div>

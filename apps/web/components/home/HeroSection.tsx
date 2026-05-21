@@ -1,6 +1,5 @@
-import Link from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
-import { Button } from '@/components/ui/Button';
+import { ButtonLink } from '@/components/ui/Button';
 import type { Locale } from '@unm/types';
 
 // Institutional hero — no radial gradient, no oversized headline.
@@ -12,9 +11,7 @@ export function HeroSection() {
   return (
     <section className="bg-warm-50">
       <div className="container-page py-20 lg:py-28">
-        <p className="eyebrow">
-          {locale === 'en' ? 'UNM · Morocco' : 'UNM · Maroc'}
-        </p>
+        <p className="eyebrow">{t('heroEyebrow')}</p>
         <h1 className="mt-5 max-w-3xl font-display text-display-xl text-secondary">
           {t('heroTitle')}
         </h1>
@@ -22,12 +19,12 @@ export function HeroSection() {
           {t('heroSubtitle')}
         </p>
         <div className="mt-10 flex flex-wrap gap-3">
-          <Link href={locale === 'en' ? '/en/programs' : '/programmes'}>
-            <Button>{t('heroCta1')}</Button>
-          </Link>
-          <Link href={locale === 'en' ? '/en/admissions' : '/admissions'}>
-            <Button variant="ghost">{t('heroCta2')}</Button>
-          </Link>
+          <ButtonLink href={locale === 'en' ? '/en/programs' : '/programmes'}>
+            {t('heroCta1')}
+          </ButtonLink>
+          <ButtonLink href={locale === 'en' ? '/en/admissions' : '/admissions'} variant="ghost">
+            {t('heroCta2')}
+          </ButtonLink>
         </div>
       </div>
     </section>
