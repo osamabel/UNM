@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { unstable_setRequestLocale } from 'next-intl/server';
 import { SectionWrapper } from '@/components/ui/SectionWrapper';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
+import { UniversitySubHero } from '@/components/university/UniversitySubHero';
 import { CTABanner } from '@/components/home/CTABanner';
 import type { Locale } from '@unm/types';
 
@@ -60,28 +61,20 @@ export default function PresidentWordPage({ params }: { params: { locale: Locale
         ]}
       />
 
-      {/* ────── HERO ────── */}
-      <section className="bg-secondary text-warm-50">
-        <div className="container-page py-20 lg:py-24">
-          <p className="font-heading text-sm font-semibold uppercase tracking-[0.22em] text-primary-200">
-            {isEn ? "President's word" : 'Mot du Président'}
-          </p>
-          <h1 className="mt-4 max-w-3xl font-display text-display-xl leading-[1.05] text-warm-50">
-            {isEn
-              ? 'Forming the leaders of tomorrow’s Africa.'
-              : "Former les leaders de l'Afrique de demain."}
-          </h1>
-          <p className="mt-6 font-display text-xl text-warm-100">
-            — {PRESIDENT_NAME} · {isEn ? PRESIDENT_TITLE_EN : PRESIDENT_TITLE_FR}
-          </p>
-        </div>
-      </section>
+      <UniversitySubHero
+        eyebrow={isEn ? "President's word" : 'Mot du Président'}
+        title={
+          isEn
+            ? 'Forming the leaders of tomorrow’s Africa.'
+            : "Former les leaders de l'Afrique de demain."
+        }
+        subtitle={`${PRESIDENT_NAME} · ${isEn ? PRESIDENT_TITLE_EN : PRESIDENT_TITLE_FR}`}
+      />
 
-      {/* ────── LETTER ────── */}
-      <SectionWrapper tone="default">
-        <div className="grid gap-12 lg:grid-cols-[260px_1fr]">
-          <aside className="lg:sticky lg:top-24 h-fit">
-            <div className="relative aspect-[4/5] w-full max-w-[260px] overflow-hidden rounded-card shadow-card">
+      <SectionWrapper tone="canvas" className="!pt-8 sm:!pt-10">
+        <div className="grid min-w-0 gap-10 lg:grid-cols-[minmax(0,16rem)_1fr] lg:gap-12">
+          <aside className="mx-auto w-full max-w-[16rem] lg:sticky lg:top-28 lg:mx-0 lg:self-start">
+            <div className="card-interactive relative aspect-[4/5] w-full overflow-hidden p-0">
               <Image
                 src="/images/portraits/balambo.webp"
                 alt={`${PRESIDENT_NAME} — ${isEn ? PRESIDENT_TITLE_EN : PRESIDENT_TITLE_FR}`}
@@ -91,8 +84,8 @@ export default function PresidentWordPage({ params }: { params: { locale: Locale
                 className="object-cover"
               />
             </div>
-            <p className="mt-4 font-display text-xl text-secondary">{PRESIDENT_NAME}</p>
-            <p className="font-heading text-sm text-secondary-400">
+            <p className="mt-4 text-center font-display text-xl text-secondary lg:text-left">{PRESIDENT_NAME}</p>
+            <p className="text-center font-heading text-sm text-secondary/60 lg:text-left">
               {isEn ? PRESIDENT_TITLE_EN : PRESIDENT_TITLE_FR}
             </p>
           </aside>
@@ -120,7 +113,7 @@ export default function PresidentWordPage({ params }: { params: { locale: Locale
               {pillars.map((p) => (
                 <li
                   key={p.title}
-                  className="rounded-card border border-warm-200 bg-warm-100 p-4"
+                  className="card-flat p-4"
                 >
                   <p className="font-heading font-semibold text-secondary">— {p.title}</p>
                   <p className="mt-1 text-sm text-secondary-400">{p.body}</p>
@@ -146,7 +139,7 @@ export default function PresidentWordPage({ params }: { params: { locale: Locale
                 : "À travers nos partenariats académiques internationaux, notamment avec European Business School, nous souhaitons créer des passerelles entre les standards globaux et les enjeux spécifiques du continent africain."}
             </p>
 
-            <div className="not-prose my-6 rounded-card border-l-4 border-primary bg-primary-50 p-6">
+            <div className="not-prose my-6 card-flat border-l-4 border-primary/40 pl-6">
               <p className="font-display text-xl italic text-secondary">
                 {isEn
                   ? 'UNM aims to form a new generation of African leaders — leaders able to transform organisations, produce useful knowledge and build models tailored to the continent’s realities.'

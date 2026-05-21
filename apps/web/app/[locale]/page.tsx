@@ -4,7 +4,6 @@ import { HeroSection } from '@/components/home/HeroSection';
 import { EBSPartnership } from '@/components/home/EBSPartnership';
 import { FacultyGrid } from '@/components/home/FacultyGrid';
 import { FeaturedPrograms } from '@/components/home/FeaturedPrograms';
-import { StatsBar } from '@/components/home/StatsBar';
 import { TestimonialsSlider } from '@/components/home/TestimonialsSlider';
 import { PartnerLogos } from '@/components/home/PartnerLogos';
 import { CTABanner } from '@/components/home/CTABanner';
@@ -27,15 +26,14 @@ export default async function HomePage({ params }: { params: { locale: Locale } 
   ]);
 
   return (
-    <>
+    <div className="home-page flex flex-col">
       <HeroSection />
       <EBSPartnership />
-      <FacultyGrid faculties={faculties} />
       <FeaturedPrograms programs={programs} />
-      <StatsBar />
+      <FacultyGrid faculties={faculties} />
       <TestimonialsSlider testimonials={testimonials} />
       <PartnerLogos partners={partners} />
       <CTABanner />
-    </>
+    </div>
   );
 }

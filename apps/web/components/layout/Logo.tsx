@@ -1,22 +1,20 @@
 import { cn } from '@/lib/utils';
-
-/**
- * UNM logo.
- * - `variant="full"` serves the official wordmark from /public/logo-unm.svg.
- * - `variant="mark"` is an inline mark-only fallback for mobile (≤375 px).
- *
- * Brand rule: the logo must always appear on a white or warm-50 background.
- * Never recolour, rotate, or stretch the official wordmark.
- */
+import { LOGO_ALT, LOGO_SVG } from '@/lib/logo';
 
 interface LogoProps {
   variant?: 'full' | 'mark';
+  /** Background the logo sits on — sets matte color + blend mode. */
+  surface?: 'light' | 'dark';
   className?: string;
-  // tone only applies to the inline mark fallback; the official SVG is fixed.
   tone?: 'primary' | 'secondary' | 'inherit';
 }
 
-export function Logo({ variant = 'full', className, tone = 'primary' }: LogoProps) {
+export function Logo({
+  variant = 'full',
+  surface = 'light',
+  className,
+  tone = 'primary',
+}: LogoProps) {
   if (variant === 'mark') {
     const fill =
       tone === 'primary'
@@ -40,18 +38,28 @@ export function Logo({ variant = 'full', className, tone = 'primary' }: LogoProp
     );
   }
 
-  // The wordmark embeds a raster, so we let the browser load it as a regular
-  // SVG asset (Next/Image's optimiser does nothing useful for embedded
-  // bitmaps inside an SVG and adds latency).
+  const isDark = surface === 'dark';
+
   return (
-    <img
-      src="/logo-unm.svg"
-      alt="Université Numérique du Maroc"
-      width={200}
-      height={92}
-      className={cn('h-10 w-auto select-none', className)}
-      loading="eager"
-      decoding="async"
-    />
+    <span
+      className={cn(
+        'logo-wrap inline-flex items-center leading-none',
+        isDark ? 'logo-wrap-dark' : 'logo-wrap-light',
+        className,
+      )}
+    >
+      <img
+        src={LOGO_SVG}
+        alt={LOGO_ALT}
+        width={200}
+        height={92}
+        className={cn(
+          'logo-wordmark h-9 w-auto max-w-[11rem] select-none sm:max-w-none sm:h-10',
+          isDark ? 'logo-blend-dark' : 'logo-blend-light',
+        )}
+        loading="eager"
+        decoding="async"
+      />
+    </span>
   );
 }

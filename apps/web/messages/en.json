@@ -14,7 +14,22 @@
     "viewAllPrograms": "View all programs",
     "loading": "Loading...",
     "search": "Search",
-    "searchPlaceholder": "Search a program, faculty...",
+    "searchSubtitle": "UNM programs, faculties and news",
+    "searchPlaceholder": "Program, faculty, news…",
+    "searchClear": "Clear",
+    "searchRecent": "Recent searches",
+    "searchQuickLinks": "Quick links",
+    "searchQuickPrograms": "All programs",
+    "searchQuickFaculties": "Faculties",
+    "searchQuickAdmissions": "Admissions",
+    "searchQuickNews": "News",
+    "searchGroupPrograms": "Programs",
+    "searchGroupFaculties": "Faculties",
+    "searchGroupArticles": "News",
+    "searchNoResults": "No results for this search.",
+    "searchNavigate": "navigate",
+    "searchOpen": "open",
+    "searchClose": "close",
     "close": "Close",
     "submit": "Submit",
     "next": "Next",
@@ -40,15 +55,33 @@
     "title": "Admissions",
     "metaDescription": "Apply to UNM in five steps. Submit your application online.",
     "intro": "Complete the application in five steps. Required documents: CV, diploma, motivation letter.",
-    "breadcrumb": "Admissions"
+    "breadcrumb": "Admissions",
+    "formEyebrow": "Online application",
+    "stepsHint": "5 steps · about 10 min",
+    "trustSecure": "Secure submission",
+    "trustResponse": "Response within 48h",
+    "helpTitle": "Need help?",
+    "helpBody": "Our Admissions team can guide you on programme choice and preparing your application."
   },
   "programsIndex": {
+    "eyebrow": "Executive offering",
     "title": "All programs",
+    "subtitle": "Filter by faculty, format and language to find the path that fits your career.",
     "metaTitle": "Programs",
-    "empty": "No program matches these filters.",
-    "breadcrumb": "Programs"
+    "empty": "No programs match these filters.",
+    "emptyHint": "Try adjusting your filters to see more programmes.",
+    "breadcrumb": "Programs",
+    "filters": "Filters",
+    "filtersHint": "Narrow the catalogue to match your profile and constraints.",
+    "typeLabel": "Type",
+    "activeFilters": "Active filters",
+    "exploreProgram": "View",
+    "resetFilters": "Reset",
+    "applyFilters": "Apply",
+    "programCount": "{count, plural, one {# program} other {# programs}}"
   },
   "application": {
+    "stepOf": "Step {current} of {total}",
     "steps": {
       "identity": "Identity",
       "academic": "Academic profile",
@@ -56,7 +89,17 @@
       "documents": "Documents",
       "recap": "Summary"
     },
-    "recapTitle": "Summary",
+    "stepsShort": {
+      "identity": "Identity",
+      "academic": "Academic",
+      "program": "Program",
+      "documents": "Docs",
+      "recap": "Summary"
+    },
+    "recapTitle": "Review your application",
+    "recapIntro": "Please check your information before submitting.",
+    "editSection": "Edit",
+    "fullName": "Full name",
     "referencePrefix": "Reference",
     "faculty": "Faculty",
     "program": "Program",
@@ -71,16 +114,166 @@
     "formatDistanciel": "Online",
     "formatHybride": "Hybrid"
   },
+  "featuredPrograms": {
+    "eyebrow": "Explore",
+    "subtitle": "MBA and Executive pathways co-delivered with EBS Paris — a selection of our most sought-after programmes.",
+    "explore": "View programme"
+  },
+  "facultyGrid": {
+    "upcomingHeading": "Opening soon",
+    "upcomingNote": "Launch dates will be announced over upcoming intakes.",
+    "explore": "Explore the faculty",
+    "programOne": "program",
+    "programMany": "programs",
+    "pitch": {
+      "business-school": "MBA, DBA and Executive pathways with EBS Paris — management, finance and strategy.",
+      "school-of-governance": "Public policy, institutions and public finance for decision-makers.",
+      "school-of-technology": "Software engineering, data, AI and digital transformation for organizations.",
+      "school-of-sport-business": "Sports management, infrastructure and sports ecosystems across Africa."
+    }
+  },
+  "legalPage": {
+    "eyebrow": "Legal document",
+    "breadcrumbLegal": "Legal",
+    "lastUpdated": "Last updated",
+    "documentsNav": "Legal documents",
+    "contents": "Contents",
+    "related": "Related documents"
+  },
+  "partnersIndex": {
+    "metaTitle": "Partners",
+    "eyebrow": "Ecosystem",
+    "title": "Our partners",
+    "subtitle": "Academic, industry and government partners supporting UNM and our students.",
+    "breadcrumb": "Partners",
+    "empty": "No partners to display yet.",
+    "categoryTitle": {
+      "academic": "Academic partners",
+      "industry": "Industry partners",
+      "government": "Institutional partners"
+    }
+  },
+  "newsIndex": {
+    "metaTitle": "News",
+    "eyebrow": "UNM news",
+    "title": "News",
+    "subtitle": "Announcements, campus, research and partnerships from the Digital University of Morocco.",
+    "breadcrumb": "News",
+    "empty": "No articles yet."
+  },
+  "eventsIndex": {
+    "metaTitle": "Events",
+    "metaDescription": "Upcoming events, masterclasses and open days at the Digital University of Morocco.",
+    "eyebrow": "Campus life",
+    "title": "Events & open days",
+    "intro": "Meet our teams, alumni and partners at our upcoming sessions.",
+    "breadcrumb": "Events",
+    "disclaimer": "These events are illustrative — a public registration page will be added shortly.",
+    "kind": {
+      "openDay": "Open Day",
+      "webinar": "Webinar",
+      "masterclass": "Masterclass"
+    }
+  },
+  "newsroomIndex": {
+    "metaTitle": "Newsroom — Press centre",
+    "metaDescription": "Press kit, official statements and media contacts of the Digital University of Morocco.",
+    "eyebrow": "Press centre",
+    "title": "Newsroom",
+    "intro": "Press kit, official statements and direct contacts for media coverage of the Digital University of Morocco.",
+    "breadcrumb": "Newsroom",
+    "resourcesTitle": "Press resources",
+    "resourcesHint": "Downloads coming soon — contact us for urgent requests.",
+    "contactEyebrow": "Press contact",
+    "contactTitle": "Communication office",
+    "contactNote": "For interview requests, please allow 48 hours.",
+    "contactCta": "Request an interview",
+    "releasesTitle": "Latest press releases",
+    "releasesEmpty": "Press releases will be published here. In the meantime, browse our institutional news.",
+    "releasesLink": "View news"
+  },
+  "universityIndex": {
+    "metaTitle": "University",
+    "eyebrow": "Who we are",
+    "title": "Building African leadership",
+    "intro1": "The Digital University of Morocco (UNM) is a higher-education institution dedicated to executive education, with a vocation resolutely turned toward Africa and its dynamics of transformation.",
+    "intro2": "Through an academic offering structured around executive education, UNM supports executives, leaders and future leaders in developing the strategic, managerial and decision-making skills required by African realities.",
+    "intro3": "Positioned at the intersection of academic excellence and operational stakes, UNM favours an action-oriented approach, integrating African case studies, field experience and international openness.",
+    "missionTitle": "Our mission",
+    "missionBody": "Contribute actively to the emergence of an innovative, responsible African leadership able to take on the continent's economic, social and technological challenges.",
+    "campusesTitle": "Two campuses",
+    "accreditationsTitle": "Accreditations",
+    "breadcrumb": "University"
+  },
+  "ebs": {
+    "eyebrow": "Strategic alliance",
+    "title": "UNM × EBS Paris",
+    "description": "A partnership combining academic excellence, international openness and grounding in African economic realities. DBA, sectoral MBAs and Executive certificates.",
+    "learnMore": "Learn more about the alliance",
+    "pillar1Title": "International academic excellence",
+    "pillar1Body": "Programmes co-built with EBS Paris.",
+    "pillar2Title": "Local anchoring & African relevance",
+    "pillar2Body": "Content adapted to African economic realities.",
+    "pillar3Title": "Action-oriented approach",
+    "pillar3Body": "Real-world cases, skill growth, tangible transformation."
+  },
+  "facultiesIndex": {
+    "metaTitle": "Faculties",
+    "eyebrow": "Faculties",
+    "title": "One operational school. Three in the making.",
+    "subtitle": "UNM is structured around four faculties. {active} is operational today, {upcoming} are being prepared for upcoming intakes.",
+    "breadcrumb": "Faculties",
+    "trustActive": "{count} active faculty",
+    "trustUpcoming": "{count} in preparation"
+  },
+  "facultiesShowcase": {
+    "activeHeading": "In operation",
+    "upcomingHeading": "In preparation",
+    "upcomingIntro": "UNM is preparing the next generation of faculties — opening dates will be announced over the coming intakes.",
+    "exploreFaculty": "Explore the faculty",
+    "seeAllPrograms": "See all programs",
+    "programSingular": "program",
+    "programPlural": "programs"
+  },
+  "facultyPage": {
+    "eyebrow": "Faculty",
+    "programsTitle": "Faculty programmes",
+    "programsAction": "All programmes",
+    "domainsEyebrow": "Disciplinary scope",
+    "domainsTitle": "Domains covered",
+    "strengthsTitle": "Why this faculty",
+    "outcomesTitle": "Outcomes",
+    "ctaTitle": "Take the next step",
+    "comingSoonBadge": "In preparation",
+    "comingSoonNote": "Opening in a future intake — get notified.",
+    "getNotified": "Get notified",
+    "backToFaculties": "Back to faculties",
+    "programSingular": "programme",
+    "programPlural": "programmes"
+  },
   "contact": {
     "title": "Contact us",
     "metaTitle": "Contact",
+    "eyebrow": "Admissions & guidance",
     "intro": "Our admissions team replies within 48 hours. You can also call us or use WhatsApp directly.",
+    "trustResponse": "Reply within 48h",
+    "trustPhone": "Direct lines 7 days a week",
+    "trustCampus": "2 campuses in Morocco",
     "sendMessage": "Send us a message",
+    "sendMessageHint": "Questions about programmes, admissions, or partnerships.",
     "requestCallback": "Request a callback",
+    "callbackHint": "Pick your preferred time slot — we call back within 24h.",
     "directLines": "Direct lines",
     "campusMarrakech": "Marrakech campus",
     "campusLaayoune": "Laâyoune campus",
-    "faqTitle": "FAQ",
+    "mapTitle": "Marrakech campus",
+    "faqTitle": "Frequently asked questions",
+    "faqEyebrow": "FAQ",
+    "name": "Name",
+    "preferredSlot": "Preferred time slot",
+    "slotMorning": "Morning",
+    "slotAfternoon": "Afternoon",
+    "slotEvening": "Evening",
     "breadcrumb": "Contact"
   },
   "nav": {
@@ -114,12 +307,21 @@
     "facultiesTitle": "Our four centers of excellence",
     "facultiesSubtitle": "An Executive offering built around the key sectors of African economic transformation.",
     "featuredProgramsTitle": "Flagship programs",
+    "statsEyebrow": "UNM at a glance",
+    "statsTitle": "A growing community",
     "statsStudents": "Students",
     "statsPrograms": "Programs",
     "statsYears": "Years of expertise",
     "statsPartners": "Partners",
+    "statsSource": "UNM internal data — 2025 intake",
+    "testimonialsEyebrow": "Testimonials",
     "testimonialsTitle": "What our students say",
+    "testimonialsSubtitle": "Leaders and alumni on how UNM Executive programs shaped their careers.",
+    "partnersEyebrow": "Ecosystem",
     "partnersTitle": "Academic and industry partners",
+    "partnersSubtitle": "Institutions, companies and public bodies supporting our Executive programs.",
+    "partnersCta": "View all partners",
+    "ctaBannerEyebrow": "Apply",
     "ctaBannerTitle": "Ready to join UNM?",
     "ctaBannerSubtitle": "Start your application in minutes."
   },
@@ -139,7 +341,10 @@
     "format": "Format",
     "language": "Language",
     "startDate": "Next intake",
-    "deadline": "Application deadline"
+    "deadline": "Application deadline",
+    "brochureEyebrow": "Brochure",
+    "brochureTitle": "Get the brochure",
+    "brochureHint": "PDF available right after you confirm your email."
   },
   "forms": {
     "firstName": "First name",
@@ -162,13 +367,19 @@
     "errorPhone": "Invalid phone number"
   },
   "footer": {
+    "tagline": "Building the digital generation of Morocco through excellence and innovation.",
     "university": "University",
     "academic": "Academic",
     "resources": "Resources",
+    "partnerships": "Partnership & accreditations",
     "legal": "Legal notice",
+    "termsOfUse": "Terms of use",
+    "termsOfSale": "Terms of sale",
     "privacy": "Privacy policy",
     "newsletter": "Subscribe to our newsletter",
     "newsletterPlaceholder": "Your email address",
+    "newsletterSubmit": "Subscribe",
+    "newsletterSuccess": "Thank you — you're subscribed.",
     "copyright": "© {year} Digital University of Morocco. All rights reserved."
   }
 }

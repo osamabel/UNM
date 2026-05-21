@@ -1,7 +1,11 @@
 import type { Metadata } from 'next';
-import { unstable_setRequestLocale } from 'next-intl/server';
+import { getTranslations, unstable_setRequestLocale } from 'next-intl/server';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
+import { PageHeader } from '@/components/patterns/PageHeader';
+import { SectionWrapper } from '@/components/ui/SectionWrapper';
+import { Icon } from '@/components/ui/Icon';
 import { FacultiesShowcase } from '@/components/faculty/FacultiesShowcase';
+import { CTABanner } from '@/components/home/CTABanner';
 import { getFaculties } from '@/lib/api';
 import type { Locale } from '@unm/types';
 
@@ -12,19 +16,20 @@ export async function generateMetadata({
 }: {
   params: { locale: Locale };
 }): Promise<Metadata> {
-  const isEn = params.locale === 'en';
-  return {
-    title: isEn ? 'Faculties' : 'Facultés',
-    description: isEn
-      ? 'UNM Business School is the first operational faculty. Three more faculties are in preparation: Governance & Public Affairs, Technology, Sport Business.'
-      : "L'UNM Business School est la première faculté opérationnelle. Trois autres facultés sont en préparation : Gouvernance & Affaires Publiques, Technology, Sport Business.",
-  };
+  const t = await getTranslations({ locale: params.locale, namespace: 'facultiesIndex' });
+  return { title: t('metaTitle') };
 }
 
 export default async function FacultiesIndex({ params }: { params: { locale: Locale } }) {
   unstable_setRequestLocale(params.locale);
-  const faculties = await getFaculties();
+  const [faculties, t, tb] = await Promise.all([
+    getFaculties(),
+    getTranslations({ locale: params.locale, namespace: 'facultiesIndex' }),
+    getTranslations({ locale: params.locale, namespace: 'breadcrumb' }),
+  ]);
   const isEn = params.locale === 'en';
+  const homeUrl = isEn ? '/en' : '/';
+  const facultiesUrl = isEn ? '/en/faculties' : '/facultes';
   const active = faculties.filter((f) => !f.comingSoon).length;
   const upcoming = faculties.filter((f) => f.comingSoon).length;
 
@@ -32,31 +37,36 @@ export default async function FacultiesIndex({ params }: { params: { locale: Loc
     <>
       <Breadcrumb
         items={[
-          { name: isEn ? 'Home' : 'Accueil', url: isEn ? '/en' : '/' },
-          { name: isEn ? 'Faculties' : 'Facultés', url: isEn ? '/en/faculties' : '/facultes' },
+          { name: tb('home'), url: homeUrl },
+          { name: t('breadcrumb'), url: facultiesUrl },
         ]}
       />
 
-      {/* Editorial intro — fine line of context, no oversized hero */}
-      <section className="border-b border-warm-200">
-        <div className="container-page py-12 lg:py-16">
-          <p className="font-sans text-[11px] font-semibold uppercase tracking-[0.22em] text-primary">
-            {isEn ? 'Faculties' : 'Facultés'}
-          </p>
-          <h1 className="mt-4 max-w-2xl font-display text-display-lg text-secondary">
-            {isEn
-              ? 'One operational school. Three in the making.'
-              : 'Une école en activité. Trois en préparation.'}
-          </h1>
-          <p className="mt-4 max-w-2xl text-secondary-400">
-            {isEn
-              ? `UNM is structured around four faculties. ${active} is operational today, ${upcoming} are being prepared for upcoming intakes.`
-              : `L'UNM est structurée autour de quatre facultés. ${active} est opérationnelle aujourd'hui, ${upcoming} sont en préparation pour les prochaines rentrées.`}
-          </p>
-        </div>
-      </section>
+      <SectionWrapper tone="soft" className="!pb-10 sm:!pb-12">
+        <PageHeader
+          icon="building"
+          eyebrow={t('eyebrow')}
+          title={t('title')}
+          description={t('subtitle', { active, upcoming })}
+          className="border-0 pb-0"
+        />
+        <ul className="mt-6 flex flex-wrap gap-2 sm:mt-8">
+          <li className="glass-pill flex items-center gap-1.5 text-xs font-medium text-secondary/75">
+            <Icon name="check-circle" size={14} className="text-primary/90" />
+            {t('trustActive', { count: active })}
+          </li>
+          <li className="glass-pill flex items-center gap-1.5 text-xs font-medium text-secondary/75">
+            <Icon name="graduation" size={14} className="text-primary/90" />
+            {t('trustUpcoming', { count: upcoming })}
+          </li>
+        </ul>
+      </SectionWrapper>
 
-      <FacultiesShowcase faculties={faculties} />
+      <SectionWrapper tone="canvas" className="!pt-8 sm:!pt-10">
+        <FacultiesShowcase faculties={faculties} />
+      </SectionWrapper>
+
+      <CTABanner />
     </>
   );
 }

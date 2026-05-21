@@ -1,6 +1,7 @@
 import { useLocale, useTranslations } from 'next-intl';
 import type { Locale, LocalizedField } from '@unm/types';
 import { localized } from '@/lib/utils';
+import { Icon } from '@/components/ui/Icon';
 
 interface Props {
   outcomes: LocalizedField[];
@@ -12,16 +13,14 @@ export function OutcomesSection({ outcomes }: Props) {
   if (!outcomes?.length) return null;
   return (
     <section>
-      <h2 className="font-display text-2xl text-secondary">{t('outcomes')}</h2>
+      <h2 className="font-display text-display-md text-secondary">{t('outcomes')}</h2>
       <ul className="mt-6 space-y-3">
         {outcomes.map((o, i) => (
-          <li key={i} className="flex gap-3 text-secondary">
-            <svg viewBox="0 0 24 24" className="mt-1 h-5 w-5 shrink-0 text-primary" aria-hidden="true">
-              <path
-                fill="currentColor"
-                d="m9 16.2-3.5-3.5L4 14.2 9 19.2l11-11-1.5-1.5z"
-              />
-            </svg>
+          <li
+            key={i}
+            className="card-flat flex gap-3 px-4 py-3 text-secondary"
+          >
+            <Icon name="check-circle" size={20} className="mt-0.5 shrink-0 text-primary" />
             <span>{localized(o, locale)}</span>
           </li>
         ))}

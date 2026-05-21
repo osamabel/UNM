@@ -45,7 +45,7 @@ export function FacultyPillars() {
         {faculty.pillars.map((p, i) => (
           <li
             key={i}
-            className="rounded-card bg-white p-8 shadow-card transition-transform duration-200 hover:-translate-y-0.5 motion-reduce:hover:translate-y-0"
+            className="card-interactive p-8"
           >
             <div className="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary-50 text-primary">
               <span className="h-6 w-6 inline-block">{ICONS[i]}</span>

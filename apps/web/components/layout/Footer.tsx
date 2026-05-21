@@ -1,150 +1,138 @@
+'use client';
+
 import Link from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
-import { Logo } from './Logo';
 import { NewsletterForm } from '@/components/forms/NewsletterForm';
+import { Logo } from '@/components/layout/Logo';
 import type { Locale } from '@unm/types';
 
-interface FooterColumn {
-  title: string;
-  links: { label: string; fr: string; en: string }[];
+type FooterLink = { label: string; fr: string; en: string };
+
+function buildColumns(isEn: boolean): { titleKey: 'university' | 'academic' | 'resources'; links: FooterLink[] }[] {
+  return [
+    {
+      titleKey: 'university',
+      links: isEn
+        ? [
+            { label: 'About', fr: '/universite', en: '/en/university' },
+            { label: 'Faculties', fr: '/facultes', en: '/en/faculties' },
+            { label: 'Partners', fr: '/partenaires', en: '/en/partners' },
+            { label: 'News', fr: '/actualites', en: '/en/news' },
+          ]
+        : [
+            { label: 'Présentation', fr: '/universite', en: '/en/university' },
+            { label: 'Facultés', fr: '/facultes', en: '/en/faculties' },
+            { label: 'Partenaires', fr: '/partenaires', en: '/en/partners' },
+            { label: 'Actualités', fr: '/actualites', en: '/en/news' },
+          ],
+    },
+    {
+      titleKey: 'academic',
+      links: isEn
+        ? [
+            { label: 'Programs', fr: '/programmes', en: '/en/programs' },
+            { label: 'Admissions', fr: '/admissions', en: '/en/admissions' },
+          ]
+        : [
+            { label: 'Programmes', fr: '/programmes', en: '/en/programs' },
+            { label: 'Admissions', fr: '/admissions', en: '/en/admissions' },
+          ],
+    },
+    {
+      titleKey: 'resources',
+      links: isEn
+        ? [
+            { label: 'Contact', fr: '/contact', en: '/en/contact' },
+            { label: 'Organizations', fr: '/organisations', en: '/en/organisations' },
+            { label: 'Data & cookies', fr: '/confidentialite', en: '/en/privacy' },
+          ]
+        : [
+            { label: 'Contact', fr: '/contact', en: '/en/contact' },
+            { label: 'Organisations', fr: '/organisations', en: '/en/organisations' },
+            { label: 'Données & cookies', fr: '/confidentialite', en: '/en/privacy' },
+          ],
+    },
+  ];
 }
 
-const COLUMNS_FR: FooterColumn[] = [
-  {
-    title: "L'Université",
-    links: [
-      { label: 'Présentation', fr: '/universite', en: '/en/university' },
-      { label: 'Facultés', fr: '/facultes', en: '/en/faculties' },
-      { label: 'Partenaires', fr: '/partenaires', en: '/en/partners' },
-      { label: 'Actualités', fr: '/actualites', en: '/en/news' },
-    ],
-  },
-  {
-    title: 'Académique',
-    links: [
-      { label: 'Programmes', fr: '/programmes', en: '/en/programs' },
-      { label: 'Admissions', fr: '/admissions', en: '/en/admissions' },
-    ],
-  },
-  {
-    title: 'Ressources',
-    links: [
-      { label: 'Contact', fr: '/contact', en: '/en/contact' },
-      { label: 'Mentions légales', fr: '/mentions-legales', en: '/en/legal-notice' },
-      { label: "Conditions d'utilisation", fr: '/cgu', en: '/en/terms-of-use' },
-      { label: 'Conditions de vente', fr: '/cgv', en: '/en/terms-of-sale' },
-      { label: 'Données & cookies', fr: '/confidentialite', en: '/en/privacy' },
-    ],
-  },
-];
-
-const COLUMNS_EN: FooterColumn[] = [
-  {
-    title: 'University',
-    links: [
-      { label: 'About', fr: '/universite', en: '/en/university' },
-      { label: 'Faculties', fr: '/facultes', en: '/en/faculties' },
-      { label: 'Partners', fr: '/partenaires', en: '/en/partners' },
-      { label: 'News', fr: '/actualites', en: '/en/news' },
-    ],
-  },
-  {
-    title: 'Academic',
-    links: [
-      { label: 'Programs', fr: '/programmes', en: '/en/programs' },
-      { label: 'Admissions', fr: '/admissions', en: '/en/admissions' },
-    ],
-  },
-  {
-    title: 'Resources',
-    links: [
-      { label: 'Contact', fr: '/contact', en: '/en/contact' },
-      { label: 'Legal notice', fr: '/mentions-legales', en: '/en/legal-notice' },
-      { label: 'Terms of use', fr: '/cgu', en: '/en/terms-of-use' },
-      { label: 'Terms of sale', fr: '/cgv', en: '/en/terms-of-sale' },
-      { label: 'Data & cookies', fr: '/confidentialite', en: '/en/privacy' },
-    ],
-  },
-];
+function FooterNavTitle({ children }: { children: React.ReactNode }) {
+  return (
+    <h3 className="mb-4 flex items-center gap-2 font-heading text-[11px] font-semibold uppercase tracking-[0.14em] text-warm-50">
+      <span className="h-px w-5 bg-primary/70" aria-hidden />
+      {children}
+    </h3>
+  );
+}
 
 export function Footer() {
   const locale = useLocale() as Locale;
   const t = useTranslations('footer');
-  const columns = locale === 'en' ? COLUMNS_EN : COLUMNS_FR;
   const year = new Date().getFullYear();
+  const isEn = locale === 'en';
+  const homeHref = isEn ? '/en' : '/';
+  const columns = buildColumns(isEn);
+
+  const legalLinks = [
+    { href: isEn ? '/en/legal-notice' : '/mentions-legales', label: t('legal') },
+    { href: isEn ? '/en/terms-of-use' : '/cgu', label: t('termsOfUse') },
+    { href: isEn ? '/en/terms-of-sale' : '/cgv', label: t('termsOfSale') },
+  ];
 
   return (
-    <footer className="bg-secondary text-warm-100">
-      <div className="container-page py-16">
-        <div className="grid gap-12 lg:grid-cols-4">
-          <div>
-            <Logo tone="inherit" className="text-warm-50" />
-            <p className="mt-4 max-w-xs text-sm text-warm-200">
-              {locale === 'en'
-                ? 'Building the digital generation of Morocco through excellence and innovation.'
-                : "Construire la génération numérique du Maroc à travers l'excellence et l'innovation."}
-            </p>
-            <NewsletterForm className="mt-6" />
+    <footer className="glass-footer relative mt-auto overflow-hidden text-warm-100">
+      <div className="hero-panel-pattern pointer-events-none absolute inset-0 opacity-70" aria-hidden />
+      <div
+        className="pointer-events-none absolute -left-24 top-0 h-64 w-64 rounded-full bg-primary/10 blur-3xl motion-reduce:hidden"
+        aria-hidden
+      />
+
+      <div className="container-page relative py-14 lg:py-16">
+        <div className="grid gap-12 lg:grid-cols-12 lg:gap-10">
+          <div className="lg:col-span-5 xl:col-span-4">
+            <Link href={homeHref} className="inline-block transition-opacity duration-300 hover:opacity-90">
+              <Logo surface="dark" className="!inline-flex sm:[&_.logo-wordmark]:h-11" />
+            </Link>
+            <p className="mt-5 max-w-sm text-sm leading-relaxed text-warm-200/90">{t('tagline')}</p>
+            <NewsletterForm className="mt-8 max-w-md" />
           </div>
 
-          {columns.map((col) => (
-            <nav key={col.title} aria-label={col.title}>
-              <h3 className="mb-4 font-heading text-sm font-semibold uppercase tracking-wider text-warm-50">
-                {col.title}
-              </h3>
-              <ul className="space-y-2">
-                {col.links.map((l) => (
-                  <li key={l.label}>
-                    <Link
-                      href={locale === 'en' ? l.en : l.fr}
-                      className="text-sm text-warm-200 hover:text-white hover:underline"
-                    >
-                      {l.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-          ))}
-        </div>
-
-        <div className="mt-12 border-t border-warm-500/30 pt-6">
-          <p className="font-heading text-xs font-semibold uppercase tracking-wider text-warm-50">
-            {locale === 'en' ? 'Partnership & accreditations' : 'Partenariat & accréditations'}
-          </p>
-          <div className="mt-3 flex flex-wrap gap-2">
-            {['EBS Paris', 'EFMD', 'AACSB Business Education Alliance', 'CEFDG'].map((label) => (
-              <span
-                key={label}
-                className="rounded-full border border-warm-500/40 bg-secondary-700/40 px-3 py-1 text-xs font-medium text-warm-100"
-              >
-                {label}
-              </span>
+          <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:col-span-7 lg:gap-10 xl:col-span-8">
+            {columns.map((col) => (
+              <nav key={col.titleKey} aria-label={t(col.titleKey)}>
+                <FooterNavTitle>{t(col.titleKey)}</FooterNavTitle>
+                <ul className="space-y-2.5">
+                  {col.links.map((l) => (
+                    <li key={l.label}>
+                      <Link href={isEn ? l.en : l.fr} className="link-on-dark">
+                        {l.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
             ))}
           </div>
         </div>
 
-        <div className="mt-8 flex flex-col items-start justify-between gap-4 border-t border-warm-500/30 pt-6 sm:flex-row sm:items-center">
-          <p className="text-xs text-warm-300">
-            {t('copyright', { year })}
-          </p>
-          <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-warm-300">
-            <Link className="hover:text-white" href={locale === 'en' ? '/en/legal-notice' : '/mentions-legales'}>
-              {t('legal')}
-            </Link>
-            <span aria-hidden="true">·</span>
-            <Link className="hover:text-white" href={locale === 'en' ? '/en/terms-of-use' : '/cgu'}>
-              {locale === 'en' ? 'Terms of use' : "Conditions d'utilisation"}
-            </Link>
-            <span aria-hidden="true">·</span>
-            <Link className="hover:text-white" href={locale === 'en' ? '/en/terms-of-sale' : '/cgv'}>
-              {locale === 'en' ? 'Terms of sale' : 'Conditions de vente'}
-            </Link>
-            <span aria-hidden="true">·</span>
-            <Link className="hover:text-white" href={locale === 'en' ? '/en/privacy' : '/confidentialite'}>
-              {t('privacy')}
-            </Link>
-          </div>
+        <div className="divider-fine mt-12 flex flex-col gap-4 pt-8 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-xs text-warm-300/90">{t('copyright', { year })}</p>
+          <nav
+            className="flex flex-wrap items-center gap-x-1 gap-y-2 text-xs"
+            aria-label={isEn ? 'Legal' : 'Mentions légales'}
+          >
+            {legalLinks.map((link, i) => (
+              <span key={link.href} className="inline-flex items-center gap-1">
+                {i > 0 && (
+                  <span className="text-warm-500/60" aria-hidden>
+                    ·
+                  </span>
+                )}
+                <Link href={link.href} className="link-on-dark">
+                  {link.label}
+                </Link>
+              </span>
+            ))}
+          </nav>
         </div>
       </div>
     </footer>

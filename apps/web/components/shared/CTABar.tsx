@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
+import { Icon } from '@/components/ui/Icon';
 import type { Locale } from '@unm/types';
 
 interface CTABarProps {
@@ -16,43 +17,47 @@ export function CTABar({ programSlug, hidden }: CTABarProps) {
 
   if (hidden) return null;
 
-  const applyHref =
-    locale === 'en' ? '/en/admissions' : '/admissions';
+  const applyHref = locale === 'en' ? '/en/admissions' : '/admissions';
   const brochureAnchor = programSlug ? '#brochure' : '#';
   const waMessage = encodeURIComponent(
     locale === 'en'
       ? `Hello, I would like more info on ${programSlug ?? 'UNM programs'}.`
-      : `Bonjour, je souhaite des informations sur ${programSlug ?? "les programmes UNM"}.`,
+      : `Bonjour, je souhaite des informations sur ${programSlug ?? 'les programmes UNM'}.`,
   );
-
   const contactHref = locale === 'en' ? '/en/contact' : '/contact';
 
   return (
     <div
-      className="fixed inset-x-0 bottom-0 z-20 border-t border-warm-200 bg-warm-50/95 backdrop-blur pb-[env(safe-area-inset-bottom,0px)] lg:hidden"
+      className="glass-strong fixed inset-x-0 bottom-0 z-20 border-t border-white/50 lg:hidden"
       role="navigation"
       aria-label={t('apply')}
+      style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
     >
-      <div className="grid grid-cols-3 divide-x divide-warm-200">
+      <div className="grid grid-cols-3 divide-x divide-warm-150/80">
         <Link
           href={applyHref}
-          className="flex h-14 items-center justify-center bg-primary font-heading text-sm font-semibold text-white"
+          className="flex min-h-[3.25rem] flex-col items-center justify-center gap-0.5 bg-primary px-2 font-heading text-xs font-semibold text-white sm:text-sm"
         >
-          {t('apply')}
+          <Icon name="send" size={16} className="opacity-90" />
+          <span>{t('apply')}</span>
         </Link>
         <Link
           href={programSlug ? brochureAnchor : contactHref}
-          className="flex h-14 items-center justify-center font-heading text-sm font-medium text-secondary"
+          className="flex min-h-[3.25rem] flex-col items-center justify-center gap-0.5 px-2 font-heading text-xs font-medium text-secondary sm:text-sm"
         >
-          {programSlug ? t('downloadBrochure') : t('contactUs')}
+          <Icon name="document" size={16} className="text-primary/80" />
+          <span className="line-clamp-1 text-center">
+            {programSlug ? t('downloadBrochure') : t('contactUs')}
+          </span>
         </Link>
         <a
           href={`https://wa.me/${whatsapp.replace(/[^0-9]/g, '')}?text=${waMessage}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex h-14 items-center justify-center font-heading text-sm font-medium text-secondary"
+          className="flex min-h-[3.25rem] flex-col items-center justify-center gap-0.5 px-2 font-heading text-xs font-medium text-secondary sm:text-sm"
         >
-          {t('whatsapp')}
+          <Icon name="phone" size={16} className="text-[#25D366]" />
+          <span>{t('whatsapp')}</span>
         </a>
       </div>
     </div>

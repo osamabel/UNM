@@ -1149,21 +1149,28 @@ async function run() {
     });
   }
 
-  // Partners
+  // Partners — real logos from apps/web/public/LOGS
+  const partnersDir = path.resolve(__dirname, '../../web/public/LOGS');
   const partners = [
-    { name: 'European Business School (EBS Paris)', category: 'academic' as const },
-    { name: 'EFMD', category: 'academic' as const },
-    { name: 'AACSB Business Education Alliance', category: 'academic' as const },
-    { name: 'CEFDG', category: 'academic' as const },
-    { name: 'Ministère des Mines (Maroc)', category: 'government' as const },
-    { name: 'OCP Group', category: 'industry' as const },
-    { name: 'Confédération Générale des Entreprises du Maroc', category: 'industry' as const },
-    { name: 'Bank Al-Maghrib', category: 'government' as const },
+    { name: 'European Business School (EBS Paris)', category: 'academic' as const, file: 'EBS.jpeg' },
+    { name: 'EFMD', category: 'academic' as const, file: 'EFMD.jpeg' },
+    { name: 'AACSB Business Education Alliance', category: 'academic' as const, file: 'aac.jpeg' },
+    { name: 'CEFDG', category: 'academic' as const, file: 'cef.jpeg' },
+    { name: 'Ministère des Mines (Maroc)', category: 'government' as const, file: 'minstry.jpeg' },
+    { name: 'OCP Group', category: 'industry' as const, file: 'ocp.jpeg' },
+    { name: 'Confédération Générale des Entreprises du Maroc', category: 'industry' as const, file: 'cgem.jpeg' },
+    { name: 'Bank Al-Maghrib', category: 'government' as const, file: 'bankmagreb.jpeg' },
   ];
   for (const p of partners) {
+    const logoPath = path.join(partnersDir, p.file);
+    const logoMedia = await payload.create({
+      collection: 'media',
+      data: { alt: p.name },
+      filePath: logoPath,
+    });
     await payload.create({
       collection: 'partners',
-      data: { name: p.name, logo: placeholderMedia.id, category: p.category },
+      data: { name: p.name, logo: logoMedia.id, category: p.category },
     });
   }
 
@@ -1206,7 +1213,16 @@ async function run() {
       },
     },
   ];
-  for (const a of articles) {
+  const articleMeta: { category: 'campus' | 'recherche' | 'partenariats' | 'evenements'; daysAgo: number }[] = [
+    { category: 'partenariats', daysAgo: 2 },
+    { category: 'recherche', daysAgo: 14 },
+    { category: 'campus', daysAgo: 28 },
+  ];
+  for (let i = 0; i < articles.length; i++) {
+    const a = articles[i];
+    const meta = articleMeta[i] ?? { category: 'campus' as const, daysAgo: 7 };
+    const publishedAt = new Date();
+    publishedAt.setDate(publishedAt.getDate() - meta.daysAgo);
     await payload.create({
       collection: 'articles',
       data: {
@@ -1216,8 +1232,8 @@ async function run() {
         body: a.body,
         coverImage: placeholderMedia.id,
         author: { name: 'Rédaction UNM' },
-        category: 'campus',
-        publishedAt: new Date(),
+        category: meta.category,
+        publishedAt,
         readingTime: 3,
         metaTitle: a.title,
         metaDescription: a.excerpt,

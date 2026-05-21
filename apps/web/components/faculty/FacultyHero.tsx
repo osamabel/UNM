@@ -1,5 +1,8 @@
-import Image from 'next/image';
-import { useLocale } from 'next-intl';
+'use client';
+
+import { useLocale, useTranslations } from 'next-intl';
+import { Icon } from '@/components/ui/Icon';
+import { FacultyHeroPanel } from '@/components/faculty/FacultyHeroPanel';
 import type { Faculty, Locale } from '@unm/types';
 import { localized } from '@/lib/utils';
 
@@ -9,31 +12,42 @@ interface Props {
 
 export function FacultyHero({ faculty }: Props) {
   const locale = useLocale() as Locale;
+  const t = useTranslations('facultyPage');
+  const ts = useTranslations('facultiesShowcase');
+  const accent = faculty.color || '#B5341A';
+  const count = faculty.programCount ?? 0;
+  const programLabel = count > 1 ? ts('programPlural') : ts('programSingular');
+
   return (
-    <section
-      className="relative isolate overflow-hidden text-white"
-      style={{ backgroundColor: faculty.color || '#B5341A' }}
-    >
-      {faculty.coverImage?.url && (
-        <Image
-          src={faculty.coverImage.url}
-          alt={faculty.coverImage.alt || localized(faculty.name, locale)}
-          fill
-          priority
-          className="-z-10 object-cover opacity-30"
-          sizes="100vw"
-        />
-      )}
-      <div className="container-page py-20 lg:py-28">
-        <p className="font-heading text-sm font-semibold uppercase tracking-[0.18em] text-white/80">
-          {locale === 'en' ? 'Faculty' : 'Faculté'}
-        </p>
-        <h1 className="mt-3 max-w-3xl font-display text-display-lg">
-          {localized(faculty.name, locale)}
-        </h1>
-        <p className="mt-4 max-w-2xl text-lg text-white/90">
-          {localized(faculty.description, locale)}
-        </p>
+    <section className="relative overflow-hidden border-b border-warm-150/50 bg-canvas">
+      <div
+        className="hero-blob -right-20 -top-16 h-64 w-64 motion-reduce:hidden"
+        style={{ backgroundColor: `${accent}14` }}
+        aria-hidden
+      />
+      <div
+        className="hero-blob bottom-0 left-0 h-48 w-48 bg-secondary/[0.04] motion-reduce:hidden"
+        aria-hidden
+        style={{ animationDelay: '-6s' }}
+      />
+      <div className="hero-bg pointer-events-none absolute inset-0" aria-hidden />
+
+      <div className="container-page relative min-w-0 py-10 sm:py-14 lg:py-16 lg:pr-[13rem] xl:pr-[15rem]">
+        <FacultyHeroPanel
+          eyebrow={t('eyebrow')}
+          title={localized(faculty.name, locale)}
+          description={localized(faculty.description, locale)}
+          accent={accent}
+        >
+          {count > 0 && (
+            <span className="glass-pill inline-flex max-w-full text-xs font-semibold text-secondary/80">
+              <Icon name="program" size={14} className="shrink-0 text-primary" />
+              <span className="truncate">
+                {count} {programLabel}
+              </span>
+            </span>
+          )}
+        </FacultyHeroPanel>
       </div>
     </section>
   );

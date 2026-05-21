@@ -8,6 +8,7 @@ import { useTranslations } from 'next-intl';
 import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
 import { Button } from '@/components/ui/Button';
+import { Icon } from '@/components/ui/Icon';
 
 const schema = z.object({
   firstName: z.string().min(2),
@@ -24,11 +25,13 @@ export function ContactForm() {
   const t = useTranslations('forms');
   const tc = useTranslations('common');
   const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState(false);
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<ContactData>({
     resolver: zodResolver(schema),
   });
 
   async function onSubmit(data: ContactData) {
+    setSubmitError(false);
     try {
       const res = await fetch('/api/contact', {
         method: 'POST',
@@ -38,14 +41,17 @@ export function ContactForm() {
       if (!res.ok) throw new Error();
       setSubmitted(true);
     } catch {
-      /* handled by errors in UI */
+      setSubmitError(true);
     }
   }
 
   if (submitted) {
     return (
-      <div className="rounded-card bg-primary-50 p-6 text-center">
-        <p className="font-heading text-secondary">{t('thankYou')}</p>
+      <div className="py-6 text-center sm:py-8">
+        <span className="icon-box mx-auto h-14 w-14">
+          <Icon name="check-circle" size={28} className="text-primary" />
+        </span>
+        <p className="mt-4 font-display text-xl text-secondary">{t('thankYou')}</p>
       </div>
     );
   }
@@ -60,7 +66,14 @@ export function ContactForm() {
       <Input label={t('phone')} type="tel" {...register('phone')} />
       <Input label={t('subject')} required {...register('subject')} error={errors.subject && t('errorRequired')} />
       <Textarea label={t('message')} required {...register('message')} error={errors.message && t('errorRequired')} />
-      <Button type="submit" loading={isSubmitting}>{tc('submit')}</Button>
+      {submitError && (
+        <p role="alert" className="rounded-xl border border-primary/20 bg-primary-50/80 px-4 py-3 text-sm text-primary-800">
+          {t('errorGeneric')}
+        </p>
+      )}
+      <Button type="submit" loading={isSubmitting} size="lg" trailingIcon={<Icon name="send" size={18} />}>
+        {tc('submit')}
+      </Button>
     </form>
   );
 }

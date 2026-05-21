@@ -8,7 +8,6 @@ import {
 } from 'react';
 import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
-
 interface ModalProps {
   open: boolean;
   onClose: () => void;
@@ -70,7 +69,7 @@ export function Modal({ open, onClose, title, children, size = 'md' }: ModalProp
       role="dialog"
       aria-modal="true"
       aria-labelledby={title ? 'modal-title' : undefined}
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-secondary/60 p-0 sm:p-4 animate-fade-in"
+      className="fixed inset-0 z-50 flex animate-fade-in items-end justify-center bg-secondary/40 p-0 backdrop-blur-md sm:items-center sm:p-4"
       onClick={onClose}
     >
       <div
@@ -78,20 +77,19 @@ export function Modal({ open, onClose, title, children, size = 'md' }: ModalProp
         tabIndex={-1}
         onClick={(e) => e.stopPropagation()}
         className={cn(
-          'w-full rounded-t-card sm:rounded-card bg-warm-50 shadow-card-hover',
-          'p-6 max-h-[90vh] overflow-auto animate-slide-up',
+          'glass-strong w-full max-h-[90vh] overflow-auto rounded-t-xl p-6 sm:rounded-card animate-slide-up',
           SIZE[size],
         )}
       >
         {title && (
-          <div className="mb-4 flex items-center justify-between">
-            <h2 id="modal-title" className="font-display text-2xl text-secondary">
+          <div className="mb-5 flex items-center justify-between border-b border-warm-150/80 pb-4">
+            <h2 id="modal-title" className="font-display text-display-md text-secondary">
               {title}
             </h2>
             <button
               onClick={onClose}
               aria-label={t('close')}
-              className="rounded p-2 text-secondary hover:bg-warm-100"
+              className="rounded-card p-2 text-secondary transition-colors hover:bg-warm-150/60"
             >
               <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true">
                 <path

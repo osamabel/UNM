@@ -6,16 +6,23 @@ interface CardProps {
   className?: string;
   as?: 'div' | 'article' | 'section';
   interactive?: boolean;
+  padding?: 'none' | 'sm' | 'md' | 'lg';
 }
 
-// Institutional card: bordered, near-flat. The hover effect is a subtle
-// border-colour change — no translation, no shadow burst.
-export function Card({ children, className, as: Comp = 'div', interactive }: CardProps) {
+const PADDING = { none: '', sm: 'p-4', md: 'p-6', lg: 'p-8' };
+
+export function Card({
+  children,
+  className,
+  as: Comp = 'div',
+  interactive,
+  padding = 'none',
+}: CardProps) {
   return (
     <Comp
       className={cn(
-        'rounded-card border border-warm-200 bg-white transition-colors',
-        interactive && 'hover:border-primary/40',
+        interactive ? 'card-interactive' : 'card-flat',
+        PADDING[padding],
         className,
       )}
     >

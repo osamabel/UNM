@@ -1,10 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { useLocale, useTranslations } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
-import type { Locale } from '@unm/types';
+import { Icon } from '@/components/ui/Icon';
 
 interface Props {
   programSlug: string;
@@ -17,8 +17,8 @@ export function BrochureDownload({ programSlug, programTitle }: Props) {
   const [loading, setLoading] = useState(false);
   const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
   const t = useTranslations('forms');
+  const tp = useTranslations('program');
   const tc = useTranslations('common');
-  const locale = useLocale() as Locale;
 
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -56,14 +56,20 @@ export function BrochureDownload({ programSlug, programTitle }: Props) {
 
   if (downloadUrl) {
     return (
-      <div id="brochure" className="rounded-card bg-warm-100 p-6 text-center">
-        <p className="font-heading text-secondary">{t('thankYou')}</p>
-        <a
-          href={downloadUrl}
-          className="mt-4 inline-flex"
-          download
-        >
-          <Button>{tc('downloadBrochure')}</Button>
+      <div id="brochure" className="form-panel px-6 py-10 text-center sm:px-10 sm:py-12">
+        <span className="icon-box mx-auto h-14 w-14">
+          <Icon name="check-circle" size={28} className="text-primary" />
+        </span>
+        <p className="mt-5 font-display text-xl text-secondary">{t('thankYou')}</p>
+        <a href={downloadUrl} className="mt-6 inline-flex w-full sm:w-auto" download>
+          <Button
+            fullWidth
+            size="lg"
+            trailingIcon={<Icon name="document" size={18} />}
+            className="sm:!w-auto"
+          >
+            {tc('downloadBrochure')}
+          </Button>
         </a>
       </div>
     );
@@ -73,28 +79,52 @@ export function BrochureDownload({ programSlug, programTitle }: Props) {
     <form
       id="brochure"
       onSubmit={submit}
-      className="rounded-card bg-warm-100 p-6"
-      aria-label="Brochure"
+      className="form-panel relative overflow-hidden"
+      aria-label={tp('brochureTitle')}
     >
-      <h3 className="font-display text-xl text-secondary">
-        {locale === 'en' ? 'Get the brochure' : 'Recevoir la brochure'}
-      </h3>
-      <p className="mt-1 text-sm text-secondary-400">
-        {programTitle}
-      </p>
-      <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-end">
-        <Input
-          label={t('email')}
-          type="email"
-          required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          error={error ?? undefined}
-          className="flex-1"
-        />
-        <Button type="submit" loading={loading}>
-          {tc('downloadBrochure')}
-        </Button>
+      <div
+        className="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-primary/10 blur-3xl"
+        aria-hidden
+      />
+
+      <div className="relative flex flex-col gap-6 sm:flex-row sm:items-start sm:gap-8">
+        <div className="flex min-w-0 flex-1 gap-4 sm:max-w-[42%]">
+          <span className="icon-box h-11 w-11 shrink-0 sm:h-12 sm:w-12">
+            <Icon name="document" size={22} />
+          </span>
+          <div className="min-w-0">
+            <p className="eyebrow">{tp('brochureEyebrow')}</p>
+            <h3 className="mt-2 font-display text-display-md text-secondary">{tp('brochureTitle')}</h3>
+            <p className="mt-1.5 font-medium text-secondary/80 line-clamp-2">{programTitle}</p>
+            <p className="mt-2 text-xs leading-relaxed text-secondary/50">{tp('brochureHint')}</p>
+          </div>
+        </div>
+
+        <div className="relative min-w-0 flex-1 sm:pt-1">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
+            <div className="min-w-0 flex-1">
+              <Input
+                label={t('email')}
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                error={error ?? undefined}
+                autoComplete="email"
+              />
+            </div>
+            <Button
+              type="submit"
+              loading={loading}
+              size="lg"
+              fullWidth
+              trailingIcon={<Icon name="arrow-right" size={18} />}
+              className="shrink-0 sm:!w-auto sm:min-w-[12.5rem]"
+            >
+              {tc('downloadBrochure')}
+            </Button>
+          </div>
+        </div>
       </div>
     </form>
   );

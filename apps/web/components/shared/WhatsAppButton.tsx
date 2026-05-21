@@ -24,7 +24,7 @@ export function WhatsAppButton({ programName }: Props) {
       target="_blank"
       rel="noopener noreferrer"
       aria-label={t('whatsapp')}
-      className="fixed bottom-6 right-4 z-10 hidden h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-card-hover hover:scale-105 lg:flex motion-reduce:hover:scale-100"
+      className="fixed bottom-[calc(4.5rem+env(safe-area-inset-bottom,0px))] right-4 z-30 hidden h-14 w-14 items-center justify-center rounded-full border border-white/30 bg-[#25D366]/90 text-white shadow-lg backdrop-blur-md transition-all duration-300 ease-smooth hover:scale-110 hover:shadow-[0_8px_32px_rgba(37,211,102,0.45)] lg:bottom-6 lg:flex motion-reduce:hover:scale-100"
     >
       <svg viewBox="0 0 32 32" className="h-7 w-7" aria-hidden="true">
         <path

@@ -1,40 +1,55 @@
 import type { Metadata } from 'next';
-import { unstable_setRequestLocale } from 'next-intl/server';
+import { getTranslations, unstable_setRequestLocale } from 'next-intl/server';
 import { SectionWrapper } from '@/components/ui/SectionWrapper';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
-import { PartnerLogos } from '@/components/home/PartnerLogos';
+import { PageHeader } from '@/components/patterns/PageHeader';
+import { PartnersShowcase } from '@/components/partners/PartnersShowcase';
+import { CTABanner } from '@/components/home/CTABanner';
 import { getPartners } from '@/lib/api';
 import type { Locale } from '@unm/types';
 
 export const revalidate = 300;
 
 export async function generateMetadata({ params }: { params: { locale: Locale } }): Promise<Metadata> {
-  return { title: params.locale === 'en' ? 'Partners' : 'Partenaires' };
+  const t = await getTranslations({ locale: params.locale, namespace: 'partnersIndex' });
+  return { title: t('metaTitle') };
 }
 
 export default async function PartnersPage({ params }: { params: { locale: Locale } }) {
   unstable_setRequestLocale(params.locale);
-  const partners = await getPartners();
+  const [partners, t, tb] = await Promise.all([
+    getPartners(),
+    getTranslations({ locale: params.locale, namespace: 'partnersIndex' }),
+    getTranslations({ locale: params.locale, namespace: 'breadcrumb' }),
+  ]);
   const isEn = params.locale === 'en';
+  const homeUrl = isEn ? '/en' : '/';
+  const partnersUrl = isEn ? '/en/partners' : '/partenaires';
+
   return (
     <>
       <Breadcrumb
         items={[
-          { name: isEn ? 'Home' : 'Accueil', url: isEn ? '/en' : '/' },
-          { name: isEn ? 'Partners' : 'Partenaires', url: isEn ? '/en/partners' : '/partenaires' },
+          { name: tb('home'), url: homeUrl },
+          { name: t('breadcrumb'), url: partnersUrl },
         ]}
       />
-      <SectionWrapper>
-        <h1 className="font-display text-display-lg text-secondary">
-          {isEn ? 'Our partners' : 'Nos partenaires'}
-        </h1>
-        <p className="mt-3 max-w-2xl text-secondary-400">
-          {isEn
-            ? 'Academic, industry, and government partners supporting our students.'
-            : 'Partenaires académiques, industriels et institutionnels qui soutiennent nos étudiants.'}
-        </p>
+
+      <SectionWrapper tone="soft" className="!pb-10 sm:!pb-12">
+        <PageHeader
+          icon="shield"
+          eyebrow={t('eyebrow')}
+          title={t('title')}
+          description={t('subtitle')}
+          className="border-0 pb-0"
+        />
       </SectionWrapper>
-      <PartnerLogos partners={partners} />
+
+      <SectionWrapper tone="canvas" className="!pt-8 sm:!pt-10">
+        <PartnersShowcase partners={partners} />
+      </SectionWrapper>
+
+      <CTABanner />
     </>
   );
 }

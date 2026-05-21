@@ -1,5 +1,6 @@
 import { cookies, headers } from 'next/headers';
 import { ButtonLink } from '@/components/ui/Button';
+import { Icon } from '@/components/ui/Icon';
 import enMessages from '@/messages/en.json';
 import frMessages from '@/messages/fr.json';
 
@@ -20,14 +21,17 @@ export default async function NotFound() {
   const prefix = locale === 'en' ? '/en' : '';
 
   return (
-    <div className="container-page flex min-h-[60vh] flex-col items-center justify-center text-center">
-      <p className="font-heading text-sm font-semibold uppercase tracking-[0.18em] text-primary">
-        {t.eyebrow}
-      </p>
+    <div className="container-page flex min-h-[60vh] flex-col items-center justify-center py-20 text-center">
+      <span className="icon-box h-16 w-16 text-primary">
+        <Icon name="search" size={32} className="text-primary/80" />
+      </span>
+      <p className="eyebrow mt-8">{t.eyebrow}</p>
       <h1 className="mt-3 font-display text-display-lg text-secondary">{t.title}</h1>
-      <p className="mt-4 max-w-md text-secondary-400">{t.description}</p>
-      <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-        <ButtonLink href={prefix || '/'}>{t.home}</ButtonLink>
+      <p className="mt-4 max-w-md leading-relaxed text-secondary/75">{t.description}</p>
+      <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
+        <ButtonLink href={prefix || '/'} leadingIcon={<Icon name="home" size={18} />}>
+          {t.home}
+        </ButtonLink>
         <ButtonLink href={locale === 'en' ? '/en/programs' : '/programmes'} variant="ghost">
           {t.programs}
         </ButtonLink>

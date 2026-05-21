@@ -13,7 +13,7 @@ export function MainContent({ children }: { children: ReactNode }) {
   return (
     <main
       id="main"
-      className={hasMobileBar ? 'pb-[calc(3.5rem+env(safe-area-inset-bottom,0px))] lg:pb-0' : undefined}
+      className={hasMobileBar ? 'pb-[calc(4.25rem+env(safe-area-inset-bottom,0px))] lg:pb-0' : undefined}
     >
       {children}
     </main>

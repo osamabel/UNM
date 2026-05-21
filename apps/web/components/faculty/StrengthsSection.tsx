@@ -1,44 +1,58 @@
-import { useLocale } from 'next-intl';
-import { SectionWrapper } from '@/components/ui/SectionWrapper';
-import type { Faculty, Locale } from '@unm/types';
+'use client';
+
+import { useLocale, useTranslations } from 'next-intl';
+import { Icon } from '@/components/ui/Icon';
+import type { Faculty, Locale, LocalizedField } from '@unm/types';
 import { localized } from '@/lib/utils';
 
 interface Props {
   faculty: Faculty;
 }
 
-export function StrengthsSection({ faculty }: Props) {
+function BulletList({
+  items,
+  iconClass,
+}: {
+  items: LocalizedField[];
+  iconClass: string;
+}) {
   const locale = useLocale() as Locale;
+  if (items.length === 0) return null;
+
   return (
-    <SectionWrapper tone="alt">
-      <div className="grid gap-12 lg:grid-cols-2">
+    <ul className="mt-6 space-y-3">
+      {items.map((item, i) => (
+        <li key={i} className="card-flat flex gap-3 p-4">
+          <Icon name="check-circle" size={18} className={iconClass} />
+          <span className="text-sm leading-relaxed text-secondary/80">
+            {localized(item, locale)}
+          </span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+export function StrengthsSection({ faculty }: Props) {
+  const t = useTranslations('facultyPage');
+  const hasStrengths = (faculty.strengths?.length ?? 0) > 0;
+  const hasOutcomes = (faculty.outcomes?.length ?? 0) > 0;
+  if (!hasStrengths && !hasOutcomes) return null;
+
+  return (
+    <div className="grid gap-10 lg:grid-cols-2 lg:gap-12">
+      {hasStrengths && (
         <div>
-          <h2 className="font-display text-display-md text-secondary">
-            {locale === 'en' ? 'Why this faculty' : 'Pourquoi cette faculté'}
-          </h2>
-          <ul className="mt-6 space-y-4">
-            {faculty.strengths?.map((s, i) => (
-              <li key={i} className="flex gap-3">
-                <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-primary" />
-                <span className="text-secondary">{localized(s, locale)}</span>
-              </li>
-            ))}
-          </ul>
+          <h2 className="font-display text-display-md text-secondary">{t('strengthsTitle')}</h2>
+          <BulletList items={faculty.strengths ?? []} iconClass="mt-0.5 shrink-0 text-primary" />
         </div>
+      )}
+      {hasOutcomes && (
         <div>
-          <h2 className="font-display text-display-md text-secondary">
-            {locale === 'en' ? 'Outcomes' : 'Débouchés'}
-          </h2>
-          <ul className="mt-6 space-y-4">
-            {faculty.outcomes?.map((o, i) => (
-              <li key={i} className="flex gap-3">
-                <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-secondary" />
-                <span className="text-secondary">{localized(o, locale)}</span>
-              </li>
-            ))}
-          </ul>
+          <h2 className="font-display text-display-md text-secondary">{t('outcomesTitle')}</h2>
+          <BulletList items={faculty.outcomes ?? []} iconClass="mt-0.5 shrink-0 text-secondary/70" />
         </div>
-      </div>
-    </SectionWrapper>
+      )}
+    </div>
   );
 }

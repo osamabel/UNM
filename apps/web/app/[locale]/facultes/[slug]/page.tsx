@@ -4,10 +4,11 @@ import { notFound } from 'next/navigation';
 import { FacultyHero } from '@/components/faculty/FacultyHero';
 import { ProgramsList } from '@/components/faculty/ProgramsList';
 import { StrengthsSection } from '@/components/faculty/StrengthsSection';
-import { FacultyCTA } from '@/components/faculty/FacultyCTA';
 import { FacultyComingSoon } from '@/components/faculty/FacultyComingSoon';
 import { DomainsSection } from '@/components/faculty/DomainsSection';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
+import { SectionWrapper } from '@/components/ui/SectionWrapper';
+import { CTABanner } from '@/components/home/CTABanner';
 import { JsonLd } from '@/components/shared/JsonLd';
 import { facultySchema } from '@/lib/schema';
 import { getFaculties, getFaculty, getPrograms } from '@/lib/api';
@@ -49,22 +50,26 @@ export default async function FacultyPage({ params }: Params) {
   const faculty = await getFaculty(params.slug);
   if (!faculty) notFound();
 
+  const isEn = params.locale === 'en';
   const breadcrumb = (
     <Breadcrumb
       items={[
-        { name: params.locale === 'en' ? 'Home' : 'Accueil', url: params.locale === 'en' ? '/en' : '/' },
-        { name: params.locale === 'en' ? 'Faculties' : 'Facultés', url: params.locale === 'en' ? '/en/faculties' : '/facultes' },
+        { name: isEn ? 'Home' : 'Accueil', url: isEn ? '/en' : '/' },
+        {
+          name: isEn ? 'Faculties' : 'Facultés',
+          url: isEn ? '/en/faculties' : '/facultes',
+        },
         { name: localized(faculty.name, params.locale), url: facultyPath(faculty.slug, params.locale) },
       ]}
     />
   );
 
-  // Coming-soon faculties skip the full template (no programmes to list).
   if (faculty.comingSoon) {
     return (
       <>
         {breadcrumb}
         <FacultyComingSoon faculty={faculty} />
+        <CTABanner />
       </>
     );
   }
@@ -76,10 +81,18 @@ export default async function FacultyPage({ params }: Params) {
       <JsonLd data={facultySchema(faculty, params.locale)} />
       {breadcrumb}
       <FacultyHero faculty={faculty} />
-      <ProgramsList programs={programs} />
-      <DomainsSection faculty={faculty} />
-      <StrengthsSection faculty={faculty} />
-      <FacultyCTA />
+      {programs.length > 0 && (
+        <SectionWrapper tone="canvas" className="!pt-8 sm:!pt-10">
+          <ProgramsList programs={programs} />
+        </SectionWrapper>
+      )}
+      <SectionWrapper tone="soft">
+        <DomainsSection faculty={faculty} />
+      </SectionWrapper>
+      <SectionWrapper tone="canvas">
+        <StrengthsSection faculty={faculty} />
+      </SectionWrapper>
+      <CTABanner />
     </>
   );
 }
