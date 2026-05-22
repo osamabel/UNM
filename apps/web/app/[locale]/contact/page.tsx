@@ -1,14 +1,14 @@
 import type { Metadata } from 'next';
-import { unstable_setRequestLocale } from 'next-intl/server';
+import type { ReactNode } from 'react';
+import { getTranslations, unstable_setRequestLocale } from 'next-intl/server';
 import { SectionWrapper } from '@/components/ui/SectionWrapper';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
+import { PageHeader } from '@/components/patterns/PageHeader';
+import { Icon } from '@/components/ui/Icon';
 import { ContactForm } from '@/components/forms/ContactForm';
 import { CallbackForm } from '@/components/forms/CallbackForm';
+import { CTABanner } from '@/components/home/CTABanner';
 import type { Locale } from '@unm/types';
-
-export async function generateMetadata({ params }: { params: { locale: Locale } }): Promise<Metadata> {
-  return { title: 'Contact' };
-}
 
 const FAQS = [
   {
@@ -36,124 +36,200 @@ const FAQS = [
 const PHONE = '+212 6 62 62 62 19';
 const WHATSAPP_RAW = '212662626219';
 
-export default function ContactPage({ params }: { params: { locale: Locale } }) {
+export async function generateMetadata({ params }: { params: { locale: Locale } }): Promise<Metadata> {
+  const t = await getTranslations({ locale: params.locale, namespace: 'contact' });
+  return { title: t('metaTitle'), description: t('intro') };
+}
+
+function ContactCard({
+  icon,
+  title,
+  children,
+}: {
+  icon: 'phone' | 'mail' | 'map-pin' | 'building';
+  title: string;
+  children: ReactNode;
+}) {
+  return (
+    <div className="card-interactive p-5 sm:p-6">
+      <div className="flex items-center gap-3">
+        <span className="icon-box h-10 w-10 shrink-0">
+          <Icon name={icon} size={20} />
+        </span>
+        <h3 className="font-heading text-sm font-semibold text-secondary">{title}</h3>
+      </div>
+      <div className="mt-4 text-sm leading-relaxed text-secondary/70">{children}</div>
+    </div>
+  );
+}
+
+function FormBlock({
+  icon,
+  title,
+  hint,
+  children,
+}: {
+  icon: 'send' | 'phone';
+  title: string;
+  hint: string;
+  children: ReactNode;
+}) {
+  return (
+    <section>
+      <div className="flex gap-4">
+        <span className="icon-box h-11 w-11 shrink-0">
+          <Icon name={icon} size={22} />
+        </span>
+        <div className="min-w-0">
+          <h2 className="font-display text-xl text-secondary sm:text-2xl">{title}</h2>
+          <p className="mt-1 text-sm leading-relaxed text-secondary/55">{hint}</p>
+        </div>
+      </div>
+      <div className="form-panel mt-5 sm:mt-6">{children}</div>
+    </section>
+  );
+}
+
+export default async function ContactPage({ params }: { params: { locale: Locale } }) {
   unstable_setRequestLocale(params.locale);
+  const [t, tb, tc] = await Promise.all([
+    getTranslations({ locale: params.locale, namespace: 'contact' }),
+    getTranslations({ locale: params.locale, namespace: 'breadcrumb' }),
+    getTranslations({ locale: params.locale, namespace: 'common' }),
+  ]);
   const isEn = params.locale === 'en';
+  const homeUrl = isEn ? '/en' : '/';
+  const contactUrl = isEn ? '/en/contact' : '/contact';
+  const waText = encodeURIComponent(isEn ? 'Hello UNM' : 'Bonjour UNM');
+
   return (
     <>
       <Breadcrumb
         items={[
-          { name: isEn ? 'Home' : 'Accueil', url: isEn ? '/en' : '/' },
-          { name: 'Contact', url: isEn ? '/en/contact' : '/contact' },
+          { name: tb('home'), url: homeUrl },
+          { name: t('breadcrumb'), url: contactUrl },
         ]}
       />
-      <SectionWrapper>
-        <h1 className="font-display text-display-lg text-secondary">
-          {isEn ? 'Contact us' : 'Nous contacter'}
-        </h1>
-        <p className="mt-3 max-w-2xl text-secondary-400">
-          {isEn
-            ? "Our admissions team replies within 48 hours. You can also call us or use WhatsApp directly."
-            : 'Notre équipe Admissions vous répond sous 48 heures. Vous pouvez aussi nous appeler ou écrire sur WhatsApp.'}
-        </p>
 
-        <div className="mt-10 grid gap-12 lg:grid-cols-[1.4fr_1fr]">
-          <div>
-            <h2 className="font-display text-2xl text-secondary">
-              {isEn ? 'Send us a message' : 'Envoyez-nous un message'}
-            </h2>
-            <div className="mt-6">
+      <SectionWrapper tone="soft" className="!pb-10 sm:!pb-12">
+        <PageHeader
+          icon="mail"
+          eyebrow={t('eyebrow')}
+          title={t('title')}
+          description={t('intro')}
+          className="border-0 pb-0"
+        />
+        <ul className="mt-6 flex flex-wrap gap-2 sm:mt-8">
+          <li className="glass-pill flex items-center gap-1.5 text-xs font-medium text-secondary/75">
+            <Icon name="mail" size={14} className="text-primary/90" />
+            {t('trustResponse')}
+          </li>
+          <li className="glass-pill flex items-center gap-1.5 text-xs font-medium text-secondary/75">
+            <Icon name="phone" size={14} className="text-primary/90" />
+            {t('trustPhone')}
+          </li>
+          <li className="glass-pill flex items-center gap-1.5 text-xs font-medium text-secondary/75">
+            <Icon name="map-pin" size={14} className="text-primary/90" />
+            {t('trustCampus')}
+          </li>
+        </ul>
+      </SectionWrapper>
+
+      <SectionWrapper tone="canvas" className="!pt-8 sm:!pt-10">
+        <div className="min-w-0 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,19rem)] lg:items-start lg:gap-12 xl:gap-14">
+          <div className="min-w-0 space-y-10 sm:space-y-12">
+            <FormBlock icon="send" title={t('sendMessage')} hint={t('sendMessageHint')}>
               <ContactForm />
-            </div>
-            <h2 className="mt-12 font-display text-2xl text-secondary">
-              {isEn ? 'Request a callback' : 'Demander un rappel'}
-            </h2>
-            <div className="mt-6">
+            </FormBlock>
+            <FormBlock icon="phone" title={t('requestCallback')} hint={t('callbackHint')}>
               <CallbackForm />
-            </div>
+            </FormBlock>
           </div>
 
-          <aside className="space-y-6">
-            <div className="rounded-card border border-warm-200 bg-white p-6">
-              <h3 className="font-heading font-semibold text-secondary">
-                {isEn ? 'Direct lines' : 'Lignes directes'}
-              </h3>
-              <ul className="mt-4 space-y-3 text-sm">
+          <aside className="mt-10 min-w-0 space-y-4 lg:sticky lg:top-28 lg:mt-0">
+            <ContactCard icon="phone" title={t('directLines')}>
+              <ul className="space-y-3">
                 <li>
                   <a
                     href={`tel:${PHONE.replace(/\s/g, '')}`}
-                    className="font-medium text-primary hover:underline"
+                    className="inline-flex items-center gap-2 font-medium text-primary transition-colors hover:text-primary-700"
                   >
-                    📞 {PHONE}
+                    <Icon name="phone" size={16} />
+                    {PHONE}
                   </a>
                 </li>
                 <li>
                   <a
-                    href={`https://wa.me/${WHATSAPP_RAW}?text=${encodeURIComponent(isEn ? 'Hello UNM, I would like more information.' : 'Bonjour UNM, je souhaite des informations.')}`}
-                    className="font-medium text-primary hover:underline"
+                    href={`https://wa.me/${WHATSAPP_RAW}?text=${waText}`}
+                    className="glass-pill !h-9 w-full justify-center text-xs font-semibold text-secondary/80 hover:!bg-white/90"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    💬 WhatsApp
+                    {tc('whatsapp')}
                   </a>
                 </li>
                 <li>
                   <a
                     href="mailto:contact@unm.ma"
-                    className="font-medium text-primary hover:underline"
+                    className="inline-flex items-center gap-2 font-medium text-primary transition-colors hover:text-primary-700"
                   >
-                    ✉ contact@unm.ma
+                    <Icon name="mail" size={16} />
+                    contact@unm.ma
                   </a>
                 </li>
               </ul>
-            </div>
-
-            <div className="rounded-card border border-warm-200 bg-white p-6">
-              <h3 className="font-heading font-semibold text-secondary">
-                {isEn ? 'Campus Marrakech' : 'Campus Marrakech'}
-              </h3>
-              <p className="mt-2 text-sm text-secondary-400">
-                Borj Menara I<br />
-                Av. Abdelkrim El Khattabi<br />
+            </ContactCard>
+            <ContactCard icon="map-pin" title={t('campusMarrakech')}>
+              <p>
+                Borj Menara I
+                <br />
+                Av. Abdelkrim El Khattabi
+                <br />
                 Marrakech, Maroc
               </p>
-            </div>
-
-            <div className="rounded-card border border-warm-200 bg-white p-6">
-              <h3 className="font-heading font-semibold text-secondary">
-                {isEn ? 'Campus Laâyoune' : 'Campus Laâyoune'}
-              </h3>
-              <p className="mt-2 text-sm text-secondary-400">
-                N°8, Al Bouchra<br />
-                Av. Alfourssane<br />
+            </ContactCard>
+            <ContactCard icon="map-pin" title={t('campusLaayoune')}>
+              <p>
+                N°8, Al Bouchra
+                <br />
+                Av. Alfourssane
+                <br />
                 Laâyoune, Maroc
               </p>
-            </div>
-
-            <div className="overflow-hidden rounded-card border border-warm-200">
+            </ContactCard>
+            <div className="card-flat overflow-hidden p-0">
+              <p className="sr-only">{t('mapTitle')}</p>
               <iframe
-                title="Campus Marrakech map"
+                title={t('mapTitle')}
                 loading="lazy"
                 src="https://www.openstreetmap.org/export/embed.html?bbox=-8.0606%2C31.5912%2C-7.9606%2C31.6712&amp;layer=mapnik"
-                className="h-64 w-full"
+                className="h-52 w-full sm:h-56"
               />
             </div>
           </aside>
         </div>
+      </SectionWrapper>
 
-        <h2 className="mt-16 font-display text-display-md text-secondary">FAQ</h2>
-        <ul className="mt-6 space-y-4">
+      <SectionWrapper tone="soft">
+        <p className="eyebrow">{t('faqEyebrow')}</p>
+        <h2 className="mt-3 font-display text-display-md text-secondary">{t('faqTitle')}</h2>
+        <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:gap-5">
           {FAQS.map((f, i) => {
             const item = isEn ? f.en : f.fr;
             return (
-              <li key={i} className="rounded-card border border-warm-200 bg-white p-5">
-                <p className="font-heading font-semibold text-secondary">{item.q}</p>
-                <p className="mt-2 text-sm text-secondary-400">{item.a}</p>
+              <li key={i} className="card-interactive p-5 sm:p-6">
+                <p className="flex items-start gap-2.5 font-heading text-sm font-semibold leading-snug text-secondary">
+                  <Icon name="book" size={18} className="mt-0.5 shrink-0 text-primary/85" />
+                  {item.q}
+                </p>
+                <p className="mt-3 pl-7 text-sm leading-relaxed text-secondary/60">{item.a}</p>
               </li>
             );
           })}
         </ul>
       </SectionWrapper>
+
+      <CTABanner />
     </>
   );
 }

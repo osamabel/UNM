@@ -10,7 +10,7 @@ export function organizationSchema() {
     name: 'Université Numérique du Maroc',
     alternateName: 'UNM',
     url: SITE_URL,
-    logo: `${SITE_URL}/logo-unm.svg`,
+    logo: `${SITE_URL}/unmtrans.png`,
     sameAs: [
       'https://www.linkedin.com/school/unm-ma',
       'https://www.facebook.com/unm.ma',
@@ -92,7 +92,7 @@ export function articleSchema(article: Article, locale: Locale) {
     publisher: {
       '@type': 'EducationalOrganization',
       name: 'Université Numérique du Maroc',
-      logo: { '@type': 'ImageObject', url: `${SITE_URL}/logo-unm.svg` },
+      logo: { '@type': 'ImageObject', url: `${SITE_URL}/unmtrans.png` },
     },
   };
 }

@@ -1,6 +1,6 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import type { LocalizedField, Locale } from '@unm/types';
+import type { LocalizedField, Locale, ProgramType } from '@unm/types';
 
 export function cn(...inputs: ClassValue[]): string {
   return twMerge(clsx(inputs));
@@ -34,6 +34,13 @@ export function slugify(input: string): string {
     .replace(/[̀-ͯ]/g, '')
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/(^-|-$)/g, '');
+}
+
+/** Drop redundant type prefix when a badge already shows MBA, DBA, etc. */
+export function displayProgramTitle(title: string, type?: ProgramType): string {
+  if (!type) return title;
+  const re = new RegExp(`^${type}\\s+`, 'i');
+  return title.replace(re, '').trim() || title;
 }
 
 export function programPath(slug: string, locale: Locale): string {

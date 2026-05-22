@@ -1,6 +1,7 @@
 import { useLocale, useTranslations } from 'next-intl';
 import type { Locale, LocalizedField } from '@unm/types';
 import { localized } from '@/lib/utils';
+import { Icon } from '@/components/ui/Icon';
 
 interface Props {
   skills: LocalizedField[];
@@ -12,15 +13,18 @@ export function SkillsGrid({ skills }: Props) {
   if (!skills?.length) return null;
   return (
     <section>
-      <h2 className="font-display text-2xl text-secondary">{t('skills')}</h2>
+      <h2 className="font-display text-display-md text-secondary">{t('skills')}</h2>
       <ul className="mt-6 grid gap-3 sm:grid-cols-2">
         {skills.map((s, i) => (
           <li
             key={i}
-            className="flex items-start gap-3 rounded-card bg-warm-100 p-4 text-sm text-secondary"
+            className="card-flat flex items-start gap-3 p-4 text-sm text-secondary"
           >
-            <span aria-hidden="true" className="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">
-              {i + 1}
+            <span
+              aria-hidden="true"
+              className="icon-box h-7 w-7 shrink-0 text-xs font-bold"
+            >
+              <Icon name="check" size={14} />
             </span>
             {localized(s, locale)}
           </li>

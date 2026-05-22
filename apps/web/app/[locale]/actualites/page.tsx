@@ -1,12 +1,13 @@
 import type { Metadata } from 'next';
-import { unstable_setRequestLocale } from 'next-intl/server';
 import Link from 'next/link';
-import Image from 'next/image';
+import { getTranslations, unstable_setRequestLocale } from 'next-intl/server';
 import { SectionWrapper } from '@/components/ui/SectionWrapper';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
-import { Card } from '@/components/ui/Card';
+import { PageHeader } from '@/components/patterns/PageHeader';
+import { Icon } from '@/components/ui/Icon';
+import { NewsArticleList } from '@/components/news/NewsArticleList';
+import { CTABanner } from '@/components/home/CTABanner';
 import { getArticles } from '@/lib/api';
-import { articlePath, formatDate, localized } from '@/lib/utils';
 import type { Locale } from '@unm/types';
 
 export const revalidate = 300;
@@ -17,67 +18,68 @@ interface Props {
 }
 
 export async function generateMetadata({ params }: { params: { locale: Locale } }): Promise<Metadata> {
-  return { title: params.locale === 'en' ? 'News' : 'Actualités' };
+  const t = await getTranslations({ locale: params.locale, namespace: 'newsIndex' });
+  return { title: t('metaTitle') };
 }
 
 export default async function NewsIndex({ params, searchParams }: Props) {
   unstable_setRequestLocale(params.locale);
   const page = Math.max(1, Number(searchParams.page) || 1);
-  const { docs, totalPages } = await getArticles(page, 12);
+  const [{ docs, totalPages }, t, tb] = await Promise.all([
+    getArticles(page, 12),
+    getTranslations({ locale: params.locale, namespace: 'newsIndex' }),
+    getTranslations({ locale: params.locale, namespace: 'breadcrumb' }),
+  ]);
+  const isEn = params.locale === 'en';
+  const homeUrl = isEn ? '/en' : '/';
+  const newsUrl = isEn ? '/en/news' : '/actualites';
+
   return (
     <>
       <Breadcrumb
         items={[
-          { name: params.locale === 'en' ? 'Home' : 'Accueil', url: params.locale === 'en' ? '/en' : '/' },
-          { name: params.locale === 'en' ? 'News' : 'Actualités', url: params.locale === 'en' ? '/en/news' : '/actualites' },
+          { name: tb('home'), url: homeUrl },
+          { name: t('breadcrumb'), url: newsUrl },
         ]}
       />
-      <SectionWrapper>
-        <h1 className="font-display text-display-lg text-secondary">
-          {params.locale === 'en' ? 'News' : 'Actualités'}
-        </h1>
-        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {docs.map((a) => (
-            <Link key={a.id} href={articlePath(a.slug, params.locale)}>
-              <Card interactive className="overflow-hidden h-full">
-                {a.coverImage?.url && (
-                  <div className="relative aspect-[16/9] w-full">
-                    <Image
-                      src={a.coverImage.url}
-                      alt={a.coverImage.alt ?? ''}
-                      fill
-                      sizes="(max-width: 768px) 100vw, 33vw"
-                      className="object-cover"
-                    />
-                  </div>
-                )}
-                <div className="p-6">
-                  <p className="text-xs font-heading font-semibold uppercase tracking-wider text-primary">
-                    {a.category}
-                  </p>
-                  <h2 className="mt-2 font-display text-lg text-secondary line-clamp-2">
-                    {localized(a.title, params.locale)}
-                  </h2>
-                  <p className="mt-2 text-sm text-secondary-400">
-                    {formatDate(a.publishedAt, params.locale)} · {a.readingTime} min
-                  </p>
-                </div>
-              </Card>
-            </Link>
-          ))}
-        </div>
+
+      <SectionWrapper tone="soft" className="!pb-10 sm:!pb-12">
+        <PageHeader
+          icon="newspaper"
+          eyebrow={t('eyebrow')}
+          title={t('title')}
+          description={t('subtitle')}
+          className="border-0 pb-0"
+        />
+      </SectionWrapper>
+
+      <SectionWrapper tone="canvas" className="!pt-8 sm:!pt-10">
+        {docs.length > 0 ? (
+          <NewsArticleList articles={docs} locale={params.locale} />
+        ) : (
+          <div className="card-flat px-6 py-16 text-center sm:px-10">
+            <span className="icon-box mx-auto h-14 w-14">
+              <Icon name="newspaper" size={28} />
+            </span>
+            <p className="mt-5 font-display text-xl text-secondary">{t('empty')}</p>
+          </div>
+        )}
+
         {totalPages > 1 && (
-          <nav aria-label="Pagination" className="mt-10 flex justify-center gap-2">
+          <nav aria-label="Pagination" className="mt-10 flex flex-wrap justify-center gap-2 sm:mt-12">
             {Array.from({ length: totalPages }).map((_, i) => {
               const n = i + 1;
+              const active = n === page;
               return (
                 <Link
                   key={n}
                   href={`?page=${n}`}
-                  aria-current={n === page ? 'page' : undefined}
-                  className={`h-9 w-9 rounded grid place-items-center text-sm ${
-                    n === page ? 'bg-primary text-white' : 'bg-warm-100 text-secondary hover:bg-warm-200'
-                  }`}
+                  aria-current={active ? 'page' : undefined}
+                  className={
+                    active
+                      ? 'glass-pill min-h-9 min-w-9 justify-center bg-primary/90 font-semibold text-white'
+                      : 'glass-pill min-h-9 min-w-9 justify-center font-medium text-secondary/70 hover:bg-white/90'
+                  }
                 >
                   {n}
                 </Link>
@@ -86,6 +88,8 @@ export default async function NewsIndex({ params, searchParams }: Props) {
           </nav>
         )}
       </SectionWrapper>
+
+      <CTABanner />
     </>
   );
 }

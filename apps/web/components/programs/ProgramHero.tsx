@@ -1,68 +1,86 @@
 import Link from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
 import { Badge } from '@/components/ui/Badge';
+import { Icon } from '@/components/ui/Icon';
 import type { Locale, Program } from '@unm/types';
-import { facultyPath, localized } from '@/lib/utils';
+import { iconForProgramFormat } from '@/lib/program-meta-icons';
+import { displayProgramTitle, facultyPath, localized } from '@/lib/utils';
+import type { IconName } from '@/components/ui/Icon';
 
 interface Props {
   program: Program;
 }
 
-// Editorial hero — dark brown background (HBS / Wharton brochure style),
-// eyebrow + serif H1 + vocation paragraph + key specs row. The CTAs live
-// in the sticky sidebar of the page layout, so the hero stays clean and
-// content-focused.
 export function ProgramHero({ program }: Props) {
   const locale = useLocale() as Locale;
   const t = useTranslations('program');
+  const title = displayProgramTitle(localized(program.title, locale), program.type);
   const facLabel = program.faculty?.name ? localized(program.faculty.name, locale) : '';
 
   return (
-    <section className="bg-secondary text-warm-50">
-      <div className="container-page py-20 lg:py-24">
-        <p className="eyebrow text-primary-200">
-          <Badge variant="program-type" type={program.type} className="mr-3 align-middle">
-            {program.type}
-          </Badge>
-          {program.faculty?.slug && (
-            <Link
-              href={facultyPath(program.faculty.slug, locale)}
-              className="text-warm-200 hover:text-white hover:underline"
-            >
-              {facLabel}
-            </Link>
-          )}
-        </p>
-        <h1 className="mt-5 max-w-4xl font-display text-display-xl text-warm-50">
-          {localized(program.title, locale)}
-        </h1>
-        {program.vocation && localized(program.vocation, locale) && (
-          <p className="mt-6 max-w-3xl text-lg leading-relaxed text-warm-100">
-            {localized(program.vocation, locale)}
-          </p>
-        )}
+    <section className="relative overflow-hidden border-b border-warm-150/40">
+      <div className="glass-dark relative">
+        <div className="hero-panel-pattern absolute inset-0" aria-hidden />
+        <div className="container-page relative min-w-0 py-12 sm:py-16 lg:py-20">
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge variant="program-type" type={program.type}>
+              {program.type}
+            </Badge>
+            {program.faculty?.slug && (
+              <Link
+                href={facultyPath(program.faculty.slug, locale)}
+                className="glass-pill text-xs font-semibold text-warm-100 transition-colors hover:text-white"
+              >
+                {facLabel.replace(/^UNM\s+/i, '')}
+              </Link>
+            )}
+          </div>
 
-        {/* Specs row — minimal, no card chrome */}
-        <dl className="mt-10 grid max-w-3xl grid-cols-2 gap-6 border-t border-warm-500/30 pt-8 sm:grid-cols-3">
-          <Spec label={t('duration')} value={program.duration} />
-          <Spec label={t('format')} value={program.format} />
-          <Spec
-            label={t('language')}
-            value={program.language.map((l) => l.toUpperCase()).join(' · ')}
-          />
-        </dl>
+          <h1 className="mt-5 max-w-4xl break-words font-display text-display-xl text-warm-50">
+            {title}
+          </h1>
+          {program.vocation && localized(program.vocation, locale) && (
+            <p className="mt-5 max-w-3xl text-base leading-relaxed text-warm-200/90 sm:text-lg">
+              {localized(program.vocation, locale)}
+            </p>
+          )}
+
+          <dl className="mt-8 grid grid-cols-2 gap-2.5 border-t border-white/15 pt-8 sm:grid-cols-3 sm:gap-3">
+            <Spec icon="calendar" label={t('duration')} value={program.duration} />
+            <Spec icon={iconForProgramFormat(program.format)} label={t('format')} value={program.format} />
+            <Spec
+              icon="globe"
+              label={t('language')}
+              value={program.language.map((l) => l.toUpperCase()).join(' · ')}
+              className="col-span-2 sm:col-span-1"
+            />
+          </dl>
+        </div>
       </div>
     </section>
   );
 }
 
-function Spec({ label, value }: { label: string; value: string }) {
+function Spec({
+  icon,
+  label,
+  value,
+  className,
+}: {
+  icon: IconName;
+  label: string;
+  value: string;
+  className?: string;
+}) {
   return (
-    <div>
-      <dt className="font-sans text-[11px] font-semibold uppercase tracking-[0.16em] text-primary-200">
-        {label}
+    <div className={`glass-stat min-w-0 px-3 py-3.5 sm:px-4 sm:py-4 ${className ?? ''}`}>
+      <dt className="flex items-center gap-1.5 font-sans text-[10px] font-semibold uppercase tracking-[0.14em] text-primary-200">
+        <Icon name={icon} size={14} className="shrink-0" />
+        <span className="truncate">{label}</span>
       </dt>
-      <dd className="mt-2 font-display text-2xl text-warm-50">{value}</dd>
+      <dd className="mt-1.5 break-words font-display text-lg font-semibold text-warm-50 sm:text-xl">
+        {value}
+      </dd>
     </div>
   );
 }

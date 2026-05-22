@@ -1,29 +1,20 @@
-import Link from 'next/link';
+'use client';
+
 import { useLocale, useTranslations } from 'next-intl';
 import type { Faculty, Locale } from '@unm/types';
 import { facultyPath, localized } from '@/lib/utils';
-import { Button } from '@/components/ui/Button';
+import { ButtonLink } from '@/components/ui/Button';
+import { Icon } from '@/components/ui/Icon';
+import { cn } from '@/lib/utils';
 
 interface Props {
   faculties: Faculty[];
 }
 
-// ════════════════════════════════════════════════════════════════
-// Editorial showcase of UNM faculties for the /facultes index page.
-//
-// Two distinct visual treatments:
-//   • The operational faculty (UNM Business School) gets a wide,
-//     editorially-styled hero card with brand colour and a CTA.
-//   • The faculties in preparation are shown smaller, in a separate
-//     section, in a neutral palette — clearly NOT in the same league.
-//
-// No grid sticking the four together: the active one stands alone,
-// the upcoming ones live below as a distinct programmatic block.
-// ════════════════════════════════════════════════════════════════
 export function FacultiesShowcase({ faculties }: Props) {
   const locale = useLocale() as Locale;
-  const t = useTranslations('nav');
-  const isEn = locale === 'en';
+  const ts = useTranslations('facultiesShowcase');
+  const tn = useTranslations('nav');
 
   const ordered = [...faculties].sort(
     (a, b) => (a.displayOrder ?? 999) - (b.displayOrder ?? 999),
@@ -32,23 +23,18 @@ export function FacultiesShowcase({ faculties }: Props) {
   const upcoming = ordered.filter((f) => f.comingSoon);
 
   return (
-    <div className="container-page space-y-20 py-16 lg:py-20">
-      {/* Active faculty — hero card */}
+    <div className="min-w-0 space-y-16 sm:space-y-20">
       {active.length > 0 && (
         <section aria-labelledby="active-faculties-heading">
-          <header className="mb-10 flex items-baseline justify-between">
-            <p
-              id="active-faculties-heading"
-              className="font-sans text-[11px] font-semibold uppercase tracking-[0.22em] text-primary"
-            >
-              {isEn ? 'In operation' : 'Faculté en activité'}
+          <header className="mb-8 flex items-baseline justify-between gap-4">
+            <p id="active-faculties-heading" className="eyebrow">
+              {ts('activeHeading')}
             </p>
-            <p className="font-sans text-[11px] text-secondary-400">
+            <p className="shrink-0 font-heading text-[11px] tabular-nums text-secondary/45">
               {active.length} / {ordered.length}
             </p>
           </header>
-
-          <div className="space-y-8">
+          <div className="space-y-6">
             {active.map((f) => (
               <ActiveFacultyCard key={f.id} faculty={f} locale={locale} />
             ))}
@@ -56,31 +42,24 @@ export function FacultiesShowcase({ faculties }: Props) {
         </section>
       )}
 
-      {/* Upcoming faculties — secondary, neutral palette */}
       {upcoming.length > 0 && (
-        <section aria-labelledby="upcoming-faculties-heading">
-          <header className="mb-10 flex items-baseline justify-between border-t border-warm-200 pt-8">
-            <div>
-              <p
-                id="upcoming-faculties-heading"
-                className="font-sans text-[11px] font-semibold uppercase tracking-[0.22em] text-secondary-400"
-              >
-                {isEn ? 'In preparation' : 'Facultés en préparation'}
+        <section aria-labelledby="upcoming-faculties-heading" className="divider-fine pt-12 sm:pt-14">
+          <header className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div className="min-w-0">
+              <p id="upcoming-faculties-heading" className="eyebrow text-secondary/50">
+                {ts('upcomingHeading')}
               </p>
-              <p className="mt-2 max-w-xl text-sm text-secondary-400">
-                {isEn
-                  ? "UNM is preparing the next generation of faculties — opening dates will be announced over the coming intakes."
-                  : "L'UNM prépare la prochaine génération de facultés — les dates d'ouverture seront annoncées au fil des rentrées."}
+              <p className="mt-2 max-w-xl text-sm leading-relaxed text-secondary/55">
+                {ts('upcomingIntro')}
               </p>
             </div>
-            <p className="font-sans text-[11px] text-secondary-400 shrink-0">
+            <p className="shrink-0 font-heading text-[11px] tabular-nums text-secondary/45">
               {upcoming.length} / {ordered.length}
             </p>
           </header>
-
-          <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5">
             {upcoming.map((f) => (
-              <UpcomingFacultyCard key={f.id} faculty={f} locale={locale} />
+              <UpcomingFacultyCard key={f.id} faculty={f} locale={locale} comingSoonLabel={tn('comingSoon')} />
             ))}
           </ul>
         </section>
@@ -89,52 +68,68 @@ export function FacultiesShowcase({ faculties }: Props) {
   );
 }
 
-// ─────────────────────────────────────────────────────────────────
-// Active faculty — full-width editorial card with brand accent
-// ─────────────────────────────────────────────────────────────────
 function ActiveFacultyCard({ faculty: f, locale }: { faculty: Faculty; locale: Locale }) {
-  const isEn = locale === 'en';
+  const ts = useTranslations('facultiesShowcase');
+  const accent = f.color || '#B5341A';
   const count = f.programCount ?? 0;
+  const programLabel = count > 1 ? ts('programPlural') : ts('programSingular');
+  const shortName = localized(f.name, locale).replace(/^UNM\s+/i, '');
+
   return (
-    <article className="overflow-hidden rounded-card border border-warm-200 bg-white">
-      <div className="grid lg:grid-cols-[1fr_2fr]">
-        {/* Coloured sidebar — brand identity */}
+    <article className="card-interactive group overflow-hidden p-0">
+      <div className="grid min-w-0 md:grid-cols-[minmax(0,12rem)_1fr] lg:grid-cols-[minmax(0,14rem)_1fr] xl:grid-cols-[minmax(0,16rem)_1fr]">
         <div
-          className="relative px-8 py-10 text-warm-50"
-          style={{ backgroundColor: f.color || '#B5341A' }}
+          className="relative flex flex-col justify-between px-5 py-7 text-warm-50 sm:px-7 sm:py-9"
+          style={{
+            background: `linear-gradient(155deg, ${accent}e8 0%, ${accent}c9 45%, #3D1A0B 100%)`,
+          }}
         >
-          <p className="font-sans text-[11px] font-semibold uppercase tracking-[0.22em] text-warm-100">
-            UNM
-          </p>
-          <h2 className="mt-4 font-display text-display-lg text-warm-50">
-            {localized(f.name, locale).replace(/^UNM\s+/, '')}
-          </h2>
-          <p className="mt-8 font-sans text-3xl font-light text-warm-50">
-            {count}
-          </p>
-          <p className="font-sans text-xs uppercase tracking-wider text-warm-100">
-            {isEn
-              ? count > 1 ? 'programmes' : 'programme'
-              : count > 1 ? 'programmes' : 'programme'}
-          </p>
+          <div
+            className="pointer-events-none absolute -right-6 -top-6 h-28 w-28 rounded-full bg-white/15 blur-2xl"
+            aria-hidden
+          />
+          <div className="relative">
+            <p className="font-heading text-[10px] font-semibold uppercase tracking-[0.18em] text-warm-100/90">
+              UNM
+            </p>
+            <h2 className="mt-3 font-display text-2xl leading-snug text-warm-50 sm:text-[1.65rem]">
+              {shortName}
+            </h2>
+          </div>
+          <div className="relative mt-8">
+            <p className="font-display text-4xl font-light tabular-nums text-warm-50">{count}</p>
+            <p className="mt-1 font-heading text-[10px] font-semibold uppercase tracking-[0.14em] text-warm-100/85">
+              {programLabel}
+            </p>
+          </div>
         </div>
 
-        {/* Editorial body */}
-        <div className="flex flex-col justify-between gap-6 px-8 py-10 lg:px-10">
-          <p className="text-secondary leading-relaxed">
+        <div className="relative flex min-w-0 flex-col justify-between gap-6 px-6 py-8 sm:px-8 lg:px-10">
+          <div
+            className="pointer-events-none absolute -right-10 -top-10 h-36 w-36 rounded-full opacity-[0.08] blur-2xl transition-opacity group-hover:opacity-[0.14]"
+            style={{ backgroundColor: accent }}
+            aria-hidden
+          />
+          <p className="relative text-sm leading-relaxed text-secondary/75 sm:text-[15px]">
             {localized(f.description, locale)}
           </p>
-          <div className="flex flex-wrap gap-3">
-            <Link href={facultyPath(f.slug, locale)}>
-              <Button>
-                {isEn ? 'Explore the faculty' : 'Découvrir la faculté'}
-              </Button>
-            </Link>
-            <Link href={locale === 'en' ? '/en/programs' : '/programmes'}>
-              <Button variant="ghost">
-                {isEn ? 'See all programmes' : 'Voir tous les programmes'}
-              </Button>
-            </Link>
+          <div className="relative flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:gap-3">
+            <ButtonLink
+              href={facultyPath(f.slug, locale)}
+              fullWidth
+              className="sm:!w-auto"
+              trailingIcon={<Icon name="arrow-right" size={16} />}
+            >
+              {ts('exploreFaculty')}
+            </ButtonLink>
+            <ButtonLink
+              href={locale === 'en' ? '/en/programs' : '/programmes'}
+              variant="ghost"
+              fullWidth
+              className="sm:!w-auto"
+            >
+              {ts('seeAllPrograms')}
+            </ButtonLink>
           </div>
         </div>
       </div>
@@ -142,25 +137,37 @@ function ActiveFacultyCard({ faculty: f, locale }: { faculty: Faculty; locale: L
   );
 }
 
-// ─────────────────────────────────────────────────────────────────
-// Upcoming faculty — compact, neutral, clearly a different tier
-// ─────────────────────────────────────────────────────────────────
-function UpcomingFacultyCard({ faculty: f, locale }: { faculty: Faculty; locale: Locale }) {
-  const t = useTranslations('nav');
+function UpcomingFacultyCard({
+  faculty: f,
+  locale,
+  comingSoonLabel,
+}: {
+  faculty: Faculty;
+  locale: Locale;
+  comingSoonLabel: string;
+}) {
+  const shortName = localized(f.name, locale).replace(/^UNM\s+/i, '');
+
   return (
-    <li className="rounded-card border border-warm-200 bg-warm-100/40 p-6">
-      <p className="font-sans text-[10px] font-semibold uppercase tracking-[0.22em] text-secondary-400">
-        UNM
-      </p>
-      <h3 className="mt-2 font-display text-lg text-secondary-400">
-        {localized(f.name, locale).replace(/^UNM\s+/, '')}
-      </h3>
-      <p className="mt-3 text-sm leading-relaxed text-secondary-400 line-clamp-4">
-        {localized(f.description, locale)}
-      </p>
-      <p className="mt-6 font-sans text-[10px] font-semibold uppercase tracking-[0.18em] text-secondary-400">
-        {t('comingSoon')}
-      </p>
+    <li>
+      <div className="card-flat flex h-full flex-col p-5 sm:p-6">
+        <p className="font-heading text-[10px] font-semibold uppercase tracking-[0.16em] text-secondary/40">
+          UNM
+        </p>
+        <h3 className="mt-2 font-display text-lg text-secondary/70">{shortName}</h3>
+        <p className="mt-3 flex-1 text-sm leading-relaxed text-secondary/50 line-clamp-4">
+          {localized(f.description, locale)}
+        </p>
+        <p
+          className={cn(
+            'mt-5 inline-flex w-fit items-center gap-1.5 rounded-full border border-warm-200/80',
+            'bg-white/50 px-3 py-1 font-heading text-[10px] font-semibold uppercase tracking-[0.12em] text-secondary/45',
+          )}
+        >
+          <Icon name="clock" size={12} className="opacity-60" />
+          {comingSoonLabel}
+        </p>
+      </div>
     </li>
   );
 }

@@ -1,9 +1,8 @@
-import Link from 'next/link';
+'use client';
+
 import { useLocale, useTranslations } from 'next-intl';
-import { Badge } from '@/components/ui/Badge';
-import { Card } from '@/components/ui/Card';
+import { ProgramCard } from '@/components/patterns/ProgramCard';
 import type { Locale, Program } from '@unm/types';
-import { localized, programPath } from '@/lib/utils';
 
 interface Props {
   programs: Program[];
@@ -12,23 +11,29 @@ interface Props {
 export function RelatedPrograms({ programs }: Props) {
   const locale = useLocale() as Locale;
   const t = useTranslations('program');
+  const ti = useTranslations('programsIndex');
+  const tf = useTranslations('featuredPrograms');
+
   if (!programs?.length) return null;
+
   return (
     <section>
-      <h2 className="font-display text-2xl text-secondary">{t('related')}</h2>
-      <div className="mt-6 grid gap-6 sm:grid-cols-3">
+      <p className="eyebrow">{tf('eyebrow')}</p>
+      <h2 className="mt-3 font-display text-display-md text-secondary">{t('related')}</h2>
+      <ul className="mt-6 grid min-w-0 grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
         {programs.map((p) => (
-          <Link key={p.id} href={programPath(p.slug, locale)}>
-            <Card interactive className="p-6 h-full">
-              <Badge variant="program-type" type={p.type}>{p.type}</Badge>
-              <h3 className="mt-3 font-display text-lg text-secondary line-clamp-2">
-                {localized(p.title, locale)}
-              </h3>
-              <p className="mt-2 text-sm text-secondary-400">{p.duration} · {p.format}</p>
-            </Card>
-          </Link>
+          <li key={p.id} className="min-w-0">
+            <ProgramCard
+              program={p}
+              locale={locale}
+              durationLabel={t('duration')}
+              formatLabel={t('format')}
+              exploreLabel={ti('exploreProgram')}
+              variant="compact"
+            />
+          </li>
         ))}
-      </div>
+      </ul>
     </section>
   );
 }

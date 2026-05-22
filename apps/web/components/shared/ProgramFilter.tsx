@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/Button';
 import { Select } from '@/components/ui/Select';
+import { Icon } from '@/components/ui/Icon';
 import type { Faculty, ProgramFormat, ProgramType } from '@unm/types';
 import { Modal } from '@/components/ui/Modal';
 
@@ -21,6 +22,7 @@ export function ProgramFilter({ faculties }: Props) {
   const params = useSearchParams();
   const [mobileOpen, setMobileOpen] = useState(false);
   const t = useTranslations('program');
+  const ti = useTranslations('programsIndex');
 
   const current = useMemo(
     () => ({
@@ -49,17 +51,17 @@ export function ProgramFilter({ faculties }: Props) {
   }, [router]);
 
   const fields = (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="grid gap-4">
       <Select
         label={t('overview')}
-        placeholder="Faculté"
+        placeholder={t('faculty')}
         value={current.faculty}
         onChange={(e) => update('faculty', e.target.value)}
         options={faculties.map((f) => ({ value: f.slug, label: f.name }))}
       />
       <Select
-        label="Type"
-        placeholder="Type"
+        label={ti('typeLabel')}
+        placeholder={ti('typeLabel')}
         value={current.type}
         onChange={(e) => update('type', e.target.value)}
         options={TYPES.map((v) => ({ value: v, label: v }))}
@@ -84,24 +86,34 @@ export function ProgramFilter({ faculties }: Props) {
   return (
     <>
       <div className="hidden lg:block">{fields}</div>
-      <div className="lg:hidden flex items-center justify-between">
-        <Button variant="secondary" size="sm" onClick={() => setMobileOpen(true)}>
-          Filtres {activeCount > 0 && <span aria-hidden="true">({activeCount})</span>}
+      <div className="flex items-center justify-between gap-3 lg:hidden">
+        <Button variant="secondary" size="sm" onClick={() => setMobileOpen(true)} className="glass-pill !h-10">
+          <Icon name="search" size={16} className="text-primary/80" />
+          {ti('filters')}
+          {activeCount > 0 && (
+            <span className="ml-0.5 rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-bold text-white">
+              {activeCount}
+            </span>
+          )}
         </Button>
         {activeCount > 0 && (
-          <button onClick={reset} className="text-sm text-primary underline">
-            Réinitialiser
+          <button
+            type="button"
+            onClick={reset}
+            className="shrink-0 text-sm font-semibold text-primary hover:underline"
+          >
+            {ti('resetFilters')}
           </button>
         )}
       </div>
-      <Modal open={mobileOpen} onClose={() => setMobileOpen(false)} title="Filtres" size="sm">
-        {fields}
+      <Modal open={mobileOpen} onClose={() => setMobileOpen(false)} title={ti('filters')} size="sm">
+        <div className="grid gap-4">{fields}</div>
         <div className="mt-6 flex gap-3">
           <Button variant="ghost" onClick={reset} fullWidth>
-            Réinitialiser
+            {ti('resetFilters')}
           </Button>
           <Button onClick={() => setMobileOpen(false)} fullWidth>
-            Appliquer
+            {ti('applyFilters')}
           </Button>
         </div>
       </Modal>

@@ -53,20 +53,18 @@ const FACULTIES_SUB: LeafItem[] = [
   { kind: 'leaf', key: 'facultySportBusiness',  fr: '/facultes/school-of-sport-business', en: '/en/faculties/school-of-sport-business', comingSoon: true },
 ];
 
-// Contact has moved to the utility TopBar. The primary nav stays focused
-// on the academic offering and on the institutional gateways.
 const ITEMS: NavItem[] = [
   { kind: 'parent', key: 'university',    fr: '/universite',    en: '/en/university',    children: UNIVERSITY_SUB },
   { kind: 'parent', key: 'faculties',     fr: '/facultes',      en: '/en/faculties',     children: FACULTIES_SUB },
   { kind: 'leaf',   key: 'programs',      fr: '/programmes',    en: '/en/programs'   },
   { kind: 'leaf',   key: 'admissions',    fr: '/admissions',    en: '/en/admissions' },
   { kind: 'leaf',   key: 'organisations', fr: '/organisations', en: '/en/organizations' },
+  { kind: 'leaf',   key: 'contact',       fr: '/contact',       en: '/en/contact' },
 ];
 
 // Shared classes for level-1 items: UPPERCASE, narrow tracking, no shadow.
 // Inspired by HBS / Wharton / INSEAD main nav.
-const L1_LINK =
-  'rounded px-3 py-2 font-sans text-[13px] font-semibold uppercase tracking-[0.08em] text-secondary hover:bg-warm-100 hover:text-primary';
+const L1_LINK = 'nav-link rounded px-3 py-2.5';
 
 export function Nav() {
   const locale = useLocale() as Locale;
@@ -173,11 +171,8 @@ function Dropdown({ label, parentHref, items, comingSoonLabel }: DropdownProps) 
       onFocus={() => setOpen(true)}
       onBlur={scheduleClose}
     >
-      <span className="inline-flex items-center rounded font-sans text-[13px] font-semibold uppercase tracking-[0.08em] text-secondary hover:bg-warm-100 hover:text-primary">
-        <Link
-          href={parentHref}
-          className="rounded-l px-3 py-2 hover:text-primary"
-        >
+      <span className="nav-link inline-flex items-center rounded">
+        <Link href={parentHref} className="rounded-l px-3 py-2.5">
           {label}
         </Link>
         <button
@@ -199,12 +194,12 @@ function Dropdown({ label, parentHref, items, comingSoonLabel }: DropdownProps) 
               });
             }
           }}
-          className="rounded-r px-2 py-2 hover:text-primary"
+          className="rounded-r px-2 py-2.5 transition-transform duration-300"
         >
           <svg
             aria-hidden="true"
             viewBox="0 0 12 12"
-            className={cn('h-3 w-3 transition-transform', open && 'rotate-180')}
+            className={cn('h-3 w-3 transition-transform duration-300 ease-smooth', open && 'rotate-180')}
           >
             <path fill="currentColor" d="M2 4l4 4 4-4z" />
           </svg>
@@ -228,7 +223,7 @@ function Dropdown({ label, parentHref, items, comingSoonLabel }: DropdownProps) 
           role="menu"
           aria-label={label}
           aria-hidden={!open}
-          className="min-w-[260px] rounded-card border border-warm-200 bg-warm-50 p-2 shadow-card-hover"
+          className="glass-dropdown min-w-[280px] animate-scale-in p-2"
         >
           {items.map((it) =>
             it.comingSoon ? (
@@ -254,7 +249,7 @@ function Dropdown({ label, parentHref, items, comingSoonLabel }: DropdownProps) 
                   href={it.href}
                   tabIndex={open ? 0 : -1}
                   onClick={() => setOpen(false)}
-                  className="block rounded px-3 py-2 font-sans text-sm font-medium text-secondary hover:bg-warm-100 hover:text-primary focus-visible:bg-warm-100 focus-visible:text-primary"
+                  className="block rounded-lg px-3 py-2.5 font-sans text-sm font-medium text-secondary transition-all duration-200 hover:bg-white/50 hover:text-primary hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.6)]"
                 >
                   {it.label}
                 </Link>

@@ -1,7 +1,6 @@
-import Link from 'next/link';
 import { useLocale } from 'next-intl';
 import type { Locale } from '@unm/types';
-import { Button } from '@/components/ui/Button';
+import { ButtonLink } from '@/components/ui/Button';
 import { dbaContent } from '@/lib/dba-content';
 import { localized } from '@/lib/utils';
 
@@ -30,14 +29,17 @@ export function HeroDBA() {
             {localized(hero.pitch, locale)}
           </p>
           <div className="mt-10 flex flex-wrap gap-3">
-            <Link href={hero.ctas.primary.href}>
-              <Button size="lg">{localized(hero.ctas.primary.label, locale)}</Button>
-            </Link>
-            <Link href={hero.ctas.secondary.href}>
-              <Button size="lg" variant="ghost" className="border border-warm-50/30 text-warm-50 hover:bg-warm-50/10">
-                {localized(hero.ctas.secondary.label, locale)}
-              </Button>
-            </Link>
+            <ButtonLink href={hero.ctas.primary.href} size="lg">
+              {localized(hero.ctas.primary.label, locale)}
+            </ButtonLink>
+            <ButtonLink
+              href={hero.ctas.secondary.href}
+              size="lg"
+              variant="ghost"
+              className="border border-warm-50/30 text-warm-50 hover:bg-warm-50/10"
+            >
+              {localized(hero.ctas.secondary.label, locale)}
+            </ButtonLink>
           </div>
         </div>
         <ul

@@ -1,147 +1,125 @@
 import type { Metadata } from 'next';
-import { unstable_setRequestLocale } from 'next-intl/server';
+import { getTranslations, unstable_setRequestLocale } from 'next-intl/server';
 import { SectionWrapper } from '@/components/ui/SectionWrapper';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
+import { PageHeader } from '@/components/patterns/PageHeader';
+import { Icon } from '@/components/ui/Icon';
 import { StatsBar } from '@/components/home/StatsBar';
+import { EBSPartnership } from '@/components/home/EBSPartnership';
 import { CTABanner } from '@/components/home/CTABanner';
 import type { Locale } from '@unm/types';
 
 export async function generateMetadata({ params }: { params: { locale: Locale } }): Promise<Metadata> {
-  return {
-    title: params.locale === 'en' ? 'University' : "L'Université",
-    description: params.locale === 'en'
-      ? 'UNM, the Digital University of Morocco, is dedicated to executive education with a strong African focus.'
-      : "L'Université Numérique du Maroc est dédiée à la formation Executive, avec une vocation africaine affirmée.",
-  };
+  const t = await getTranslations({ locale: params.locale, namespace: 'universityIndex' });
+  return { title: t('metaTitle') };
 }
 
-const PILLARS_FR = [
-  {
-    title: 'Excellence académique internationale',
-    body: 'Des programmes co-construits avec EBS Paris, intégrant des standards pédagogiques internationaux et des expertises reconnues.',
-  },
-  {
-    title: 'Ancrage local & pertinence africaine',
-    body: 'Des contenus adaptés aux réalités économiques et managériales africaines, pour une application directe en contexte professionnel.',
-  },
-  {
-    title: 'Approche orientée impact & action',
-    body: 'Une pédagogie basée sur des cas réels, favorisant la montée en compétences et la transformation concrète des organisations.',
-  },
-];
-const PILLARS_EN = [
-  {
-    title: 'International academic excellence',
-    body: 'Programmes co-built with EBS Paris, integrating international pedagogical standards and recognised expertise.',
-  },
-  {
-    title: 'Local anchoring & African relevance',
-    body: 'Content adapted to African economic and managerial realities, for direct application in a professional context.',
-  },
-  {
-    title: 'Impact and action-oriented approach',
-    body: 'A pedagogy built on real-world cases, accelerating skill growth and tangible transformation of organisations.',
-  },
-];
+const ACCREDITATIONS = ['EFMD', 'AACSB Business Education Alliance', 'CEFDG'] as const;
 
-export default function UniversityPage({ params }: { params: { locale: Locale } }) {
+const CAMPUSES = [
+  {
+    city: { fr: 'Marrakech', en: 'Marrakech' },
+    line1: { fr: 'Borj Menara I', en: 'Borj Menara I' },
+    line2: { fr: 'Av. Abdelkrim El Khattabi, Marrakech, Maroc', en: 'Av. Abdelkrim El Khattabi, Marrakech, Morocco' },
+  },
+  {
+    city: { fr: 'Laâyoune', en: 'Laâyoune' },
+    line1: { fr: 'N°8, Al Bouchra', en: 'N°8, Al Bouchra' },
+    line2: { fr: 'Av. Alfourssane, Laâyoune, Maroc', en: 'Av. Alfourssane, Laâyoune, Morocco' },
+  },
+] as const;
+
+export default async function UniversityPage({ params }: { params: { locale: Locale } }) {
   unstable_setRequestLocale(params.locale);
+  const [t, tb] = await Promise.all([
+    getTranslations({ locale: params.locale, namespace: 'universityIndex' }),
+    getTranslations({ locale: params.locale, namespace: 'breadcrumb' }),
+  ]);
   const isEn = params.locale === 'en';
-  const pillars = isEn ? PILLARS_EN : PILLARS_FR;
+  const homeUrl = isEn ? '/en' : '/';
+  const universityUrl = isEn ? '/en/university' : '/universite';
+  const loc = isEn ? 'en' : 'fr';
+
   return (
     <>
       <Breadcrumb
         items={[
-          { name: isEn ? 'Home' : 'Accueil', url: isEn ? '/en' : '/' },
-          { name: isEn ? 'University' : "L'Université", url: isEn ? '/en/university' : '/universite' },
+          { name: tb('home'), url: homeUrl },
+          { name: t('breadcrumb'), url: universityUrl },
         ]}
       />
 
-      <SectionWrapper>
-        <p className="font-heading text-sm font-semibold uppercase tracking-[0.18em] text-primary">
-          {isEn ? 'Who we are' : 'Qui sommes-nous'}
-        </p>
-        <h1 className="mt-3 max-w-3xl font-display text-display-lg text-secondary">
-          {isEn ? 'Building African leadership' : 'Construire le leadership africain'}
-        </h1>
-        <div className="prose mt-6 max-w-prose text-secondary">
-          <p>
-            {isEn
-              ? "The Digital University of Morocco (UNM) is a higher-education institution dedicated to executive education, with a vocation resolutely turned toward Africa and its dynamics of transformation."
-              : "L'Université Numérique du Maroc est un établissement d'enseignement supérieur dédié à la formation Executive, avec une vocation résolument tournée vers l'Afrique et ses dynamiques de transformation."}
-          </p>
-          <p>
-            {isEn
-              ? 'Through an academic offering structured around executive education, UNM supports executives, leaders and future leaders in developing the strategic, managerial and decision-making skills required by African realities.'
-              : "À travers une offre académique structurée autour de la formation Executive, l'université accompagne les cadres, dirigeants et futurs leaders dans le développement de compétences stratégiques, managériales et décisionnelles adaptées aux réalités africaines."}
-          </p>
-          <p>
-            {isEn
-              ? 'Positioned at the intersection of academic excellence and operational stakes, UNM favours an action-oriented approach, integrating African case studies, field experience and international openness.'
-              : "Positionnée au croisement de l'excellence académique et des enjeux opérationnels, l'UNM privilégie une approche orientée vers l'action, intégrant études de cas africains, retours d'expérience terrain et ouverture internationale."}
-          </p>
+      <SectionWrapper tone="soft" className="!pb-10 sm:!pb-12">
+        <PageHeader
+          icon="landmark"
+          eyebrow={t('eyebrow')}
+          title={t('title')}
+          className="border-0 pb-0"
+        />
+        <div className="prose prose-secondary mt-6 max-w-prose text-secondary/80 sm:mt-8">
+          <p>{t('intro1')}</p>
+          <p>{t('intro2')}</p>
+          <p>{t('intro3')}</p>
         </div>
+        <ul className="mt-6 flex flex-wrap gap-2 sm:mt-8">
+          <li>
+            <a
+              href={isEn ? '/en/university/manifeste' : '/universite/manifeste'}
+              className="glass-pill text-xs font-semibold text-secondary/75 transition-colors hover:bg-white/90"
+            >
+              {isEn ? 'Manifesto' : 'Manifeste'}
+            </a>
+          </li>
+          <li>
+            <a
+              href={isEn ? '/en/university/mot-du-president' : '/universite/mot-du-president'}
+              className="glass-pill text-xs font-semibold text-secondary/75 transition-colors hover:bg-white/90"
+            >
+              {isEn ? "President's word" : 'Mot du Président'}
+            </a>
+          </li>
+        </ul>
       </SectionWrapper>
 
       <StatsBar />
 
-      <SectionWrapper tone="alt">
-        <p className="font-heading text-sm font-semibold uppercase tracking-[0.18em] text-primary">
-          {isEn ? 'A strategic alliance' : 'Une alliance stratégique'}
-        </p>
-        <h2 className="mt-3 font-display text-display-md text-secondary">
-          UNM &times; EBS Paris
-        </h2>
-        <p className="mt-4 max-w-3xl text-secondary">
-          {isEn
-            ? 'The partnership between the Digital University of Morocco and European Business School Paris combines academic excellence, international openness and grounding in African economic realities. Together we build a hybrid academic model where international standards meet local stakes.'
-            : "Le partenariat entre l'Université Numérique du Maroc et European Business School Paris combine excellence académique internationale, ouverture internationale et compréhension fine des réalités économiques du continent africain. Un modèle académique hybride, où les standards internationaux rencontrent les enjeux locaux."}
-        </p>
-        <ul className="mt-8 grid gap-6 lg:grid-cols-3">
-          {pillars.map((p) => (
-            <li key={p.title} className="rounded-card bg-white p-6 shadow-card">
-              <h3 className="font-display text-xl text-secondary">{p.title}</h3>
-              <p className="mt-3 text-sm text-secondary-400">{p.body}</p>
-            </li>
-          ))}
-        </ul>
+      <SectionWrapper tone="canvas" className="!pt-8 sm:!pt-10">
+        <EBSPartnership />
       </SectionWrapper>
 
-      <SectionWrapper>
-        <h2 className="font-display text-display-md text-secondary">
-          {isEn ? 'Our mission' : 'Notre mission'}
-        </h2>
-        <p className="mt-4 max-w-3xl text-secondary">
-          {isEn
-            ? 'Contribute actively to the emergence of an innovative, responsible African leadership able to take on the continent’s economic, social and technological challenges.'
-            : "Contribuer activement à l'émergence d'un leadership africain innovant, responsable et capable de relever les défis économiques, sociaux et technologiques du continent."}
+      <SectionWrapper tone="soft">
+        <p className="eyebrow">{t('missionTitle')}</p>
+        <p className="mt-4 max-w-3xl font-display text-xl leading-snug text-secondary sm:text-2xl">
+          {t('missionBody')}
         </p>
 
-        <h2 className="mt-12 font-display text-display-md text-secondary">
-          {isEn ? 'Two campuses' : 'Deux campus'}
-        </h2>
-        <div className="mt-6 grid gap-6 sm:grid-cols-2">
-          <div className="rounded-card border border-warm-200 bg-white p-6">
-            <p className="font-heading text-xs font-semibold uppercase tracking-wider text-primary">Marrakech</p>
-            <p className="mt-2 font-display text-xl text-secondary">Borj Menara I</p>
-            <p className="text-sm text-secondary-400">Av. Abdelkrim El Khattabi, Marrakech, Maroc</p>
-          </div>
-          <div className="rounded-card border border-warm-200 bg-white p-6">
-            <p className="font-heading text-xs font-semibold uppercase tracking-wider text-primary">Laâyoune</p>
-            <p className="mt-2 font-display text-xl text-secondary">N°8, Al Bouchra</p>
-            <p className="text-sm text-secondary-400">Av. Alfourssane, Laâyoune, Maroc</p>
-          </div>
+        <h2 className="mt-12 font-display text-display-md text-secondary sm:mt-14">{t('campusesTitle')}</h2>
+        <div className="mt-6 grid min-w-0 gap-4 sm:grid-cols-2 sm:gap-5">
+          {CAMPUSES.map((c) => (
+            <div key={c.city.fr} className="card-interactive p-5 sm:p-6">
+              <div className="flex items-start gap-3">
+                <span className="icon-box h-10 w-10 shrink-0">
+                  <Icon name="map-pin" size={20} />
+                </span>
+                <div className="min-w-0">
+                  <p className="font-heading text-[10px] font-semibold uppercase tracking-[0.14em] text-primary">
+                    {c.city[loc]}
+                  </p>
+                  <p className="mt-1 font-display text-xl text-secondary">{c.line1[loc]}</p>
+                  <p className="mt-1 text-sm leading-relaxed text-secondary/60">{c.line2[loc]}</p>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
 
-        <h2 className="mt-12 font-display text-display-md text-secondary">
-          {isEn ? 'Accreditations' : 'Accréditations'}
+        <h2 className="mt-12 font-display text-display-md text-secondary sm:mt-14">
+          {t('accreditationsTitle')}
         </h2>
-        <ul className="mt-4 flex flex-wrap gap-3">
-          {['EFMD', 'AACSB Business Education Alliance', 'CEFDG'].map((label) => (
-            <li
-              key={label}
-              className="rounded-full border border-warm-300 bg-warm-100 px-4 py-2 font-heading text-sm font-semibold text-secondary"
-            >
+        <ul className="mt-6 flex flex-wrap gap-2.5">
+          {ACCREDITATIONS.map((label) => (
+            <li key={label} className="glass-pill text-sm font-medium text-secondary/75">
+              <Icon name="shield" size={14} className="shrink-0 text-primary/80" />
               {label}
             </li>
           ))}

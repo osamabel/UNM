@@ -2,7 +2,9 @@ import type { Metadata } from 'next';
 import { unstable_setRequestLocale } from 'next-intl/server';
 import { SectionWrapper } from '@/components/ui/SectionWrapper';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
+import { UniversitySubHero } from '@/components/university/UniversitySubHero';
 import { CTABanner } from '@/components/home/CTABanner';
+import { Icon } from '@/components/ui/Icon';
 import type { Locale } from '@unm/types';
 
 // ════════════════════════════════════════════════════════════════
@@ -104,28 +106,25 @@ export default function ManifestoPage({ params }: { params: { locale: Locale } }
         ]}
       />
 
-      {/* ────── HERO ────── */}
-      <section className="bg-secondary text-warm-50">
-        <div className="container-page py-20 lg:py-24">
-          <p className="font-heading text-sm font-semibold uppercase tracking-[0.22em] text-primary-200">
-            {isEn ? 'Manifesto' : 'Manifeste'}
-          </p>
-          <h1 className="mt-4 font-display text-display-xl leading-[1.05] text-warm-50">
-            {isEn ? 'UNM Manifesto' : "Manifeste de l'UNM"}
-          </h1>
-          <ul className="mt-10 space-y-3">
-            {baseline.map((line, i) => (
-              <li key={i} className="font-display text-2xl text-warm-50 sm:text-3xl">
-                <span aria-hidden="true" className="mr-3 text-primary">—</span>
-                {line}
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
+      <UniversitySubHero
+        eyebrow={isEn ? 'Manifesto' : 'Manifeste'}
+        title={isEn ? 'UNM Manifesto' : "Manifeste de l'UNM"}
+      >
+        <ul className="mx-auto max-w-3xl space-y-4 text-left lg:mx-0">
+          {baseline.map((line, i) => (
+            <li
+              key={i}
+              className="card-flat flex gap-3 px-5 py-4 font-display text-lg leading-snug text-secondary sm:text-xl"
+            >
+              <Icon name="quote" size={20} className="mt-1 shrink-0 text-primary/80" />
+              <span>{line}</span>
+            </li>
+          ))}
+        </ul>
+      </UniversitySubHero>
 
       {/* ────── INTRO ────── */}
-      <SectionWrapper tone="default">
+      <SectionWrapper tone="canvas" className="!pt-8 sm:!pt-10">
         <div className="mx-auto max-w-3xl space-y-6 text-secondary">
           <p className="text-lg leading-relaxed">
             {isEn
@@ -143,7 +142,7 @@ export default function ManifestoPage({ params }: { params: { locale: Locale } }
               : "L'Université Numérique du Maroc (UNM) est née d'une conviction simple : les dirigeants africains ont besoin d'une formation Executive de haut niveau, capable de conjuguer excellence académique internationale, compréhension des réalités locales et impact concret sur les organisations."}
           </p>
 
-          <div className="my-8 rounded-card border-l-4 border-primary bg-warm-100 p-6">
+          <div className="my-8 card-flat border-l-4 border-primary/40 pl-6 pr-5 py-5">
             <p className="font-display text-xl italic text-secondary">
               {isEn
                 ? 'We believe that an Executive degree must not only transmit knowledge. It must enable better decisions, drive transformations, create value, and produce leadership able to act in complex environments.'
@@ -163,7 +162,7 @@ export default function ManifestoPage({ params }: { params: { locale: Locale } }
         </h2>
         <ul className="mt-10 grid gap-6 sm:grid-cols-2">
           {vision.map((p, i) => (
-            <li key={i} className="rounded-card border border-warm-200 bg-white p-6 shadow-card">
+            <li key={i} className="card-interactive p-6">
               <p className="font-heading text-xs font-semibold uppercase tracking-wider text-primary">
                 0{i + 1}
               </p>
@@ -173,8 +172,9 @@ export default function ManifestoPage({ params }: { params: { locale: Locale } }
           ))}
         </ul>
 
-        <div className="mt-12 rounded-card bg-primary p-8 text-white sm:p-10">
-          <p className="font-display text-2xl leading-snug sm:text-3xl">
+        <div className="glass-dark relative mt-12 overflow-hidden rounded-2xl p-8 sm:p-10">
+          <div className="hero-panel-pattern absolute inset-0" aria-hidden />
+          <p className="relative font-display text-2xl leading-snug text-warm-50 sm:text-3xl">
             {isEn
               ? 'Through its programmes, UNM is a pan-African university of Executive education and of actionable knowledge in service of African organisations.'
               : "À travers ses programmes, l'UNM est une université panafricaine de formation Executive et de production de savoir actionnable au service des organisations africaines."}
@@ -183,7 +183,7 @@ export default function ManifestoPage({ params }: { params: { locale: Locale } }
       </SectionWrapper>
 
       {/* ────── PHILOSOPHIE — 5 principes ────── */}
-      <SectionWrapper tone="default">
+      <SectionWrapper tone="canvas" className="!pt-8 sm:!pt-10">
         <p className="font-heading text-sm font-semibold uppercase tracking-[0.18em] text-primary">
           {isEn ? 'UNM philosophy' : 'Philosophie UNM'}
         </p>
@@ -202,7 +202,7 @@ export default function ManifestoPage({ params }: { params: { locale: Locale } }
           {principles.map((p, i) => (
             <li
               key={i}
-              className="grid gap-4 rounded-card border border-warm-200 bg-warm-100 p-6 sm:grid-cols-[72px_1fr] sm:items-start"
+              className="card-flat grid gap-4 p-6 sm:grid-cols-[72px_1fr] sm:items-start"
             >
               <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary font-display text-2xl font-bold text-white shadow-card">
                 {i + 1}
@@ -229,7 +229,7 @@ export default function ManifestoPage({ params }: { params: { locale: Locale } }
           {values.map((v) => (
             <li
               key={v.title}
-              className="rounded-card bg-white p-6 shadow-card transition-transform duration-200 hover:-translate-y-0.5 motion-reduce:hover:translate-y-0"
+              className="card-interactive p-6"
             >
               <span
                 aria-hidden="true"

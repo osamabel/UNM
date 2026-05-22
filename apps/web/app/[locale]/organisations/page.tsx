@@ -1,10 +1,13 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
+import type { ReactNode } from 'react';
 import { unstable_setRequestLocale } from 'next-intl/server';
 import { SectionWrapper } from '@/components/ui/SectionWrapper';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
-import { Button } from '@/components/ui/Button';
+import { PageHeader } from '@/components/patterns/PageHeader';
+import { ButtonLink } from '@/components/ui/Button';
+import { Icon, IconBox, type IconName } from '@/components/ui/Icon';
 import { JsonLd } from '@/components/shared/JsonLd';
+import { CTABanner } from '@/components/home/CTABanner';
 import { organisationsContent as c } from '@/lib/organisations-content';
 import { localized } from '@/lib/utils';
 import type { Locale } from '@unm/types';
@@ -14,6 +17,9 @@ export const revalidate = 600;
 interface Params {
   params: { locale: Locale };
 }
+
+const THREE_WAY_ICONS: IconName[] = ['handshake', 'users', 'medal'];
+const EXPERIENCE_ICONS: IconName[] = ['library', 'globe', 'target', 'star'];
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const base = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://unm.ma';
@@ -50,10 +56,48 @@ function organisationsSchema(locale: Locale) {
   };
 }
 
+function BulletList({ items, locale }: { items: { text: { fr: string; en: string } }[]; locale: Locale }) {
+  return (
+    <ul className="mt-4 space-y-2.5">
+      {items.map((b, i) => (
+        <li key={i} className="flex gap-2.5 text-sm leading-relaxed text-secondary/80 sm:text-base">
+          <Icon name="check-circle" size={18} className="mt-0.5 shrink-0 text-primary" />
+          {localized(b.text, locale)}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function SplitBlock({
+  step,
+  title,
+  children,
+}: {
+  step: string;
+  title: string;
+  children: ReactNode;
+}) {
+  return (
+    <div className="grid min-w-0 gap-8 lg:grid-cols-[minmax(0,14rem)_1fr] lg:gap-12">
+      <div className="lg:sticky lg:top-28 lg:self-start">
+        <p className="font-heading text-[11px] font-semibold uppercase tracking-[0.14em] text-primary">
+          {step}
+        </p>
+        <h2 className="mt-3 font-display text-display-md text-secondary">{title}</h2>
+      </div>
+      <div className="min-w-0 space-y-5 text-secondary/80">{children}</div>
+    </div>
+  );
+}
+
 export default function OrganisationsPage({ params }: Params) {
   unstable_setRequestLocale(params.locale);
   const locale = params.locale;
   const isEn = locale === 'en';
+  const contactOrg = isEn ? '/en/contact?subject=organisations' : '/contact?subject=organisations';
+  const contactHref = isEn ? '/en/contact' : '/contact';
+  const orgUrl = isEn ? c.meta.canonicalPath.en : c.meta.canonicalPath.fr;
 
   return (
     <>
@@ -61,52 +105,53 @@ export default function OrganisationsPage({ params }: Params) {
       <Breadcrumb
         items={[
           { name: isEn ? 'Home' : 'Accueil', url: isEn ? '/en' : '/' },
-          { name: isEn ? 'Organizations' : 'Organisations', url: isEn ? c.meta.canonicalPath.en : c.meta.canonicalPath.fr },
+          { name: isEn ? 'Organizations' : 'Organisations', url: orgUrl },
         ]}
       />
 
-      {/* ────── HERO ────── */}
-      <section className="bg-warm-50">
-        <div className="container-page py-20 lg:py-24">
-          <p className="eyebrow">{localized(c.hero.eyebrow, locale)}</p>
-          <h1 className="mt-5 max-w-3xl font-display text-display-xl text-secondary">
-            {localized(c.hero.title, locale)}
-          </h1>
-          <p className="mt-4 max-w-3xl font-display text-2xl italic text-secondary-400">
-            {localized(c.hero.tagline, locale)}
-          </p>
-          <div className="mt-8 max-w-3xl space-y-4 text-secondary">
-            {c.hero.paragraphs.map((p, i) => (
-              <p key={i} className="text-lg leading-relaxed">{localized(p, locale)}</p>
-            ))}
-          </div>
-          <div className="mt-10 flex flex-wrap gap-3">
-            <Link href={c.hero.ctas.primary.href}>
-              <Button>{localized(c.hero.ctas.primary.label, locale)}</Button>
-            </Link>
-            <Link href={c.hero.ctas.secondary.href}>
-              <Button variant="ghost">{localized(c.hero.ctas.secondary.label, locale)}</Button>
-            </Link>
-          </div>
+      <SectionWrapper tone="soft" className="!pb-10 sm:!pb-12">
+        <PageHeader
+          icon="users"
+          eyebrow={localized(c.hero.eyebrow, locale)}
+          title={localized(c.hero.title, locale)}
+          description={localized(c.hero.tagline, locale)}
+          className="border-0 pb-0"
+        />
+        <div className="prose prose-secondary mt-6 max-w-3xl space-y-4 text-secondary/80 sm:mt-8">
+          {c.hero.paragraphs.map((p, i) => (
+            <p key={i}>{localized(p, locale)}</p>
+          ))}
         </div>
-      </section>
+        <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+          <ButtonLink
+            href={contactOrg}
+            size="lg"
+            fullWidth
+            className="sm:!w-auto"
+            trailingIcon={<Icon name="mail" size={18} />}
+          >
+            {localized(c.hero.ctas.primary.label, locale)}
+          </ButtonLink>
+          <ButtonLink href={contactHref} variant="ghost" size="lg" fullWidth className="sm:!w-auto">
+            {localized(c.hero.ctas.secondary.label, locale)}
+          </ButtonLink>
+        </div>
+      </SectionWrapper>
 
-      {/* ────── THREE WAYS ────── */}
-      <SectionWrapper tone="alt">
+      <SectionWrapper tone="canvas" className="!pt-8 sm:!pt-10">
         <p className="eyebrow">{localized(c.threeWays.eyebrow, locale)}</p>
         <h2 className="mt-3 font-display text-display-md text-secondary">
           {localized(c.threeWays.title, locale)}
         </h2>
-        <ol className="mt-10 grid gap-6 lg:grid-cols-3">
+        <ol className="mt-8 grid min-w-0 gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
           {c.threeWays.items.map((it, i) => (
-            <li key={i} className="card-flat p-6 h-full">
-              <p className="font-sans text-xs font-semibold uppercase tracking-[0.18em] text-primary">
+            <li key={i} className="card-interactive flex h-full flex-col p-6">
+              <IconBox name={THREE_WAY_ICONS[i] ?? 'handshake'} size="sm" className="mb-4" />
+              <p className="font-heading text-[10px] font-semibold uppercase tracking-[0.14em] text-secondary/45">
                 0{i + 1}
               </p>
-              <h3 className="mt-3 font-display text-xl text-secondary">
-                {localized(it.title, locale)}
-              </h3>
-              <p className="mt-3 text-sm leading-relaxed text-secondary-400">
+              <h3 className="mt-2 font-display text-xl text-secondary">{localized(it.title, locale)}</h3>
+              <p className="mt-3 flex-1 text-sm leading-relaxed text-secondary/65">
                 {localized(it.body, locale)}
               </p>
             </li>
@@ -114,157 +159,88 @@ export default function OrganisationsPage({ params }: Params) {
         </ol>
       </SectionWrapper>
 
-      {/* ────── CUSTOM PROGRAMS ────── */}
-      <SectionWrapper id="programmes-sur-mesure">
-        <div className="grid gap-12 lg:grid-cols-[1fr_1.6fr]">
-          <div>
-            <p className="eyebrow">01</p>
-            <h2 className="mt-3 font-display text-display-md text-secondary">
-              {localized(c.custom.title, locale)}
-            </h2>
-          </div>
-          <div className="space-y-5 text-secondary">
-            {c.custom.paragraphs.map((p, i) => (
-              <p key={i} className="text-lg leading-relaxed">{localized(p, locale)}</p>
-            ))}
-            <div className="mt-8">
-              <h3 className="font-display text-xl text-secondary">
-                {localized(c.custom.subTitle, locale)}
-              </h3>
-              <ul className="mt-4 space-y-2 text-secondary">
-                {c.custom.bullets.map((b, i) => (
-                  <li key={i} className="flex gap-3">
-                    <span aria-hidden="true" className="mt-2 h-1 w-3 flex-shrink-0 bg-primary" />
-                    {localized(b.text, locale)}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <p className="mt-6 text-sm italic text-secondary-400">
-              {localized(c.custom.closing, locale)}
+      <SectionWrapper tone="soft" id="programmes-sur-mesure">
+        <SplitBlock step="01" title={localized(c.custom.title, locale)}>
+          {c.custom.paragraphs.map((p, i) => (
+            <p key={i} className="text-base leading-relaxed sm:text-lg">
+              {localized(p, locale)}
             </p>
+          ))}
+          <div className="card-flat p-5 sm:p-6">
+            <h3 className="font-display text-xl text-secondary">{localized(c.custom.subTitle, locale)}</h3>
+            <BulletList items={c.custom.bullets} locale={locale} />
           </div>
-        </div>
+          <p className="text-sm italic text-secondary/55">{localized(c.custom.closing, locale)}</p>
+        </SplitBlock>
       </SectionWrapper>
 
-      {/* ────── COHORTS ────── */}
-      <SectionWrapper id="cohortes-dediees" tone="alt">
-        <div className="grid gap-12 lg:grid-cols-[1fr_1.6fr]">
-          <div>
-            <p className="eyebrow">02</p>
-            <h2 className="mt-3 font-display text-display-md text-secondary">
-              {localized(c.cohorts.title, locale)}
-            </h2>
+      <SectionWrapper tone="canvas" id="cohortes-dediees">
+        <SplitBlock step="02" title={localized(c.cohorts.title, locale)}>
+          {c.cohorts.paragraphs.map((p, i) => (
+            <p key={i} className="text-base leading-relaxed sm:text-lg">
+              {localized(p, locale)}
+            </p>
+          ))}
+          <div className="card-flat p-5 sm:p-6">
+            <h3 className="font-display text-xl text-secondary">{localized(c.cohorts.subTitle, locale)}</h3>
+            <BulletList items={c.cohorts.bullets} locale={locale} />
           </div>
-          <div className="space-y-5 text-secondary">
-            {c.cohorts.paragraphs.map((p, i) => (
-              <p key={i} className="text-lg leading-relaxed">{localized(p, locale)}</p>
-            ))}
-            <div className="mt-8">
-              <h3 className="font-display text-xl text-secondary">
-                {localized(c.cohorts.subTitle, locale)}
-              </h3>
-              <ul className="mt-4 space-y-2 text-secondary">
-                {c.cohorts.bullets.map((b, i) => (
-                  <li key={i} className="flex gap-3">
-                    <span aria-hidden="true" className="mt-2 h-1 w-3 flex-shrink-0 bg-primary" />
-                    {localized(b.text, locale)}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </div>
+        </SplitBlock>
       </SectionWrapper>
 
-      {/* ────── ACADEMIES ────── */}
-      <SectionWrapper id="academies-institutionnelles">
-        <div className="grid gap-12 lg:grid-cols-[1fr_1.6fr]">
-          <div>
-            <p className="eyebrow">03</p>
-            <h2 className="mt-3 font-display text-display-md text-secondary">
-              {localized(c.academies.title, locale)}
-            </h2>
+      <SectionWrapper tone="soft" id="academies-institutionnelles">
+        <SplitBlock step="03" title={localized(c.academies.title, locale)}>
+          {c.academies.paragraphs.map((p, i) => (
+            <p key={i} className="text-base leading-relaxed sm:text-lg">
+              {localized(p, locale)}
+            </p>
+          ))}
+          <div className="card-flat p-5 sm:p-6">
+            <h3 className="font-display text-xl text-secondary">{localized(c.academies.subTitle, locale)}</h3>
+            <BulletList items={c.academies.bullets} locale={locale} />
           </div>
-          <div className="space-y-5 text-secondary">
-            {c.academies.paragraphs.map((p, i) => (
-              <p key={i} className="text-lg leading-relaxed">{localized(p, locale)}</p>
-            ))}
-            <div className="mt-8">
-              <h3 className="font-display text-xl text-secondary">
-                {localized(c.academies.subTitle, locale)}
-              </h3>
-              <ul className="mt-4 space-y-2 text-secondary">
-                {c.academies.bullets.map((b, i) => (
-                  <li key={i} className="flex gap-3">
-                    <span aria-hidden="true" className="mt-2 h-1 w-3 flex-shrink-0 bg-primary" />
-                    {localized(b.text, locale)}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </div>
+        </SplitBlock>
       </SectionWrapper>
 
-      {/* ────── PARTNERS ────── */}
-      <SectionWrapper tone="alt">
+      <SectionWrapper tone="canvas">
         <div className="max-w-3xl">
           <p className="eyebrow">{localized(c.partners.eyebrow, locale)}</p>
           <h2 className="mt-3 font-display text-display-md text-secondary">
             {localized(c.partners.title, locale)}
           </h2>
-          <p className="mt-4 text-secondary-400">{localized(c.partners.intro, locale)}</p>
+          <p className="mt-4 text-secondary/65">{localized(c.partners.intro, locale)}</p>
         </div>
-        <ul className="mt-12 divide-y divide-warm-200 border-y border-warm-200">
+        <ul className="mt-8 space-y-3 sm:mt-10">
           {c.partners.categories.map((cat, i) => (
-            <li key={i} className="grid gap-2 py-6 sm:grid-cols-[1fr_1.6fr] sm:gap-12">
-              <h3 className="font-display text-lg text-secondary">
-                {localized(cat.title, locale)}
-              </h3>
-              <p className="text-secondary-400">{localized(cat.body, locale)}</p>
+            <li key={i} className="card-flat p-5 sm:p-6">
+              <div className="grid min-w-0 gap-3 sm:grid-cols-[minmax(0,12rem)_1fr] sm:gap-8">
+                <h3 className="font-display text-lg text-secondary">{localized(cat.title, locale)}</h3>
+                <p className="text-sm leading-relaxed text-secondary/65 sm:text-base">
+                  {localized(cat.body, locale)}
+                </p>
+              </div>
             </li>
           ))}
         </ul>
       </SectionWrapper>
 
-      {/* ────── UNM EXPERIENCE ────── */}
-      <SectionWrapper>
+      <SectionWrapper tone="soft">
         <p className="eyebrow">{localized(c.experience.eyebrow, locale)}</p>
         <h2 className="mt-3 font-display text-display-md text-secondary">
           {localized(c.experience.title, locale)}
         </h2>
-        <ul className="mt-10 grid gap-6 lg:grid-cols-2">
+        <ul className="mt-8 grid min-w-0 gap-5 sm:grid-cols-2 lg:gap-6">
           {c.experience.pillars.map((p, i) => (
-            <li key={i} className="card-flat p-6 h-full">
+            <li key={i} className="card-interactive p-6">
+              <IconBox name={EXPERIENCE_ICONS[i] ?? 'star'} size="sm" className="mb-4" />
               <h3 className="font-display text-xl text-secondary">{localized(p.title, locale)}</h3>
-              <p className="mt-3 text-secondary-400">{localized(p.body, locale)}</p>
+              <p className="mt-3 text-sm leading-relaxed text-secondary/65">{localized(p.body, locale)}</p>
             </li>
           ))}
         </ul>
       </SectionWrapper>
 
-      {/* ────── CLOSING CTA ────── */}
-      <section id="contact" className="bg-secondary text-warm-50">
-        <div className="container-page py-20 lg:py-24">
-          <h2 className="max-w-3xl font-display text-display-md text-warm-50">
-            {localized(c.closing.title, locale)}
-          </h2>
-          <p className="mt-4 max-w-2xl text-lg text-warm-100">
-            {localized(c.closing.body, locale)}
-          </p>
-          <div className="mt-10 flex flex-wrap gap-3">
-            <Link href={c.closing.ctas.primary.href}>
-              <Button>{localized(c.closing.ctas.primary.label, locale)}</Button>
-            </Link>
-            <Link href={c.closing.ctas.secondary.href}>
-              <Button variant="ghost" className="border border-warm-50/30 text-warm-50 hover:bg-warm-50/10">
-                {localized(c.closing.ctas.secondary.label, locale)}
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </section>
+      <CTABanner />
     </>
   );
 }

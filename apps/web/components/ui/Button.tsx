@@ -1,4 +1,5 @@
-import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from 'react';
+import Link from 'next/link';
+import { forwardRef, type ButtonHTMLAttributes, type ComponentProps, type ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 
 type Variant = 'primary' | 'secondary' | 'ghost' | 'danger';
@@ -13,21 +14,17 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   fullWidth?: boolean;
 }
 
-const variants: Record<Variant, string> = {
-  primary:
-    'bg-primary text-white hover:bg-[#CE4B2A] active:bg-[#8B2712] disabled:bg-primary/50',
-  secondary:
-    'bg-secondary text-warm-50 hover:bg-secondary-600 active:bg-secondary-700 disabled:bg-secondary/50',
-  ghost:
-    'bg-transparent text-secondary hover:bg-warm-100 active:bg-warm-200',
-  danger:
-    'bg-primary-700 text-white hover:bg-primary-800 active:bg-primary-900',
+const variantClass: Record<Variant, string> = {
+  primary: 'btn-uni-primary',
+  secondary: 'btn-uni-secondary',
+  ghost: 'btn-uni-ghost',
+  danger: 'btn-uni-danger',
 };
 
 const sizes: Record<Size, string> = {
-  sm: 'h-9 px-3 text-sm',
-  md: 'h-11 px-5 text-base',
-  lg: 'h-14 px-7 text-lg',
+  sm: 'h-9 min-h-9 px-4 text-xs rounded-lg',
+  md: 'h-11 min-h-11 px-5 text-sm rounded-lg',
+  lg: 'h-12 min-h-12 px-7 text-[15px] rounded-lg',
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
@@ -51,9 +48,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       disabled={disabled || loading}
       aria-busy={loading || undefined}
       className={cn(
-        'inline-flex items-center justify-center gap-2 rounded font-heading font-medium transition-colors',
-        'disabled:cursor-not-allowed',
-        variants[variant],
+        'btn-uni group',
+        variantClass[variant],
         sizes[size],
         fullWidth && 'w-full',
         className,
@@ -69,7 +65,47 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
         leadingIcon
       )}
       <span>{children}</span>
-      {!loading && trailingIcon}
+      {!loading && trailingIcon && (
+        <span className="btn-arrow inline-flex">{trailingIcon}</span>
+      )}
     </button>
   );
 });
+
+interface ButtonLinkProps extends Omit<ComponentProps<typeof Link>, 'className'> {
+  variant?: Variant;
+  size?: Size;
+  fullWidth?: boolean;
+  className?: string;
+  leadingIcon?: ReactNode;
+  trailingIcon?: ReactNode;
+  children: ReactNode;
+}
+
+export function ButtonLink({
+  variant = 'primary',
+  size = 'md',
+  fullWidth,
+  className,
+  leadingIcon,
+  trailingIcon,
+  children,
+  ...rest
+}: ButtonLinkProps) {
+  return (
+    <Link
+      className={cn(
+        'btn-uni group',
+        variantClass[variant],
+        sizes[size],
+        fullWidth && 'w-full',
+        className,
+      )}
+      {...rest}
+    >
+      {leadingIcon}
+      <span>{children}</span>
+      {trailingIcon && <span className="btn-arrow inline-flex">{trailingIcon}</span>}
+    </Link>
+  );
+}

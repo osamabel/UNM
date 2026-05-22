@@ -9,7 +9,7 @@ Every item below is verified by a named owner before sign-off. Tick the box, add
 - [ ] Logo displayed correctly on all pages (white or `warm-50` `#FDFAF7` background only — never on colored backgrounds)
 - [ ] Primary color `#B5341A` applied consistently to all CTAs, active states, links, and badges
 - [ ] Dark brown `#3D1A0B` used for headings, nav background, and footer — no blue, purple, or cool grays anywhere
-- [ ] Typography: Cormorant Garamond on display headings, DM Sans on subheadings, Source Sans 3 on body
+- [ ] Typography: Source Serif 4 on display headings, Inter on UI and body (`tailwind.config.ts`, `globals.css`)
 - [ ] No pure white (`#FFFFFF`) backgrounds in user-facing pages — all warm tones
 - [ ] No pure black (`#000000`) text — body uses `ink` (`#1A0A05`)
 - [ ] Favicon generated from UNM logo mark and placed at `/favicon.ico` + PNG variants

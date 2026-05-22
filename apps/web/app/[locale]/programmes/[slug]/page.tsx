@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { unstable_setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { ProgramHero } from '@/components/programs/ProgramHero';
-import { StickyProgramCTA } from '@/components/programs/StickyProgramCTA';
+import { ProgramCTAMobile, StickyProgramCTA } from '@/components/programs/StickyProgramCTA';
 import { ProgramCurriculum } from '@/components/programs/ProgramCurriculum';
 import { ProgramNarrative } from '@/components/programs/ProgramNarrative';
 import { CalendarSection } from '@/components/programs/CalendarSection';
@@ -10,6 +10,7 @@ import { TuitionSection } from '@/components/programs/TuitionSection';
 import { ProgramFAQ } from '@/components/programs/ProgramFAQ';
 import { RelatedPrograms } from '@/components/programs/RelatedPrograms';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
+import { SectionWrapper } from '@/components/ui/SectionWrapper';
 import { BrochureDownload } from '@/components/shared/BrochureDownload';
 import { CTABar } from '@/components/shared/CTABar';
 import { JsonLd } from '@/components/shared/JsonLd';
@@ -60,18 +61,31 @@ export default async function ProgramPage({ params }: Params) {
   const related = await getRelatedPrograms(program.faculty?.slug ?? '', program.slug);
   const isEn = params.locale === 'en';
 
-  // Section labels (editorial sub-titles)
   const L = isEn
-    ? { obj: 'Objectives', objBody: 'At the end of the programme, participants will be able to:',
-        audience: 'Target audience', audienceLabel: 'Who is this programme for',
-        outlooks: 'Career outlooks', outlooksLabel: 'Where it leads',
-        skills: 'Skills acquired', skillsLabel: 'What you will learn to master',
-        admission: 'Admission', admissionLabel: 'How to apply' }
-    : { obj: 'Objectifs', objBody: 'À l’issue du programme, les participants seront en mesure de :',
-        audience: 'Public-cible', audienceLabel: 'À qui s’adresse ce programme',
-        outlooks: 'Débouchés professionnels', outlooksLabel: 'Vers quels métiers',
-        skills: 'Compétences acquises', skillsLabel: 'Ce que vous apprendrez à maîtriser',
-        admission: 'Admission', admissionLabel: 'Comment candidater' };
+    ? {
+        obj: 'Objectives',
+        objBody: 'At the end of the programme, participants will be able to:',
+        audience: 'Target audience',
+        audienceLabel: 'Who is this programme for',
+        outlooks: 'Career outlooks',
+        outlooksLabel: 'Where it leads',
+        skills: 'Skills acquired',
+        skillsLabel: 'What you will learn to master',
+        admission: 'Admission',
+        admissionLabel: 'How to apply',
+      }
+    : {
+        obj: 'Objectifs',
+        objBody: 'À l’issue du programme, les participants seront en mesure de :',
+        audience: 'Public-cible',
+        audienceLabel: 'À qui s’adresse ce programme',
+        outlooks: 'Débouchés professionnels',
+        outlooksLabel: 'Vers quels métiers',
+        skills: 'Compétences acquises',
+        skillsLabel: 'Ce que vous apprendrez à maîtriser',
+        admission: 'Admission',
+        admissionLabel: 'Comment candidater',
+      };
 
   return (
     <>
@@ -86,69 +100,51 @@ export default async function ProgramPage({ params }: Params) {
 
       <ProgramHero program={program} />
 
-      <div className="container-page grid gap-12 py-16 lg:grid-cols-[1fr_320px] lg:gap-20 lg:py-20">
-        {/* Left column — editorial content */}
-        <div className="space-y-20">
-          {/* Objectives — short intro + bullets */}
-          {program.objectives && program.objectives.length > 0 && (
+      <SectionWrapper tone="canvas" className="!pt-8 sm:!pt-10">
+        <div className="min-w-0 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,17.5rem)] lg:items-start lg:gap-12 xl:gap-14">
+          <div className="min-w-0 space-y-6 sm:space-y-8">
+            <ProgramCTAMobile program={program} />
+
+            {program.objectives && program.objectives.length > 0 && (
+              <ProgramNarrative eyebrow={L.obj} title={L.objBody} bullets={program.objectives} />
+            )}
+
+            <ProgramNarrative eyebrow={L.audience} title={L.audienceLabel} body={program.targetAudience} />
+
+            <ProgramNarrative eyebrow={L.outlooks} title={L.outlooksLabel} body={program.careerOutlooks} />
+
+            <ProgramNarrative eyebrow={L.skills} title={L.skillsLabel} body={program.skillsNarrative} />
+
+            <ProgramCurriculum modules={program.curriculum} programType={program.type} />
+
+            <CalendarSection program={program} />
+
             <ProgramNarrative
-              eyebrow={L.obj}
-              title={L.objBody}
-              bullets={program.objectives}
+              eyebrow={L.admission}
+              title={L.admissionLabel}
+              body={program.admissionRequirements}
             />
-          )}
 
-          {/* Target audience */}
-          <ProgramNarrative
-            eyebrow={L.audience}
-            title={L.audienceLabel}
-            body={program.targetAudience}
-          />
+            <TuitionSection program={program} />
 
-          {/* Career outlooks */}
-          <ProgramNarrative
-            eyebrow={L.outlooks}
-            title={L.outlooksLabel}
-            body={program.careerOutlooks}
-          />
+            <ProgramFAQ items={program.faq} />
 
-          {/* Skills */}
-          <ProgramNarrative
-            eyebrow={L.skills}
-            title={L.skillsLabel}
-            body={program.skillsNarrative}
-          />
+            <BrochureDownload
+              programSlug={program.slug}
+              programTitle={localized(program.title, params.locale)}
+            />
+          </div>
 
-          {/* Curriculum */}
-          <ProgramCurriculum modules={program.curriculum} programType={program.type} />
-
-          {/* Calendar + Admission + Tuition (three compact sections) */}
-          <CalendarSection program={program} />
-          <ProgramNarrative
-            eyebrow={L.admission}
-            title={L.admissionLabel}
-            body={program.admissionRequirements}
-          />
-          <TuitionSection program={program} />
-
-          {/* FAQ */}
-          <ProgramFAQ items={program.faq} />
-
-          {/* Brochure download */}
-          <BrochureDownload
-            programSlug={program.slug}
-            programTitle={localized(program.title, params.locale)}
-          />
-
-          {/* Related programmes (same faculty) */}
-          <RelatedPrograms programs={related} />
+          <StickyProgramCTA program={program} />
         </div>
+      </SectionWrapper>
 
-        {/* Right column — sticky CTA */}
-        <StickyProgramCTA program={program} />
-      </div>
+      {related.length > 0 && (
+        <SectionWrapper tone="soft">
+          <RelatedPrograms programs={related} />
+        </SectionWrapper>
+      )}
 
-      {/* Mobile-only bottom CTA bar */}
       <CTABar programSlug={program.slug} />
     </>
   );

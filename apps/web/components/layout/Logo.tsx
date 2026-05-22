@@ -1,57 +1,43 @@
+import Image from 'next/image';
 import { cn } from '@/lib/utils';
-
-/**
- * UNM logo.
- * - `variant="full"` serves the official wordmark from /public/logo-unm.svg.
- * - `variant="mark"` is an inline mark-only fallback for mobile (≤375 px).
- *
- * Brand rule: the logo must always appear on a white or warm-50 background.
- * Never recolour, rotate, or stretch the official wordmark.
- */
+import { LOGO_ALT, LOGO_SRC } from '@/lib/logo';
 
 interface LogoProps {
   variant?: 'full' | 'mark';
+  /** Kept for API compatibility — transparent PNG works on all surfaces. */
+  surface?: 'light' | 'dark';
   className?: string;
-  // tone only applies to the inline mark fallback; the official SVG is fixed.
   tone?: 'primary' | 'secondary' | 'inherit';
 }
 
-export function Logo({ variant = 'full', className, tone = 'primary' }: LogoProps) {
+export function Logo({ variant = 'full', className }: LogoProps) {
   if (variant === 'mark') {
-    const fill =
-      tone === 'primary'
-        ? '#B5341A'
-        : tone === 'secondary'
-          ? '#3D1A0B'
-          : 'currentColor';
     return (
-      <svg
-        viewBox="0 0 64 64"
-        role="img"
-        aria-label="UNM"
-        className={cn('h-10 w-10', className)}
-      >
-        <rect width="64" height="64" rx="12" fill={fill} />
-        <path
-          fill="#FDFAF7"
-          d="M20 18h6v18c0 3.3 2.7 6 6 6s6-2.7 6-6V18h6v18c0 6.6-5.4 12-12 12s-12-5.4-12-12z"
-        />
-      </svg>
+      <Image
+        src={LOGO_SRC}
+        alt={LOGO_ALT}
+        width={120}
+        height={48}
+        className={cn(
+          'logo-mark h-9 w-auto max-w-[3.25rem] object-left object-contain select-none',
+          className,
+        )}
+        priority
+      />
     );
   }
 
-  // The wordmark embeds a raster, so we let the browser load it as a regular
-  // SVG asset (Next/Image's optimiser does nothing useful for embedded
-  // bitmaps inside an SVG and adds latency).
   return (
-    <img
-      src="/logo-unm.svg"
-      alt="Université Numérique du Maroc"
-      width={200}
-      height={92}
-      className={cn('h-10 w-auto select-none', className)}
-      loading="eager"
-      decoding="async"
+    <Image
+      src={LOGO_SRC}
+      alt={LOGO_ALT}
+      width={240}
+      height={64}
+      className={cn(
+        'logo-wordmark h-9 w-auto max-w-[12rem] select-none sm:h-10 sm:max-w-[14rem]',
+        className,
+      )}
+      priority
     />
   );
 }
