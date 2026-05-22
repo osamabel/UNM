@@ -1,8 +1,10 @@
 'use client';
 
+import Image from 'next/image';
 import type { ReactNode } from 'react';
 import { ScrollReveal } from '@/components/patterns/ScrollReveal';
 import { Logo } from '@/components/layout/Logo';
+import { LOGO_SRC } from '@/lib/logo';
 import { cn } from '@/lib/utils';
 
 interface FacultyHeroPanelProps {
@@ -32,13 +34,13 @@ export function FacultyHeroPanel({
         className="pointer-events-none absolute inset-x-0 top-6 z-0 flex justify-center opacity-30 motion-reduce:hidden sm:hidden"
         aria-hidden
       >
-        <img
-          src="/unmtrans.png"
+        <Image
+          src={LOGO_SRC}
           alt=""
           width={200}
           height={92}
           className="faculty-hero-logo-ghost h-28 w-44 object-contain"
-          decoding="async"
+          aria-hidden
         />
       </div>
 
@@ -51,13 +53,13 @@ export function FacultyHeroPanel({
           className="absolute inset-0 rounded-full blur-3xl"
           style={{ backgroundColor: accent, opacity: 0.12 }}
         />
-        <img
-          src="/unmtrans.png"
+        <Image
+          src={LOGO_SRC}
           alt=""
           width={320}
           height={148}
           className="faculty-hero-logo-ghost h-full w-full object-contain"
-          decoding="async"
+          aria-hidden
         />
       </div>
 

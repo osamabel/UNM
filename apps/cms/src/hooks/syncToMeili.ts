@@ -13,7 +13,7 @@ export const syncToMeili: (collectionSlug: string) => CollectionAfterChangeHook 
   async ({ doc }) => {
     try {
       await indexFor(collectionSlug).addDocuments([doc], { primaryKey: 'id' });
-    } catch (e) {
+    } catch {
       // Fail silently — search is best-effort.
     }
     return doc;

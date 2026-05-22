@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { LOGO_ALT, LOGO_SRC } from '@/lib/logo';
 
@@ -12,7 +13,7 @@ interface LogoProps {
 export function Logo({ variant = 'full', className }: LogoProps) {
   if (variant === 'mark') {
     return (
-      <img
+      <Image
         src={LOGO_SRC}
         alt={LOGO_ALT}
         width={120}
@@ -21,14 +22,13 @@ export function Logo({ variant = 'full', className }: LogoProps) {
           'logo-mark h-9 w-auto max-w-[3.25rem] object-left object-contain select-none',
           className,
         )}
-        loading="eager"
-        decoding="async"
+        priority
       />
     );
   }
 
   return (
-    <img
+    <Image
       src={LOGO_SRC}
       alt={LOGO_ALT}
       width={240}
@@ -37,8 +37,7 @@ export function Logo({ variant = 'full', className }: LogoProps) {
         'logo-wordmark h-9 w-auto max-w-[12rem] select-none sm:h-10 sm:max-w-[14rem]',
         className,
       )}
-      loading="eager"
-      decoding="async"
+      priority
     />
   );
 }
