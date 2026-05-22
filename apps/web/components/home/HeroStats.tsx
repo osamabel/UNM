@@ -14,9 +14,9 @@ interface Stat {
 
 const STATS: Stat[] = [
   { value: '1 500+', labelKey: 'statsStudents', icon: 'users' },
-  { value: '20', labelKey: 'statsPrograms', icon: 'book' },
-  { value: '10', labelKey: 'statsYears', icon: 'award' },
-  { value: '60+', labelKey: 'statsPartners', icon: 'shield' },
+  { value: '20', labelKey: 'statsPrograms', icon: 'library' },
+  { value: '10', labelKey: 'statsYears', icon: 'medal' },
+  { value: '60+', labelKey: 'statsPartners', icon: 'handshake' },
 ];
 
 function parseStatDisplay(raw: string) {
@@ -165,7 +165,7 @@ export function HeroStatsBand() {
       <div className="relative flex flex-col gap-6 p-6 sm:gap-8 sm:p-8 lg:gap-10 lg:p-12">
         <header className="text-center">
           <span className="inline-flex items-center gap-2">
-            <Icon name="graduation" size={20} className="text-primary-200" />
+            <Icon name="medal" size={20} className="text-primary-200" />
             <p className="font-sans text-[10px] font-semibold uppercase tracking-[0.22em] text-primary-200">
               UNM
             </p>

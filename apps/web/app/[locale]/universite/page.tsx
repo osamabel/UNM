@@ -51,7 +51,7 @@ export default async function UniversityPage({ params }: { params: { locale: Loc
 
       <SectionWrapper tone="soft" className="!pb-10 sm:!pb-12">
         <PageHeader
-          icon="building"
+          icon="landmark"
           eyebrow={t('eyebrow')}
           title={t('title')}
           className="border-0 pb-0"

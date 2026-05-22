@@ -41,7 +41,7 @@ export const UNIVERSITY_EVENTS_STUB: UniversityEventStub[] = [
 ];
 
 export const EVENT_KIND_ICON: Record<UniversityEventKind, IconName> = {
-  openDay: 'users',
-  webinar: 'globe',
-  masterclass: 'sparkles',
+  openDay: 'map-pin',
+  webinar: 'laptop',
+  masterclass: 'medal',
 };

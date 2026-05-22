@@ -144,7 +144,7 @@ export function PartnerLogos({ partners, hideHeader }: Props) {
         <ScrollReveal>
           <SectionHeader
             eyebrow={t('partnersEyebrow')}
-            icon="shield"
+            icon="handshake"
             title={t('partnersTitle')}
             description={t('partnersSubtitle')}
             action={{ label: t('partnersCta'), href: partnersHref }}

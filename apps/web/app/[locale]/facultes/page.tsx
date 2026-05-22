@@ -44,7 +44,7 @@ export default async function FacultiesIndex({ params }: { params: { locale: Loc
 
       <SectionWrapper tone="soft" className="!pb-10 sm:!pb-12">
         <PageHeader
-          icon="building"
+          icon="landmark"
           eyebrow={t('eyebrow')}
           title={t('title')}
           description={t('subtitle', { active, upcoming })}
@@ -56,7 +56,7 @@ export default async function FacultiesIndex({ params }: { params: { locale: Loc
             {t('trustActive', { count: active })}
           </li>
           <li className="glass-pill flex items-center gap-1.5 text-xs font-medium text-secondary/75">
-            <Icon name="graduation" size={14} className="text-primary/90" />
+            <Icon name="library" size={14} className="text-primary/90" />
             {t('trustUpcoming', { count: upcoming })}
           </li>
         </ul>

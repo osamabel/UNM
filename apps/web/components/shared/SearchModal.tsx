@@ -8,6 +8,7 @@ import { Icon, type IconName } from '@/components/ui/Icon';
 import { Logo } from '@/components/layout/Logo';
 import { cn } from '@/lib/utils';
 import type { Locale } from '@unm/types';
+import { iconForFacultySlug } from '@/lib/faculty-icons';
 import { articlePath, facultyPath, programPath } from '@/lib/utils';
 
 interface Hit {
@@ -33,14 +34,19 @@ type NavItem =
 const RECENT_KEY = 'unm:recent-searches';
 
 const HIT_ICON: Record<Hit['kind'], IconName> = {
-  program: 'program',
-  faculty: 'building',
+  program: 'library',
+  faculty: 'landmark',
   article: 'newspaper',
 };
 
 type ResultGroup = keyof SearchResponse;
 
 const GROUP_ORDER: ResultGroup[] = ['programs', 'faculties', 'articles'];
+
+function iconForHit(hit: Hit): IconName {
+  if (hit.kind === 'faculty') return iconForFacultySlug(hit.slug);
+  return HIT_ICON[hit.kind];
+}
 
 export function SearchModal() {
   const [open, setOpen] = useState(false);
@@ -59,9 +65,9 @@ export function SearchModal() {
 
   const quickLinks = useMemo<QuickLink[]>(
     () => [
-      { label: t('searchQuickPrograms'), href: isEn ? '/en/programs' : '/programmes', icon: 'program' },
-      { label: t('searchQuickFaculties'), href: isEn ? '/en/faculties' : '/facultes', icon: 'building' },
-      { label: t('searchQuickAdmissions'), href: isEn ? '/en/admissions' : '/admissions', icon: 'graduation' },
+      { label: t('searchQuickPrograms'), href: isEn ? '/en/programs' : '/programmes', icon: 'library' },
+      { label: t('searchQuickFaculties'), href: isEn ? '/en/faculties' : '/facultes', icon: 'landmark' },
+      { label: t('searchQuickAdmissions'), href: isEn ? '/en/admissions' : '/admissions', icon: 'document' },
       { label: t('searchQuickNews'), href: isEn ? '/en/news' : '/actualites', icon: 'newspaper' },
     ],
     [isEn, t],
@@ -427,7 +433,7 @@ export function SearchModal() {
                                     className="search-command-row"
                                   >
                                     <span className="search-command-icon">
-                                      <Icon name={HIT_ICON[hit.kind]} size={16} />
+                                      <Icon name={iconForHit(hit)} size={16} />
                                     </span>
                                     <span className="min-w-0 flex-1 truncate">{hit.title}</span>
                                     <Icon

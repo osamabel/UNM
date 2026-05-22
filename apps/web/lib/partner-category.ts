@@ -6,8 +6,8 @@ export const PARTNER_CATEGORIES: Partner['category'][] = ['academic', 'industry'
 export function iconForPartnerCategory(category: Partner['category']): IconName {
   const map: Record<Partner['category'], IconName> = {
     academic: 'graduation',
-    industry: 'building',
-    government: 'shield',
+    industry: 'briefcase',
+    government: 'landmark',
   };
   return map[category];
 }

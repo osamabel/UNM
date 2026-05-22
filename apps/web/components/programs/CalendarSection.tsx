@@ -34,7 +34,7 @@ export function CalendarSection({ program }: Props) {
       </div>
       {localized(program.schedule, locale) && (
         <p className="mt-5 flex gap-2 text-sm leading-relaxed text-secondary/70">
-          <Icon name="building" size={16} className="mt-0.5 shrink-0 text-primary/70" />
+          <Icon name="clock" size={16} className="mt-0.5 shrink-0 text-primary/70" />
           {localized(program.schedule, locale)}
         </p>
       )}

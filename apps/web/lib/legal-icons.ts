@@ -2,7 +2,7 @@ import type { IconName } from '@/components/ui/Icon';
 import type { LegalDocument } from '@/lib/legal/types';
 
 const LEGAL_DOC_ICON: Record<LegalDocument['key'], IconName> = {
-  mentions: 'building',
+  mentions: 'landmark',
   cgu: 'document',
   cgv: 'file',
   confidentialite: 'shield',

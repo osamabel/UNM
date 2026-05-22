@@ -1,15 +1,14 @@
 'use client';
 
+import Image from 'next/image';
 import { useLocale, useTranslations } from 'next-intl';
 import { ButtonLink } from '@/components/ui/Button';
-import { HeroStatsGrid } from '@/components/home/HeroStats';
 import { Icon } from '@/components/ui/Icon';
 import type { Locale } from '@unm/types';
 
 const PROOF = [
-  { icon: 'shield' as const, fr: 'Partenariat EBS Paris', en: 'EBS Paris partnership' },
-  { icon: 'building' as const, fr: 'Marrakech · Laâyoune', en: 'Marrakech · Laâyoune' },
-  { icon: 'graduation' as const, fr: 'MBA · DBA · Executive', en: 'MBA · DBA · Executive' },
+  { icon: 'handshake' as const, fr: 'Partenariat EBS Paris', en: 'EBS Paris partnership' },
+  { icon: 'briefcase' as const, fr: 'MBA · DBA · Executive', en: 'MBA · DBA · Executive' },
 ] as const;
 
 export function HeroSection() {
@@ -79,49 +78,22 @@ export function HeroSection() {
                 </li>
               ))}
             </ul>
-
-            {/* Mobile: stats condensed under hero copy */}
-            <div className="glass-dark relative mt-8 overflow-hidden rounded-2xl p-4 md:hidden">
-              <div className="hero-panel-pattern absolute inset-0" aria-hidden />
-              <div className="relative">
-                <p className="text-center font-sans text-[10px] font-semibold uppercase tracking-[0.16em] text-primary-200">
-                  {t('statsEyebrow')}
-                </p>
-                <HeroStatsGrid compact className="mt-3" />
-                {t('statsSource') && (
-                  <p className="mt-3 text-center text-[10px] text-warm-400/80">{t('statsSource')}</p>
-                )}
-              </div>
-            </div>
           </div>
 
-          <aside
-            className="hero-enter hero-panel-float glass-dark relative hidden min-w-0 overflow-hidden rounded-2xl md:block"
-          >
-            <div className="hero-panel-pattern absolute inset-0" />
-            <div className="relative flex min-h-[300px] flex-col justify-between p-6 lg:min-h-[380px] lg:p-8">
-              <div>
-                <span className="inline-flex items-center gap-2">
-                  <Icon name="graduation" size={20} className="text-primary-200" />
-                  <p className="font-sans text-[10px] font-semibold uppercase tracking-[0.22em] text-primary-200">
-                    UNM
-                  </p>
-                </span>
-                <p className="mt-3 font-sans text-[11px] font-semibold uppercase tracking-[0.16em] text-primary-200">
-                  {t('statsEyebrow')}
-                </p>
-                <p className="mt-2 max-w-[14rem] font-display text-xl font-semibold leading-snug text-warm-50 lg:text-2xl">
-                  {t('statsTitle')}
-                </p>
-              </div>
-              <div>
-                <HeroStatsGrid compact className="gap-2" />
-                {t('statsSource') && (
-                  <p className="divider-fine mt-4 text-center text-[10px] text-warm-400/80 lg:mt-5">
-                    {t('statsSource')}
-                  </p>
-                )}
-              </div>
+          <aside className="hero-enter hero-panel-float relative min-w-0">
+            <div className="card-flat relative aspect-[4/5] overflow-hidden sm:aspect-[5/6] md:aspect-auto md:min-h-[320px] lg:min-h-[400px]">
+              <Image
+                src="/section1.jpeg"
+                alt=""
+                fill
+                priority
+                sizes="(max-width: 768px) 100vw, (max-width: 1280px) 45vw, 520px"
+                className="object-cover object-center"
+              />
+              <div
+                className="pointer-events-none absolute inset-0 bg-gradient-to-t from-secondary/25 via-transparent to-transparent md:bg-gradient-to-l md:from-secondary/20 md:via-transparent md:to-transparent"
+                aria-hidden
+              />
             </div>
           </aside>
         </div>

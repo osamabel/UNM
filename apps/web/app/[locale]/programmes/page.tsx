@@ -65,7 +65,7 @@ export default async function ProgramsIndex({
 
       <SectionWrapper tone="soft" className="!pb-10 sm:!pb-12">
         <PageHeader
-          icon="program"
+          icon="library"
           eyebrow={t('eyebrow')}
           title={t('title')}
           description={t('subtitle')}

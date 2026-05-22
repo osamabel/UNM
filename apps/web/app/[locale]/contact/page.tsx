@@ -188,7 +188,7 @@ export default async function ContactPage({ params }: { params: { locale: Locale
                 Marrakech, Maroc
               </p>
             </ContactCard>
-            <ContactCard icon="building" title={t('campusLaayoune')}>
+            <ContactCard icon="map-pin" title={t('campusLaayoune')}>
               <p>
                 N°8, Al Bouchra
                 <br />

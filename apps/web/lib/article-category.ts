@@ -4,8 +4,8 @@ import type { ArticleCategory, Locale } from '@unm/types';
 const CATEGORY_ICON: Record<ArticleCategory, IconName> = {
   campus: 'map-pin',
   recherche: 'flask',
-  partenariats: 'sparkles',
-  evenements: 'calendar',
+  partenariats: 'handshake',
+  evenements: 'megaphone',
 };
 
 const CATEGORY_ACCENT: Record<ArticleCategory, string> = {
@@ -19,7 +19,13 @@ const CATEGORY_ACCENT: Record<ArticleCategory, string> = {
 export function isPlaceholderCover(url?: string | null, alt?: string | null): boolean {
   if (!url) return true;
   const hay = `${url} ${alt ?? ''}`.toLowerCase();
-  return hay.includes('logo') || hay.includes('placeholder') || hay.includes('logo-unm') || hay.includes('unm.png');
+  return (
+    hay.includes('logo') ||
+    hay.includes('placeholder') ||
+    hay.includes('logo-unm') ||
+    hay.includes('unm.png') ||
+    hay.includes('unmtrans')
+  );
 }
 
 export function iconForArticleCategory(category: ArticleCategory): IconName {

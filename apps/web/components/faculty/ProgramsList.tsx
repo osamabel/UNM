@@ -24,7 +24,7 @@ export function ProgramsList({ programs }: Props) {
       <SectionHeader
         eyebrow={tf('eyebrow')}
         title={tf('programsTitle')}
-        icon="program"
+        icon="library"
         action={{ label: tf('programsAction'), href: programsHref }}
       />
       <ul className="grid min-w-0 grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">

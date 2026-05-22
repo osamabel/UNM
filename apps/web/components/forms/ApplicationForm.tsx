@@ -14,7 +14,7 @@ import { Icon, type IconName } from '@/components/ui/Icon';
 import type { Faculty, Locale, Program } from '@unm/types';
 import { cn, localized } from '@/lib/utils';
 
-const STEP_ICONS: IconName[] = ['user', 'graduation', 'program', 'document', 'check-circle'];
+const STEP_ICONS: IconName[] = ['user', 'graduation', 'library', 'document', 'check-circle'];
 
 export const applicationSchema = z.object({
   firstName: z.string().min(2).max(50),

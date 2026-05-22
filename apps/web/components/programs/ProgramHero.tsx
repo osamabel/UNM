@@ -3,7 +3,9 @@ import { useLocale, useTranslations } from 'next-intl';
 import { Badge } from '@/components/ui/Badge';
 import { Icon } from '@/components/ui/Icon';
 import type { Locale, Program } from '@unm/types';
+import { iconForProgramFormat } from '@/lib/program-meta-icons';
 import { displayProgramTitle, facultyPath, localized } from '@/lib/utils';
+import type { IconName } from '@/components/ui/Icon';
 
 interface Props {
   program: Program;
@@ -45,7 +47,7 @@ export function ProgramHero({ program }: Props) {
 
           <dl className="mt-8 grid grid-cols-2 gap-2.5 border-t border-white/15 pt-8 sm:grid-cols-3 sm:gap-3">
             <Spec icon="calendar" label={t('duration')} value={program.duration} />
-            <Spec icon="building" label={t('format')} value={program.format} />
+            <Spec icon={iconForProgramFormat(program.format)} label={t('format')} value={program.format} />
             <Spec
               icon="globe"
               label={t('language')}
@@ -65,7 +67,7 @@ function Spec({
   value,
   className,
 }: {
-  icon: 'calendar' | 'building' | 'globe';
+  icon: IconName;
   label: string;
   value: string;
   className?: string;

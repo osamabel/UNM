@@ -41,7 +41,7 @@ export function FacultyHero({ faculty }: Props) {
         >
           {count > 0 && (
             <span className="glass-pill inline-flex max-w-full text-xs font-semibold text-secondary/80">
-              <Icon name="program" size={14} className="shrink-0 text-primary" />
+              <Icon name="library" size={14} className="shrink-0 text-primary" />
               <span className="truncate">
                 {count} {programLabel}
               </span>

@@ -164,7 +164,7 @@ function UpcomingFacultyCard({
             'bg-white/50 px-3 py-1 font-heading text-[10px] font-semibold uppercase tracking-[0.12em] text-secondary/45',
           )}
         >
-          <Icon name="graduation" size={12} className="opacity-60" />
+          <Icon name="clock" size={12} className="opacity-60" />
           {comingSoonLabel}
         </p>
       </div>

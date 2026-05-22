@@ -32,16 +32,14 @@ export function FacultyHeroPanel({
         className="pointer-events-none absolute inset-x-0 top-6 z-0 flex justify-center opacity-30 motion-reduce:hidden sm:hidden"
         aria-hidden
       >
-        <span className="logo-wrap logo-wrap-light inline-flex opacity-90">
-          <img
-            src="/logo-unm.svg"
-            alt=""
-            width={200}
-            height={92}
-            className="logo-blend-light faculty-hero-logo-ghost h-28 w-44"
-            decoding="async"
-          />
-        </span>
+        <img
+          src="/unmtrans.png"
+          alt=""
+          width={200}
+          height={92}
+          className="faculty-hero-logo-ghost h-28 w-44 object-contain"
+          decoding="async"
+        />
       </div>
 
       {/* Desktop: soft tint + blurred wordmark on the right */}
@@ -53,16 +51,14 @@ export function FacultyHeroPanel({
           className="absolute inset-0 rounded-full blur-3xl"
           style={{ backgroundColor: accent, opacity: 0.12 }}
         />
-        <span className="logo-wrap logo-wrap-light inline-flex h-full w-full">
-          <img
-            src="/logo-unm.svg"
-            alt=""
-            width={320}
-            height={148}
-            className="logo-blend-light faculty-hero-logo-ghost h-full w-full object-contain"
-            decoding="async"
-          />
-        </span>
+        <img
+          src="/unmtrans.png"
+          alt=""
+          width={320}
+          height={148}
+          className="faculty-hero-logo-ghost h-full w-full object-contain"
+          decoding="async"
+        />
       </div>
 
       <div className="relative z-10 mx-auto max-w-3xl text-center lg:mx-0 lg:max-w-2xl lg:text-left">

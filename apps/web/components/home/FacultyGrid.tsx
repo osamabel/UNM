@@ -5,7 +5,8 @@ import { useLocale, useTranslations } from 'next-intl';
 import { SectionWrapper } from '@/components/ui/SectionWrapper';
 import { SectionHeader } from '@/components/patterns/SectionHeader';
 import { ScrollReveal } from '@/components/patterns/ScrollReveal';
-import { Icon, type IconName } from '@/components/ui/Icon';
+import { Icon } from '@/components/ui/Icon';
+import { iconForFacultySlug } from '@/lib/faculty-icons';
 import { facultyPath, localized } from '@/lib/utils';
 import type { Faculty, Locale } from '@unm/types';
 import { cn } from '@/lib/utils';
@@ -13,13 +14,6 @@ import { cn } from '@/lib/utils';
 interface Props {
   faculties: Faculty[];
 }
-
-const FACULTY_ICONS: Record<string, IconName> = {
-  'business-school': 'graduation',
-  'school-of-governance': 'shield',
-  'school-of-technology': 'globe',
-  'school-of-sport-business': 'award',
-};
 
 function shortFacultyName(name: string): string {
   return name.replace(/^UNM\s+/i, '').trim();
@@ -60,7 +54,7 @@ export function FacultyGrid({ faculties }: Props) {
     <SectionWrapper id="facultes" tone="alt">
       <ScrollReveal>
         <SectionHeader
-          icon="building"
+          icon="landmark"
           eyebrow={t('facultiesEyebrow')}
           title={t('facultiesTitle')}
           description={t('facultiesSubtitle')}
@@ -105,7 +99,7 @@ function ActiveFacultyCard({
   const count = f.programCount ?? 0;
   const pitch = facultyPitch(tg, f.slug);
   const domains = (f.domains ?? []).slice(0, 3);
-  const icon = FACULTY_ICONS[f.slug] ?? 'building';
+  const icon = iconForFacultySlug(f.slug);
   const color = f.color || '#B5341A';
   const name = shortFacultyName(localized(f.name, locale));
 
@@ -174,7 +168,7 @@ function UpcomingFacultyCard({
   tg: FacultyGridT;
 }) {
   const pitch = facultyPitch(tg, f.slug);
-  const icon = FACULTY_ICONS[f.slug] ?? 'building';
+  const icon = iconForFacultySlug(f.slug);
   const color = f.color || '#3D1A0B';
   const name = shortFacultyName(localized(f.name, locale));
 

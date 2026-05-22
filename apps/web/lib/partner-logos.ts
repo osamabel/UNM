@@ -1,4 +1,14 @@
 import type { Partner } from '@unm/types';
+import { LOGO_ALT, LOGO_SRC } from '@/lib/logo';
+
+export type AllianceLogoEntry = {
+  id: string;
+  name: string;
+  src: string;
+  scale: number;
+  /** SVG wordmark needs matte blend on light bands. */
+  kind: 'svg-wordmark' | 'jpeg';
+};
 
 /**
  * Real partner logos in /public/LOGS (user-provided assets).
@@ -55,6 +65,19 @@ export function getPartnerLogoSrc(partner: Pick<Partner, 'name' | 'logo'>): stri
 
   return null;
 }
+
+/** UNM × EBS lockup in the alliance section (home). */
+export const EBS_ALLIANCE_LOCKUP: AllianceLogoEntry[] = [
+  { id: 'unm', name: LOGO_ALT, src: LOGO_SRC, scale: 1.02, kind: 'jpeg' },
+  { id: 'ebs', name: 'EBS Paris', src: '/LOGS/EBS.jpeg', scale: 0.86, kind: 'jpeg' },
+];
+
+/** Accreditation wordmarks in the alliance section (home). */
+export const ACCREDITATION_LOGOS: AllianceLogoEntry[] = [
+  { id: 'efmd', name: 'EFMD', src: '/LOGS/EFMD.jpeg', scale: 0.94, kind: 'jpeg' },
+  { id: 'aacsb', name: 'AACSB', src: '/LOGS/aac.jpeg', scale: 1.04, kind: 'jpeg' },
+  { id: 'cefdg', name: 'CEFDG', src: '/LOGS/cef.jpeg', scale: 1.08, kind: 'jpeg' },
+];
 
 export function getPartnerLogoScale(name: string): number {
   const lower = name.toLowerCase();

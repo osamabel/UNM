@@ -18,8 +18,8 @@ interface Params {
   params: { locale: Locale };
 }
 
-const THREE_WAY_ICONS: IconName[] = ['program', 'users', 'award'];
-const EXPERIENCE_ICONS: IconName[] = ['graduation', 'globe', 'shield', 'star'];
+const THREE_WAY_ICONS: IconName[] = ['handshake', 'users', 'medal'];
+const EXPERIENCE_ICONS: IconName[] = ['library', 'globe', 'target', 'star'];
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const base = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://unm.ma';
@@ -146,7 +146,7 @@ export default function OrganisationsPage({ params }: Params) {
         <ol className="mt-8 grid min-w-0 gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
           {c.threeWays.items.map((it, i) => (
             <li key={i} className="card-interactive flex h-full flex-col p-6">
-              <IconBox name={THREE_WAY_ICONS[i] ?? 'program'} size="sm" className="mb-4" />
+              <IconBox name={THREE_WAY_ICONS[i] ?? 'handshake'} size="sm" className="mb-4" />
               <p className="font-heading text-[10px] font-semibold uppercase tracking-[0.14em] text-secondary/45">
                 0{i + 1}
               </p>

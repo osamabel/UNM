@@ -124,7 +124,7 @@ export function TestimonialsSlider({ testimonials }: Props) {
                     <div className="flex flex-wrap gap-2 sm:justify-end">
                       {programLabel && (
                         <span className="glass-pill text-xs font-semibold text-secondary/80">
-                          <Icon name="graduation" size={12} className="text-primary" />
+                          <Icon name="user" size={12} className="text-primary" />
                           {programLabel}
                         </span>
                       )}

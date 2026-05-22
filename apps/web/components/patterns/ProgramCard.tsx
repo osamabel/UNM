@@ -2,7 +2,9 @@ import Link from 'next/link';
 import { Badge } from '@/components/ui/Badge';
 import { Icon } from '@/components/ui/Icon';
 import type { Locale, Program } from '@unm/types';
+import { iconForProgramFormat, iconForProgramType } from '@/lib/program-meta-icons';
 import { cn, displayProgramTitle, localized, programPath } from '@/lib/utils';
+import type { IconName } from '@/components/ui/Icon';
 
 interface ProgramCardProps {
   program: Program;
@@ -28,6 +30,8 @@ export function ProgramCard({
     ? localized(program.faculty.name, locale).replace(/^UNM\s+/i, '')
     : '';
   const accent = program.faculty?.color || '#B5341A';
+  const typeIcon = iconForProgramType(program.type);
+  const formatIcon = iconForProgramFormat(program.format);
 
   return (
     <Link
@@ -52,7 +56,7 @@ export function ProgramCard({
             )}
             style={{ backgroundColor: `${accent}18`, color: accent }}
           >
-            <Icon name="graduation" size={compact ? 16 : 18} weight="medium" />
+            <Icon name={typeIcon} size={compact ? 16 : 18} weight="medium" />
           </span>
           <Badge variant="program-type" type={program.type}>
             {program.type}
@@ -83,7 +87,7 @@ export function ProgramCard({
       <div className="relative mt-auto flex flex-wrap items-end justify-between gap-3 pt-5 sm:pt-6">
         <ul className="flex flex-wrap gap-2">
           <MetaPill icon="calendar" label={durationLabel} value={program.duration} />
-          <MetaPill icon="building" label={formatLabel} value={program.format} />
+          <MetaPill icon={formatIcon} label={formatLabel} value={program.format} />
         </ul>
         <span
           className={cn(
@@ -104,7 +108,7 @@ function MetaPill({
   label,
   value,
 }: {
-  icon: 'calendar' | 'building';
+  icon: IconName;
   label: string;
   value: string;
 }) {

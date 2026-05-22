@@ -4,13 +4,13 @@ Warm, institutional palette derived from the UNM logo. No pure white or black.
 
 ## Section backgrounds
 
-| Tone | Use |
-|------|-----|
+| Tone                 | Use                                   |
+| -------------------- | ------------------------------------- |
 | `default` / `canvas` | Transparent — page mesh shows through |
-| `soft` | Light cream band (`bg-soft`) |
-| `alt` | Sand band (`bg-warm-100`) |
-| `blush` | Deeper warm accent |
-| `dark` | Glass dark band (stats, faculty CTA) |
+| `soft`               | Light cream band (`bg-soft`)          |
+| `alt`                | Sand band (`bg-warm-100`)             |
+| `blush`              | Deeper warm accent                    |
+| `dark`               | Glass dark band (stats, faculty CTA)  |
 
 Use `<SectionWrapper tone="default|soft|alt|blush|dark" />`.
 
@@ -25,37 +25,38 @@ Use `<SectionWrapper tone="default|soft|alt|blush|dark" />`.
 
 Prefer design-system classes over repeating `border` + `bg-white` + `shadow-card`:
 
-| Class | Use |
-|-------|-----|
-| `.glass` | Base frosted surface |
-| `.glass-strong` | Nav dropdown, forms, faculty grid shell |
-| `.glass-soft` | Subtle panels |
-| `.glass-pill` | Hero proof chips, badges |
-| `.glass-dark` | Hero panel, CTA banner, dark sections |
-| `.glass-stat` | Stat tiles on dark backgrounds |
-| `.card-flat` | Static cards (= `.glass` + radius) |
-| `.card-interactive` | Hover-lift cards |
-| `.form-panel` | Form shells |
-| `.icon-box` | Icon containers |
-| `.link-on-dark` | Footer / topbar links |
+| Class               | Use                                     |
+| ------------------- | --------------------------------------- |
+| `.glass`            | Base frosted surface                    |
+| `.glass-strong`     | Nav dropdown, forms, faculty grid shell |
+| `.glass-soft`       | Subtle panels                           |
+| `.glass-pill`       | Hero proof chips, badges                |
+| `.glass-dark`       | Hero panel, CTA banner, dark sections   |
+| `.glass-stat`       | Stat tiles on dark backgrounds          |
+| `.card-flat`        | Static cards (= `.glass` + radius)      |
+| `.card-interactive` | Hover-lift cards                        |
+| `.form-panel`       | Form shells                             |
+| `.icon-box`         | Icon containers                         |
+| `.link-on-dark`     | Footer / topbar links                   |
 
 Layout shells: `.glass-nav`, `.glass-topbar`, `.glass-footer`, `.glass-dropdown`.
 
 ## Icons (`components/ui/Icon.tsx`)
 
-Single UNM stroke set (terracotta via `currentColor`) — prefer extending this over a second library.
+**Lucide React** (rounded stroke, `currentColor` = terracotta). Always use `Icon` / `IconBox` + `IconName` — never import Lucide in pages.
 
-| Icon | Typical use |
-|------|-------------|
-| `calendar` / `clock` | Dates, reading time, deadlines |
-| `map-pin` | Campus, locations |
-| `sparkles` | Partnerships |
-| `flask` | Research |
-| `newspaper` | News |
-| `graduation` / `program` | Programmes, faculties |
-| `shield` | Accreditations, trust |
+| Area | Icons / helper |
+| ---- | ---------------- |
+| Programmes | `library` (sections), type & format via `lib/program-meta-icons.ts` |
+| Facultés | `lib/faculty-icons.ts` — briefcase, scale, cpu, trophy |
+| Formats | `laptop` distanciel · `layers` hybride · `building` présentiel |
+| Partenaires | `handshake` · academic `graduation` · industry `briefcase` |
+| Actualités | `lib/article-category.ts` — campus, recherche, partenariats, événements |
+| Événements | `lib/university-events-stub.ts` — JPO, webinar, masterclass |
+| Recherche ⌘K | `lib/faculty-icons` per faculty hit |
+| Admissions | `document` · étapes formulaire dans `ApplicationForm` |
 
-Category chips: `lib/article-category.ts` · domain chips: `lib/domain-icons.ts`.
+Legacy alias: `program` → same as `library`.
 
 ## Typography
 

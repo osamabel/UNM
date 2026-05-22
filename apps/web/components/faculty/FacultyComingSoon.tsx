@@ -29,7 +29,7 @@ export function FacultyComingSoon({ faculty }: { faculty: Faculty }) {
           accent={accent}
         >
           <span className="glass-pill inline-flex max-w-full text-xs font-semibold text-secondary/80">
-            <Icon name="graduation" size={14} className="shrink-0 text-primary" />
+            <Icon name="library" size={14} className="shrink-0 text-primary" />
             {t('comingSoonBadge')}
           </span>
           <p className="max-w-md text-center font-heading text-xs font-semibold uppercase tracking-[0.14em] text-secondary/50 lg:text-left">

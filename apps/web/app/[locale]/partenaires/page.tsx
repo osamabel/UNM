@@ -37,7 +37,7 @@ export default async function PartnersPage({ params }: { params: { locale: Local
 
       <SectionWrapper tone="soft" className="!pb-10 sm:!pb-12">
         <PageHeader
-          icon="shield"
+          icon="handshake"
           eyebrow={t('eyebrow')}
           title={t('title')}
           description={t('subtitle')}
