@@ -233,7 +233,7 @@ export function ApplicationForm({ faculties, programs }: Props) {
           <div className="grid gap-4 sm:grid-cols-2">
             <Input label={t('highestDegree')} required {...register('highestDegree')} />
             <Input label={t('institution')} required {...register('institution')} />
-            <Input label={t('graduationYear')} type="number" {...register('graduationYear')} />
+            <Input label={t('graduationYear')} type="number" required {...register('graduationYear')} />
             <Input label={t('field')} required {...register('field')} />
           </div>
         )}
