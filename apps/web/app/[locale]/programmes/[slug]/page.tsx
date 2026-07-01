@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { unstable_setRequestLocale } from 'next-intl/server';
+import { setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { ProgramHero } from '@/components/programs/ProgramHero';
 import { ProgramCTAMobile, StickyProgramCTA } from '@/components/programs/StickyProgramCTA';
@@ -55,7 +55,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 }
 
 export default async function ProgramPage({ params }: Params) {
-  unstable_setRequestLocale(params.locale);
+  setRequestLocale(params.locale);
   const program = await getProgram(params.slug);
   if (!program) notFound();
   const related = await getRelatedPrograms(program.faculty?.slug ?? '', program.slug);

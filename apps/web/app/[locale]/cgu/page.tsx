@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { unstable_setRequestLocale } from 'next-intl/server';
+import { setRequestLocale } from 'next-intl/server';
 import { LegalPage } from '@/components/legal/LegalPage';
 import { cgu } from '@/lib/legal';
 import { localized } from '@/lib/utils';
@@ -27,6 +27,6 @@ export async function generateMetadata({
 }
 
 export default function CguPage({ params }: { params: { locale: Locale } }) {
-  unstable_setRequestLocale(params.locale);
+  setRequestLocale(params.locale);
   return <LegalPage doc={cgu} />;
 }

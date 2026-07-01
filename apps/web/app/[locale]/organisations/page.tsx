@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
-import { unstable_setRequestLocale } from 'next-intl/server';
+import { setRequestLocale } from 'next-intl/server';
 import { SectionWrapper } from '@/components/ui/SectionWrapper';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
 import { PageHeader } from '@/components/patterns/PageHeader';
@@ -92,7 +92,7 @@ function SplitBlock({
 }
 
 export default function OrganisationsPage({ params }: Params) {
-  unstable_setRequestLocale(params.locale);
+  setRequestLocale(params.locale);
   const locale = params.locale;
   const isEn = locale === 'en';
   const contactOrg = isEn ? '/en/contact?subject=organisations' : '/contact?subject=organisations';

@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { unstable_setRequestLocale } from 'next-intl/server';
+import { setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { FacultyHero } from '@/components/faculty/FacultyHero';
 import { ProgramsList } from '@/components/faculty/ProgramsList';
@@ -46,7 +46,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 }
 
 export default async function FacultyPage({ params }: Params) {
-  unstable_setRequestLocale(params.locale);
+  setRequestLocale(params.locale);
   const faculty = await getFaculty(params.slug);
   if (!faculty) notFound();
 

@@ -1,6 +1,7 @@
+export const revalidate = 300;
+
 export {
   default,
   generateMetadata,
   generateStaticParams,
-  revalidate,
 } from '../../programmes/[slug]/page';

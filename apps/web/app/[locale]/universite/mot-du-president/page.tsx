@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
-import { unstable_setRequestLocale } from 'next-intl/server';
+import { setRequestLocale } from 'next-intl/server';
 import { SectionWrapper } from '@/components/ui/SectionWrapper';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
 import { UniversitySubHero } from '@/components/university/UniversitySubHero';
@@ -47,7 +47,7 @@ const PILLARS_EN: Pillar[] = [
 ];
 
 export default function PresidentWordPage({ params }: { params: { locale: Locale } }) {
-  unstable_setRequestLocale(params.locale);
+  setRequestLocale(params.locale);
   const isEn = params.locale === 'en';
   const pillars = isEn ? PILLARS_EN : PILLARS_FR;
 

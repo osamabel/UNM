@@ -1,1 +1,3 @@
-export { default, generateMetadata, revalidate } from '../organisations/page';
+export const revalidate = 600;
+
+export { default, generateMetadata } from '../organisations/page';

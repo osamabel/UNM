@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { unstable_setRequestLocale } from 'next-intl/server';
+import { setRequestLocale } from 'next-intl/server';
 import { SectionWrapper } from '@/components/ui/SectionWrapper';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
 import { UniversitySubHero } from '@/components/university/UniversitySubHero';
@@ -88,7 +88,7 @@ const VALUES_EN: Value[] = [
 ];
 
 export default function ManifestoPage({ params }: { params: { locale: Locale } }) {
-  unstable_setRequestLocale(params.locale);
+  setRequestLocale(params.locale);
   const isEn = params.locale === 'en';
 
   const baseline   = isEn ? BASELINE_EN   : BASELINE_FR;

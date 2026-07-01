@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { getTranslations, unstable_setRequestLocale } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { SectionWrapper } from '@/components/ui/SectionWrapper';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
 import { PageHeader } from '@/components/patterns/PageHeader';
@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: { params: { locale: Locale } 
 }
 
 export default async function PartnersPage({ params }: { params: { locale: Locale } }) {
-  unstable_setRequestLocale(params.locale);
+  setRequestLocale(params.locale);
   const [partners, t, tb] = await Promise.all([
     getPartners(),
     getTranslations({ locale: params.locale, namespace: 'partnersIndex' }),

@@ -19,5 +19,10 @@
   "engines": {
     "node": ">=20",
     "pnpm": ">=8"
+  },
+  "pnpm": {
+    "overrides": {
+      "drizzle-kit": "^0.31.0"
+    }
   }
 }

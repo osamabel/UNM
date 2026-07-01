@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import Script from 'next/script';
 import { notFound } from 'next/navigation';
 import { NextIntlClientProvider } from 'next-intl';
-import { getMessages, getTranslations, unstable_setRequestLocale } from 'next-intl/server';
+import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { MainContent } from '@/components/layout/MainContent';
@@ -64,7 +64,7 @@ export default async function LocaleLayout({
   params: { locale: string };
 }) {
   if (!isLocale(params.locale)) notFound();
-  unstable_setRequestLocale(params.locale);
+  setRequestLocale(params.locale);
   const messages = await getMessages();
   const tCommon = await getTranslations({ locale: params.locale, namespace: 'common' });
   const plausibleDomain = process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN;

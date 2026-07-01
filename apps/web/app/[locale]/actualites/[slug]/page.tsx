@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { unstable_setRequestLocale } from 'next-intl/server';
+import { setRequestLocale } from 'next-intl/server';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { SectionWrapper } from '@/components/ui/SectionWrapper';
@@ -48,7 +48,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 }
 
 export default async function ArticlePage({ params }: Params) {
-  unstable_setRequestLocale(params.locale);
+  setRequestLocale(params.locale);
   const article = await getArticle(params.slug);
   if (!article) notFound();
 

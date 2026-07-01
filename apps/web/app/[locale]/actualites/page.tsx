@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { getTranslations, unstable_setRequestLocale } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { SectionWrapper } from '@/components/ui/SectionWrapper';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
 import { PageHeader } from '@/components/patterns/PageHeader';
@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: { params: { locale: Locale } 
 }
 
 export default async function NewsIndex({ params, searchParams }: Props) {
-  unstable_setRequestLocale(params.locale);
+  setRequestLocale(params.locale);
   const page = Math.max(1, Number(searchParams.page) || 1);
   const [{ docs, totalPages }, t, tb] = await Promise.all([
     getArticles(page, 12),

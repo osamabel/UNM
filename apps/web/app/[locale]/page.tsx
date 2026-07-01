@@ -1,4 +1,4 @@
-import { unstable_setRequestLocale } from 'next-intl/server';
+import { setRequestLocale } from 'next-intl/server';
 import type { Locale } from '@unm/types';
 import { HeroSection } from '@/components/home/HeroSection';
 import { EBSPartnership } from '@/components/home/EBSPartnership';
@@ -17,7 +17,7 @@ import {
 export const revalidate = 300;
 
 export default async function HomePage({ params }: { params: { locale: Locale } }) {
-  unstable_setRequestLocale(params.locale);
+  setRequestLocale(params.locale);
   const [faculties, programs, testimonials, partners] = await Promise.all([
     getFaculties(),
     getPrograms({ featured: true, limit: 3 }),

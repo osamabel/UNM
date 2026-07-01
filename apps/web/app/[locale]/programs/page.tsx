@@ -1,1 +1,3 @@
-export { default, generateMetadata, revalidate } from '../programmes/page';
+export const revalidate = 120;
+
+export { default, generateMetadata } from '../programmes/page';

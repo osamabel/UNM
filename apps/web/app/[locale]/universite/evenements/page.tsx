@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { getTranslations, unstable_setRequestLocale } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { SectionWrapper } from '@/components/ui/SectionWrapper';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
 import { UniversitySubHero } from '@/components/university/UniversitySubHero';
@@ -20,7 +20,7 @@ export async function generateMetadata({
 }
 
 export default async function EventsPage({ params }: { params: { locale: Locale } }) {
-  unstable_setRequestLocale(params.locale);
+  setRequestLocale(params.locale);
   const [t, tu, tb] = await Promise.all([
     getTranslations({ locale: params.locale, namespace: 'eventsIndex' }),
     getTranslations({ locale: params.locale, namespace: 'universityIndex' }),

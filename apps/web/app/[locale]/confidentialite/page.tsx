@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { unstable_setRequestLocale } from 'next-intl/server';
+import { setRequestLocale } from 'next-intl/server';
 import { LegalPage } from '@/components/legal/LegalPage';
 import { confidentialite } from '@/lib/legal';
 import { localized } from '@/lib/utils';
@@ -33,6 +33,6 @@ export default function PrivacyPage({
 }: {
   params: { locale: Locale };
 }) {
-  unstable_setRequestLocale(params.locale);
+  setRequestLocale(params.locale);
   return <LegalPage doc={confidentialite} />;
 }

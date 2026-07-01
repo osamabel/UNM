@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
-import { getTranslations, unstable_setRequestLocale } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { SectionWrapper } from '@/components/ui/SectionWrapper';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
 import { PageHeader } from '@/components/patterns/PageHeader';
@@ -38,7 +38,7 @@ export default async function ProgramsIndex({
   params: { locale: Locale };
   searchParams: Search;
 }) {
-  unstable_setRequestLocale(params.locale);
+  setRequestLocale(params.locale);
   const [faculties, programs, t, tb, tProgram] = await Promise.all([
     getFaculties(),
     getPrograms(searchParams),
