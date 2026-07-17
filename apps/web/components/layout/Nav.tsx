@@ -64,16 +64,17 @@ const ITEMS: NavItem[] = [
 
 // Shared classes for level-1 items: UPPERCASE, narrow tracking, no shadow.
 // Inspired by HBS / Wharton / INSEAD main nav.
-const L1_LINK = 'nav-link rounded px-3 py-2.5';
+const L1_LINK =
+  'nav-link !px-2 !py-2 !text-[12px] !tracking-[0.06em] whitespace-nowrap 2xl:!px-2.5 2xl:!text-[13px]';
 
 export function Nav() {
   const locale = useLocale() as Locale;
   const t = useTranslations('nav');
   return (
-    <ul className="flex items-center gap-1">
+    <ul className="flex flex-nowrap items-center justify-center gap-0">
       {ITEMS.map((item) =>
         item.kind === 'leaf' ? (
-          <li key={item.key}>
+          <li key={item.key} className="shrink-0">
             <Link
               href={locale === 'en' ? item.en : item.fr}
               className={L1_LINK}
@@ -162,7 +163,7 @@ function Dropdown({ label, parentHref, items, comingSoonLabel }: DropdownProps) 
   return (
     <li
       ref={wrapperRef}
-      className="relative"
+      className="relative shrink-0"
       onMouseEnter={() => {
         cancelClose();
         setOpen(true);
@@ -171,8 +172,8 @@ function Dropdown({ label, parentHref, items, comingSoonLabel }: DropdownProps) 
       onFocus={() => setOpen(true)}
       onBlur={scheduleClose}
     >
-      <span className="nav-link inline-flex items-center rounded">
-        <Link href={parentHref} className="rounded-l px-3 py-2.5">
+      <span className="nav-link inline-flex items-center rounded !px-0 !py-0 whitespace-nowrap">
+        <Link href={parentHref} className="rounded-l px-2 py-2 2xl:px-2.5">
           {label}
         </Link>
         <button
@@ -194,7 +195,7 @@ function Dropdown({ label, parentHref, items, comingSoonLabel }: DropdownProps) 
               });
             }
           }}
-          className="rounded-r px-2 py-2.5 transition-transform duration-300"
+          className="rounded-r px-1.5 py-2 transition-transform duration-300"
         >
           <svg
             aria-hidden="true"

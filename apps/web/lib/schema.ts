@@ -1,9 +1,16 @@
-import type { Article, Faculty, Locale, Program, ProgramFAQItem } from '@unm/types';
+import type { Article, Faculty, Locale, Program, ProgramFAQItem, SiteSettings } from '@unm/types';
 import { localized } from './utils';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://unm.ma';
 
-export function organizationSchema() {
+export function organizationSchema(settings?: SiteSettings | null) {
+  const sameAs = [
+    settings?.social?.linkedin,
+    settings?.social?.facebook,
+    settings?.social?.instagram,
+    settings?.social?.youtube,
+  ].filter(Boolean) as string[];
+
   return {
     '@context': 'https://schema.org',
     '@type': 'EducationalOrganization',
@@ -11,14 +18,14 @@ export function organizationSchema() {
     alternateName: 'UNM',
     url: SITE_URL,
     logo: `${SITE_URL}/unmtrans.png`,
-    sameAs: [
-      'https://www.linkedin.com/school/unm-ma',
-      'https://www.facebook.com/unm.ma',
-    ],
+    ...(sameAs.length > 0 && { sameAs }),
+    ...(settings?.contact?.email && { email: settings.contact.email }),
+    ...(settings?.contact?.phone && { telephone: settings.contact.phone }),
     address: {
       '@type': 'PostalAddress',
       addressCountry: 'MA',
-      addressLocality: 'Casablanca',
+      addressLocality: 'Marrakech',
+      streetAddress: settings?.contact?.address?.fr,
     },
   };
 }

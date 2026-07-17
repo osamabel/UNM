@@ -5,9 +5,9 @@ import { isAdmin } from '../access/isAdmin';
 export const Applications: CollectionConfig = {
   slug: 'applications',
   admin: {
-    useAsTitle: 'id',
+    useAsTitle: 'lastName',
     group: 'Admissions',
-    defaultColumns: ['id', 'program', 'status', 'submittedAt'],
+    defaultColumns: ['lastName', 'firstName', 'program', 'experienceLevel', 'status', 'submittedAt'],
   },
   access: {
     create: () => true,
@@ -16,8 +16,23 @@ export const Applications: CollectionConfig = {
     delete: isAdmin,
   },
   fields: [
-    { name: 'lead', type: 'relationship', relationTo: 'leads' },
+    { name: 'firstName', type: 'text', required: true },
+    { name: 'lastName', type: 'text', required: true },
+    { name: 'country', type: 'text', required: true },
+    { name: 'highestDegree', type: 'text', required: true },
+    {
+      name: 'experienceLevel',
+      type: 'select',
+      required: true,
+      options: [
+        { label: '0 – 5 ans', value: '0-5' },
+        { label: '5 – 10 ans', value: '5-10' },
+        { label: '10 – 15 ans', value: '10-15' },
+        { label: '15 ans et +', value: '15+' },
+      ],
+    },
     { name: 'program', type: 'relationship', relationTo: 'programs', required: true },
+    { name: 'consentGiven', type: 'checkbox', required: true },
     {
       name: 'status',
       type: 'select',
@@ -29,11 +44,6 @@ export const Applications: CollectionConfig = {
         { label: 'Refusée', value: 'rejected' },
         { label: 'Liste d’attente', value: 'waitlisted' },
       ],
-    },
-    {
-      name: 'documents',
-      type: 'array',
-      fields: [{ name: 'file', type: 'upload', relationTo: 'media' }],
     },
     { name: 'submittedAt', type: 'date', defaultValue: () => new Date() },
     { name: 'reviewedAt', type: 'date' },

@@ -227,9 +227,13 @@
     @apply border-primary/40 outline-none ring-2 ring-primary/25;
   }
 
-  /* Wordmark SVG — white JPEG matte keyed to nav / footer shells */
+  /* Wordmark — light matte on dark shells so UNM + subtitle stay readable */
   .logo-wrap {
     isolation: isolate;
+  }
+
+  .logo-wrap-footer {
+    @apply rounded-xl bg-canvas px-3.5 py-2.5 shadow-[0_8px_28px_rgba(0,0,0,0.22)] ring-1 ring-white/10;
   }
 
   .logo-wrap-light {

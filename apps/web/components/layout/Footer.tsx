@@ -4,7 +4,10 @@ import Link from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
 import { NewsletterForm } from '@/components/forms/NewsletterForm';
 import { Logo } from '@/components/layout/Logo';
-import type { Locale } from '@unm/types';
+import { Icon } from '@/components/ui/Icon';
+import { localized } from '@/lib/utils';
+import { digitsOnly } from '@/lib/site-settings';
+import type { Locale, SiteSettings } from '@unm/types';
 
 type FooterLink = { label: string; fr: string; en: string };
 
@@ -64,19 +67,29 @@ function FooterNavTitle({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function Footer() {
+export function Footer({ settings }: { settings: SiteSettings }) {
   const locale = useLocale() as Locale;
   const t = useTranslations('footer');
   const year = new Date().getFullYear();
   const isEn = locale === 'en';
   const homeHref = isEn ? '/en' : '/';
   const columns = buildColumns(isEn);
+  const phoneDigits = digitsOnly(settings.contact.phone);
+  const waDigits = digitsOnly(settings.contact.whatsapp);
+  const address = localized(settings.contact.address, locale);
 
   const legalLinks = [
     { href: isEn ? '/en/legal-notice' : '/mentions-legales', label: t('legal') },
     { href: isEn ? '/en/terms-of-use' : '/cgu', label: t('termsOfUse') },
     { href: isEn ? '/en/terms-of-sale' : '/cgv', label: t('termsOfSale') },
   ];
+
+  const social = [
+    { href: settings.social.linkedin, label: 'LinkedIn' },
+    { href: settings.social.facebook, label: 'Facebook' },
+    { href: settings.social.instagram, label: 'Instagram' },
+    { href: settings.social.youtube, label: 'YouTube' },
+  ].filter((s) => Boolean(s.href));
 
   return (
     <footer className="glass-footer relative mt-auto overflow-hidden text-warm-100">
@@ -89,10 +102,70 @@ export function Footer() {
       <div className="container-page relative py-14 lg:py-16">
         <div className="grid gap-12 lg:grid-cols-12 lg:gap-10">
           <div className="lg:col-span-5 xl:col-span-4">
-            <Link href={homeHref} className="inline-block transition-opacity duration-300 hover:opacity-90">
-              <Logo surface="dark" className="!inline-flex sm:[&_.logo-wordmark]:h-11" />
+            <Link
+              href={homeHref}
+              className="inline-block transition-opacity duration-300 hover:opacity-95"
+              aria-label="UNM — Université Numérique du Maroc"
+            >
+              <Logo surface="dark" />
             </Link>
             <p className="mt-5 max-w-sm text-sm leading-relaxed text-warm-200/90">{t('tagline')}</p>
+
+            <ul className="mt-5 space-y-2 text-sm text-warm-200/90">
+              {phoneDigits && (
+                <li>
+                  <a href={`tel:${phoneDigits}`} className="link-on-dark inline-flex items-center gap-2">
+                    <Icon name="phone" size={14} className="opacity-70" />
+                    {settings.contact.phone}
+                  </a>
+                </li>
+              )}
+              <li>
+                <a
+                  href={`mailto:${settings.contact.email}`}
+                  className="link-on-dark inline-flex items-center gap-2"
+                >
+                  <Icon name="mail" size={14} className="opacity-70" />
+                  {settings.contact.email}
+                </a>
+              </li>
+              {address && (
+                <li className="flex items-start gap-2 text-warm-300/90">
+                  <Icon name="map-pin" size={14} className="mt-0.5 shrink-0 opacity-70" />
+                  <span>{address}</span>
+                </li>
+              )}
+            </ul>
+
+            {(social.length > 0 || waDigits) && (
+              <ul className="mt-5 flex flex-wrap gap-2">
+                {waDigits && (
+                  <li>
+                    <a
+                      href={`https://wa.me/${waDigits}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="glass-pill !h-8 text-xs text-warm-100"
+                    >
+                      WhatsApp
+                    </a>
+                  </li>
+                )}
+                {social.map((s) => (
+                  <li key={s.label}>
+                    <a
+                      href={s.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="glass-pill !h-8 text-xs text-warm-100"
+                    >
+                      {s.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
+
             <NewsletterForm className="mt-8 max-w-md" />
           </div>
 

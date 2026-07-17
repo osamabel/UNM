@@ -175,16 +175,22 @@ export type ApplicationStatus =
 
 export interface Application {
   id: string;
-  lead: Lead;
+  firstName: string;
+  lastName: string;
+  country: string;
+  highestDegree: string;
+  experienceLevel: '0-5' | '5-10' | '10-15' | '15+';
   program: Program;
+  consentGiven: boolean;
   status: ApplicationStatus;
-  documents: Media[];
   submittedAt: string;
   reviewedAt: string | null;
   reviewerNotes: string;
 }
 
 export interface SiteSettings {
+  /** Brand mark from CMS Media — used in header, footer, alliance lockup. */
+  brandLogo?: Media | null;
   contact: {
     phone: string;
     whatsapp: string;

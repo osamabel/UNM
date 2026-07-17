@@ -53,11 +53,11 @@
   },
   "admissions": {
     "title": "Admissions",
-    "metaDescription": "Apply to UNM in five steps. Submit your application online.",
-    "intro": "Complete the application in five steps. Required documents: CV, diploma, motivation letter.",
+    "metaDescription": "Apply to UNM online. A simplified form in just a few minutes.",
+    "intro": "Fill in the essential information below. Our Admissions team will contact you about the next steps.",
     "breadcrumb": "Admissions",
     "formEyebrow": "Online application",
-    "stepsHint": "5 steps · about 10 min",
+    "stepsHint": "Simplified form · 2 min",
     "trustSecure": "Secure submission",
     "trustResponse": "Response within 48h",
     "helpTitle": "Need help?",
@@ -102,7 +102,14 @@
     "fullName": "Full name",
     "referencePrefix": "Reference",
     "faculty": "Faculty",
-    "program": "Program",
+    "program": "Desired programme",
+    "experienceLevel": "Experience level",
+    "experienceLevels": {
+      "0-5": "0 – 5 years",
+      "5-10": "5 – 10 years",
+      "10-15": "10 – 15 years",
+      "15+": "15+ years"
+    },
     "format": "Format",
     "startDate": "Start date",
     "cv": "CV",
@@ -116,7 +123,16 @@
   },
   "featuredPrograms": {
     "eyebrow": "Explore",
-    "subtitle": "MBA and Executive pathways co-delivered with EBS Paris — a selection of our most sought-after programmes.",
+    "subtitle": "Three families of Executive programmes co-delivered with EBS Paris — choose the pathway that matches your ambition.",
+    "dbaTitle": "DBA",
+    "mbaTitle": "MBA",
+    "certificateTitle": "Executive Certificate",
+    "dbaDescription": "Doctorate in Business Administration for experienced leaders — applied research, strategic impact and international recognition.",
+    "mbaDescription": "Executive MBA for managers and senior professionals — management, finance, strategy and leadership with an African focus.",
+    "certificateDescription": "Short, focused Executive certificates — targeted upskilling on key themes without committing to a full degree cycle.",
+    "discoverDba": "Discover DBA programmes",
+    "discoverMba": "Discover MBA programmes",
+    "discoverCertificate": "Discover executive certificates",
     "explore": "View programme"
   },
   "facultyGrid": {
@@ -202,7 +218,8 @@
     "missionTitle": "Our mission",
     "missionBody": "Contribute actively to the emergence of an innovative, responsible African leadership able to take on the continent's economic, social and technological challenges.",
     "campusesTitle": "Two campuses",
-    "accreditationsTitle": "Accreditations",
+    "accreditationsTitle": "EBS Paris accreditations",
+    "accreditationsSubtitle": "These accreditations apply to European Business School, UNM's academic partner — not to the Digital University of Morocco as an institution.",
     "breadcrumb": "University"
   },
   "ebs": {
@@ -352,7 +369,7 @@
     "lastName": "Last name",
     "email": "Email address",
     "phone": "Phone",
-    "nationality": "Nationality",
+    "country": "Country",
     "programInterest": "Program of interest",
     "highestDegree": "Highest degree",
     "institution": "Institution",

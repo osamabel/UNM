@@ -100,12 +100,12 @@ export function MobileNav() {
       ? createPortal(
           <>
             <div
-              className="fixed inset-0 z-[200] bg-secondary/50 backdrop-blur-sm lg:hidden"
+              className="fixed inset-0 z-[200] bg-secondary/50 backdrop-blur-sm 2xl:hidden"
               aria-hidden
               onClick={close}
             />
             <div
-              className="glass-strong fixed inset-0 z-[201] flex flex-col lg:hidden"
+              className="glass-strong fixed inset-0 z-[201] flex flex-col 2xl:hidden"
               role="dialog"
               aria-modal="true"
               aria-label="Navigation"
@@ -228,7 +228,7 @@ export function MobileNav() {
         aria-label={open ? 'Close menu' : 'Open menu'}
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
-        className="touch-target inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-warm-150/70 bg-white/60 text-secondary backdrop-blur-md transition-all duration-300 hover:border-primary/30 lg:hidden"
+        className="touch-target inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-warm-150/70 bg-white/60 text-secondary backdrop-blur-md transition-all duration-300 hover:border-primary/30 2xl:hidden"
       >
         <Icon name={open ? 'close' : 'menu'} size={22} weight="medium" />
       </button>

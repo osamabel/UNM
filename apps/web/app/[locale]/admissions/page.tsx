@@ -7,7 +7,8 @@ import { PageHeader } from '@/components/patterns/PageHeader';
 import { Icon } from '@/components/ui/Icon';
 import { ApplicationForm } from '@/components/forms/ApplicationForm';
 import { CTABanner } from '@/components/home/CTABanner';
-import { getFaculties, getPrograms } from '@/lib/api';
+import { getPrograms, getSiteSettings } from '@/lib/api';
+import { mergeSiteSettings } from '@/lib/site-settings';
 import type { Locale } from '@unm/types';
 
 export const revalidate = 300;
@@ -38,12 +39,13 @@ function FormSkeleton() {
 
 export default async function AdmissionsPage({ params }: { params: { locale: Locale } }) {
   setRequestLocale(params.locale);
-  const [faculties, programs, t, tb] = await Promise.all([
-    getFaculties(),
+  const [programs, t, tb, rawSettings] = await Promise.all([
     getPrograms({ limit: 200 }),
     getTranslations({ locale: params.locale, namespace: 'admissions' }),
     getTranslations({ locale: params.locale, namespace: 'breadcrumb' }),
+    getSiteSettings(),
   ]);
+  const settings = mergeSiteSettings(rawSettings);
   const isEn = params.locale === 'en';
   const homeUrl = isEn ? '/en' : '/';
   const admissionsUrl = isEn ? '/en/admissions' : '/admissions';
@@ -86,7 +88,7 @@ export default async function AdmissionsPage({ params }: { params: { locale: Loc
       <SectionWrapper tone="canvas" className="!pt-8 sm:!pt-10">
         <div className="mx-auto grid min-w-0 max-w-4xl gap-8 lg:grid-cols-[1fr_minmax(0,15rem)] lg:gap-10">
           <Suspense fallback={<FormSkeleton />}>
-            <ApplicationForm faculties={faculties} programs={programs} />
+            <ApplicationForm programs={programs} />
           </Suspense>
           <aside className="hidden lg:block">
             <div className="card-flat sticky top-32 space-y-4 p-5">
@@ -95,11 +97,15 @@ export default async function AdmissionsPage({ params }: { params: { locale: Loc
               <ul className="space-y-2 text-sm text-secondary/70">
                 <li className="flex gap-2">
                   <Icon name="mail" size={16} className="shrink-0 text-primary/80" />
-                  admissions@unm.ma
+                  <a href={`mailto:${settings.contact.email}`} className="hover:text-primary">
+                    {settings.contact.email}
+                  </a>
                 </li>
                 <li className="flex gap-2">
                   <Icon name="phone" size={16} className="shrink-0 text-primary/80" />
-                  +212 6 62 62 62 19
+                  <a href={`tel:${settings.contact.phone.replace(/\s/g, '')}`} className="hover:text-primary">
+                    {settings.contact.phone}
+                  </a>
                 </li>
               </ul>
             </div>

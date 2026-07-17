@@ -8,8 +8,11 @@ import { Footer } from '@/components/layout/Footer';
 import { MainContent } from '@/components/layout/MainContent';
 import { MobileBottomBar } from '@/components/shared/MobileBottomBar';
 import { WhatsAppButton } from '@/components/shared/WhatsAppButton';
+import { SiteSettingsProvider } from '@/components/providers/SiteSettingsProvider';
 import { JsonLd } from '@/components/shared/JsonLd';
 import { organizationSchema } from '@/lib/schema';
+import { getSiteSettings } from '@/lib/api';
+import { mergeSiteSettings } from '@/lib/site-settings';
 import { isLocale } from '@/lib/locale';
 import { fontDisplay, fontSans } from '@/lib/fonts';
 import '../globals.css';
@@ -65,7 +68,8 @@ export default async function LocaleLayout({
 }) {
   if (!isLocale(params.locale)) notFound();
   setRequestLocale(params.locale);
-  const messages = await getMessages();
+  const [messages, rawSettings] = await Promise.all([getMessages(), getSiteSettings()]);
+  const settings = mergeSiteSettings(rawSettings);
   const tCommon = await getTranslations({ locale: params.locale, namespace: 'common' });
   const plausibleDomain = process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN;
 
@@ -79,16 +83,18 @@ export default async function LocaleLayout({
       </head>
       <body className={fontSans.className}>
         <NextIntlClientProvider locale={params.locale} messages={messages}>
-          <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-primary focus:px-4 focus:py-2 focus:text-white">
-            {tCommon('skipToContent')}
-          </a>
-          <Header />
-          <MainContent>{children}</MainContent>
-          <Footer />
-          <MobileBottomBar />
-          <WhatsAppButton />
+          <SiteSettingsProvider settings={settings}>
+            <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-primary focus:px-4 focus:py-2 focus:text-white">
+              {tCommon('skipToContent')}
+            </a>
+            <Header />
+            <MainContent>{children}</MainContent>
+            <Footer settings={settings} />
+            <MobileBottomBar />
+            <WhatsAppButton />
+          </SiteSettingsProvider>
         </NextIntlClientProvider>
-        <JsonLd data={organizationSchema()} />
+        <JsonLd data={organizationSchema(settings)} />
         {plausibleDomain && (
           <Script
             defer

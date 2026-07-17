@@ -217,7 +217,7 @@ export async function getPartners(): Promise<Partner[]> {
 }
 
 export async function getSiteSettings(): Promise<SiteSettings | null> {
-  return cmsFetch<SiteSettings>(`/globals/site-settings`, { tag: 'site-settings' });
+  return cmsFetch<SiteSettings>(`/globals/site-settings?depth=1`, { tag: 'site-settings' });
 }
 
 // ─── Sitemap helpers ────────────────────────────────────

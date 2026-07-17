@@ -2,6 +2,8 @@
 
 import { useLocale, useTranslations } from 'next-intl';
 import type { Locale } from '@unm/types';
+import { useSiteSettings } from '@/components/providers/SiteSettingsProvider';
+import { digitsOnly } from '@/lib/site-settings';
 
 interface Props {
   programName?: string;
@@ -10,7 +12,13 @@ interface Props {
 export function WhatsAppButton({ programName }: Props) {
   const locale = useLocale() as Locale;
   const t = useTranslations('common');
-  const whatsapp = (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '').replace(/[^0-9]/g, '');
+  const settings = useSiteSettings();
+  const whatsapp =
+    digitsOnly(settings.contact.whatsapp) ||
+    digitsOnly(process.env.NEXT_PUBLIC_WHATSAPP_NUMBER);
+
+  if (!whatsapp) return null;
+
   const subject = programName ?? (locale === 'en' ? 'UNM programs' : 'les programmes UNM');
   const message = encodeURIComponent(
     locale === 'en'
