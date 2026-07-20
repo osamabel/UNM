@@ -7,12 +7,12 @@ import { SectionHeader } from '@/components/patterns/SectionHeader';
 import { ScrollReveal } from '@/components/patterns/ScrollReveal';
 import { IconBox } from '@/components/ui/Icon';
 import {
-  ACCREDITATION_LOGOS,
-  EBS_ALLIANCE_LOCKUP,
+  getAccreditationLogos,
+  getEbsAllianceLockup,
   type AllianceLogoEntry,
 } from '@/lib/partner-logos';
 import { cn } from '@/lib/utils';
-import type { Locale } from '@unm/types';
+import type { Locale, Partner } from '@unm/types';
 
 const PILLAR_KEYS = ['pillar1', 'pillar2', 'pillar3'] as const;
 /** Excellence · ancrage local · action */
@@ -25,6 +25,23 @@ function AllianceLogoMark({
   entry: AllianceLogoEntry;
   className?: string;
 }) {
+  if (!entry.src) {
+    return (
+      <div
+        className={cn(
+          'flex h-10 w-full max-w-[8rem] items-center justify-center px-1 sm:h-11 sm:max-w-[8.5rem]',
+          className,
+        )}
+      >
+        <span className="line-clamp-2 text-center text-[10px] font-semibold leading-tight text-secondary/55">
+          {entry.name}
+        </span>
+      </div>
+    );
+  }
+
+  const fromCms = entry.src.startsWith('/cms-media/');
+
   return (
     <div
       className={cn(
@@ -41,6 +58,7 @@ function AllianceLogoMark({
           height={56}
           sizes="150px"
           quality={90}
+          unoptimized={fromCms}
           className="partner-logo-img"
         />
       </div>
@@ -48,9 +66,16 @@ function AllianceLogoMark({
   );
 }
 
-function AllianceLogoPanel({ className }: { className?: string }) {
+function AllianceLogoPanel({
+  partners,
+  className,
+}: {
+  partners: Partner[];
+  className?: string;
+}) {
   const t = useTranslations('ebs');
-  const [unm, ebs] = EBS_ALLIANCE_LOCKUP;
+  const [unm, ebs] = getEbsAllianceLockup(partners);
+  const accreditations = getAccreditationLogos(partners);
 
   return (
     <div
@@ -70,26 +95,28 @@ function AllianceLogoPanel({ className }: { className?: string }) {
       </div>
 
       {/* Accreditations */}
-      <div className="border-t border-warm-150/70 lg:flex lg:flex-1 lg:flex-col lg:border-t-0 lg:min-w-0">
-        <p className="border-b border-warm-150/50 bg-warm-50/40 px-4 py-2.5 text-center font-heading text-[10px] font-semibold uppercase tracking-[0.14em] text-secondary/45 lg:py-3">
-          {t('accreditationsLabel')}
-        </p>
-        <ul className="grid flex-1 grid-cols-3 divide-x divide-warm-150/70">
-          {ACCREDITATION_LOGOS.map((entry) => (
-            <li
-              key={entry.id}
-              className="flex items-center justify-center px-2 py-5 sm:px-4 sm:py-6 lg:py-7"
-            >
-              <AllianceLogoMark entry={entry} />
-            </li>
-          ))}
-        </ul>
-      </div>
+      {accreditations.length > 0 && (
+        <div className="border-t border-warm-150/70 lg:flex lg:flex-1 lg:flex-col lg:border-t-0 lg:min-w-0">
+          <p className="border-b border-warm-150/50 bg-warm-50/40 px-4 py-2.5 text-center font-heading text-[10px] font-semibold uppercase tracking-[0.14em] text-secondary/45 lg:py-3">
+            {t('accreditationsLabel')}
+          </p>
+          <ul className="grid flex-1 grid-cols-3 divide-x divide-warm-150/70">
+            {accreditations.map((entry) => (
+              <li
+                key={entry.id}
+                className="flex items-center justify-center px-2 py-5 sm:px-4 sm:py-6 lg:py-7"
+              >
+                <AllianceLogoMark entry={entry} />
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }
 
-export function EBSPartnership() {
+export function EBSPartnership({ partners = [] }: { partners?: Partner[] }) {
   const locale = useLocale() as Locale;
   const t = useTranslations('ebs');
   const allianceHref = locale === 'en' ? '/en/university' : '/universite';
@@ -107,7 +134,10 @@ export function EBSPartnership() {
       </ScrollReveal>
 
       <ScrollReveal delay={60}>
-        <AllianceLogoPanel className="mx-auto max-w-4xl lg:flex lg:items-stretch" />
+        <AllianceLogoPanel
+          partners={partners}
+          className="mx-auto max-w-4xl lg:flex lg:items-stretch"
+        />
       </ScrollReveal>
 
       <ul className="mt-8 grid min-w-0 gap-4 sm:mt-10 md:grid-cols-3 lg:mt-12 lg:gap-5">

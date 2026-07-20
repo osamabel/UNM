@@ -7,6 +7,7 @@ import type {
   SiteSettings,
   Testimonial,
 } from '@unm/types';
+import { rewriteMedia } from '@/lib/cms-media';
 
 const CMS_API_URL = process.env.CMS_API_URL ?? 'http://localhost:3001/api';
 const CMS_API_TOKEN = process.env.CMS_API_TOKEN;
@@ -210,10 +211,13 @@ export async function getTestimonials(): Promise<Testimonial[]> {
 }
 
 export async function getPartners(): Promise<Partner[]> {
-  const data = await cmsFetch<{ docs: Partner[] }>(`/partners?limit=50`, {
+  const data = await cmsFetch<{ docs: Partner[] }>(`/partners?limit=50&depth=1`, {
     tag: 'partners',
   });
-  return data?.docs ?? [];
+  return (data?.docs ?? []).map((p) => ({
+    ...p,
+    logo: rewriteMedia(p.logo) as Partner['logo'],
+  }));
 }
 
 export async function getSiteSettings(): Promise<SiteSettings | null> {

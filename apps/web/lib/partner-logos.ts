@@ -1,42 +1,15 @@
 import type { Partner } from '@unm/types';
 import { LOGO_ALT, LOGO_SRC } from '@/lib/logo';
+import { toPublicMediaUrl } from '@/lib/cms-media';
 
 export type AllianceLogoEntry = {
   id: string;
   name: string;
+  /** Public URL from CMS (`/cms-media/...`). Empty when missing in CMS. */
   src: string;
   scale: number;
-  /** SVG wordmark needs matte blend on light bands. */
   kind: 'svg-wordmark' | 'jpeg';
 };
-
-/**
- * Real partner logos in /public/LOGS (user-provided assets).
- * Always preferred over CMS uploads (which may still be placeholders).
- */
-export const PARTNER_LOGO_BY_NAME: Record<string, string> = {
-  'European Business School (EBS Paris)': '/LOGS/EBS.jpeg',
-  EFMD: '/LOGS/EFMD.jpeg',
-  'AACSB Business Education Alliance': '/LOGS/aac.jpeg',
-  CEFDG: '/LOGS/cef.jpeg',
-  'Ministère des Mines (Maroc)': '/LOGS/minstry.jpeg',
-  'OCP Group': '/LOGS/ocp.jpeg',
-  'Confédération Générale des Entreprises du Maroc': '/LOGS/cgem.jpeg',
-  'Bank Al-Maghrib': '/LOGS/bankmagreb.jpeg',
-};
-
-/** Fuzzy match when CMS partner name differs slightly from seed labels. */
-const PARTNER_LOGO_BY_KEYWORD: { keyword: string; src: string }[] = [
-  { keyword: 'ebs', src: '/LOGS/EBS.jpeg' },
-  { keyword: 'efmd', src: '/LOGS/EFMD.jpeg' },
-  { keyword: 'aacsb', src: '/LOGS/aac.jpeg' },
-  { keyword: 'cefdg', src: '/LOGS/cef.jpeg' },
-  { keyword: 'mines', src: '/LOGS/minstry.jpeg' },
-  { keyword: 'ocp', src: '/LOGS/ocp.jpeg' },
-  { keyword: 'cgem', src: '/LOGS/cgem.jpeg' },
-  { keyword: 'maghrib', src: '/LOGS/bankmagreb.jpeg' },
-  { keyword: 'bank al', src: '/LOGS/bankmagreb.jpeg' },
-];
 
 /** Visual scale tweaks so wordmarks feel balanced in the same tile. */
 const PARTNER_LOGO_SCALE_BY_KEYWORD: { keyword: string; scale: number }[] = [
@@ -51,33 +24,13 @@ const PARTNER_LOGO_SCALE_BY_KEYWORD: { keyword: string; scale: number }[] = [
   { keyword: 'cefdg', scale: 1.08 },
 ];
 
+/**
+ * Partner logo from CMS Media only (served via `/cms-media` proxy).
+ * Returns null when the partner has no uploaded logo.
+ */
 export function getPartnerLogoSrc(partner: Pick<Partner, 'name' | 'logo'>): string | null {
-  const exact = PARTNER_LOGO_BY_NAME[partner.name];
-  if (exact) return exact;
-
-  const lower = partner.name.toLowerCase();
-  for (const { keyword, src } of PARTNER_LOGO_BY_KEYWORD) {
-    if (lower.includes(keyword)) return src;
-  }
-
-  const cmsUrl = partner.logo?.url ?? '';
-  if (cmsUrl.includes('/LOGS/')) return cmsUrl;
-
-  return null;
+  return toPublicMediaUrl(partner.logo?.url);
 }
-
-/** UNM × EBS lockup in the alliance section (home). */
-export const EBS_ALLIANCE_LOCKUP: AllianceLogoEntry[] = [
-  { id: 'unm', name: LOGO_ALT, src: LOGO_SRC, scale: 1.02, kind: 'jpeg' },
-  { id: 'ebs', name: 'EBS Paris', src: '/LOGS/EBS.jpeg', scale: 0.86, kind: 'jpeg' },
-];
-
-/** Accreditation wordmarks in the alliance section (home). */
-export const ACCREDITATION_LOGOS: AllianceLogoEntry[] = [
-  { id: 'efmd', name: 'EFMD', src: '/LOGS/EFMD.jpeg', scale: 0.94, kind: 'jpeg' },
-  { id: 'aacsb', name: 'AACSB', src: '/LOGS/aac.jpeg', scale: 1.04, kind: 'jpeg' },
-  { id: 'cefdg', name: 'CEFDG', src: '/LOGS/cef.jpeg', scale: 1.08, kind: 'jpeg' },
-];
 
 export function getPartnerLogoScale(name: string): number {
   const lower = name.toLowerCase();
@@ -86,3 +39,75 @@ export function getPartnerLogoScale(name: string): number {
   }
   return 1;
 }
+
+function findPartnerByKeywords(partners: Partner[], keywords: string[]): Partner | undefined {
+  return partners.find((partner) => {
+    const name = partner.name.toLowerCase();
+    return keywords.some((k) => name.includes(k));
+  });
+}
+
+function partnerToAllianceEntry(
+  id: string,
+  partner: Partner | undefined,
+  fallbackName: string,
+  defaultScale: number,
+): AllianceLogoEntry {
+  const src = partner ? getPartnerLogoSrc(partner) : null;
+  return {
+    id,
+    name: partner?.name ?? fallbackName,
+    src: src ?? '',
+    scale: partner ? getPartnerLogoScale(partner.name) : defaultScale,
+    kind: 'jpeg',
+  };
+}
+
+/**
+ * UNM × EBS lockup — local brand mark + CMS Partners EBS logo.
+ */
+export function getEbsAllianceLockup(
+  partners: Partner[] = [],
+  brandLogoSrc?: string | null,
+): AllianceLogoEntry[] {
+  const ebsPartner = findPartnerByKeywords(partners, ['ebs', 'european business school']);
+
+  return [
+    {
+      id: 'unm',
+      name: LOGO_ALT,
+      src: brandLogoSrc || LOGO_SRC,
+      scale: 1.02,
+      kind: 'jpeg',
+    },
+    partnerToAllianceEntry('ebs', ebsPartner, 'EBS Paris', 0.86),
+  ];
+}
+
+/**
+ * Accreditation logos from CMS Partners (EFMD / AACSB / CEFDG).
+ * Only returns entries that have a CMS media upload.
+ */
+export function getAccreditationLogos(partners: Partner[] = []): AllianceLogoEntry[] {
+  const specs = [
+    { id: 'efmd', keywords: ['efmd'], fallbackName: 'EFMD', scale: 0.94 },
+    { id: 'aacsb', keywords: ['aacsb'], fallbackName: 'AACSB', scale: 1.04 },
+    { id: 'cefdg', keywords: ['cefdg'], fallbackName: 'CEFDG', scale: 1.08 },
+  ] as const;
+
+  return specs
+    .map((spec) => {
+      const partner = findPartnerByKeywords(partners, [...spec.keywords]);
+      return partnerToAllianceEntry(spec.id, partner, spec.fallbackName, spec.scale);
+    })
+    .filter((entry) => Boolean(entry.src));
+}
+
+/** @deprecated Use getEbsAllianceLockup(partners) — kept for any leftover imports. */
+export const EBS_ALLIANCE_LOCKUP: AllianceLogoEntry[] = [
+  { id: 'unm', name: LOGO_ALT, src: LOGO_SRC, scale: 1.02, kind: 'jpeg' },
+  { id: 'ebs', name: 'EBS Paris', src: '', scale: 0.86, kind: 'jpeg' },
+];
+
+/** @deprecated Use getAccreditationLogos(partners). */
+export const ACCREDITATION_LOGOS: AllianceLogoEntry[] = [];

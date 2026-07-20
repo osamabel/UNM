@@ -46,6 +46,7 @@ export function PartnerLogoTile({
             height={80}
             sizes={layout === 'marquee' ? '280px' : '(max-width: 640px) 45vw, 220px'}
             quality={90}
+            unoptimized={src.startsWith('/cms-media/')}
             className="partner-logo-img"
           />
         </div>
