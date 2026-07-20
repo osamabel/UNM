@@ -1,22 +1,25 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
 import { SectionWrapper } from '@/components/ui/SectionWrapper';
-import { SectionHeader } from '@/components/patterns/SectionHeader';
 import { ScrollReveal } from '@/components/patterns/ScrollReveal';
-import { IconBox } from '@/components/ui/Icon';
+import { Icon } from '@/components/ui/Icon';
 import {
-  getAccreditationLogos,
   getEbsAllianceLockup,
   type AllianceLogoEntry,
 } from '@/lib/partner-logos';
+import { useSiteSettings } from '@/components/providers/SiteSettingsProvider';
+import { getBrandLogoSrc } from '@/lib/site-settings';
 import { cn } from '@/lib/utils';
 import type { Locale, Partner } from '@unm/types';
 
-const PILLAR_KEYS = ['pillar1', 'pillar2', 'pillar3'] as const;
-/** Excellence · ancrage local · action */
-const PILLAR_ICONS = ['medal', 'landmark', 'target'] as const;
+const PILLARS = [
+  { key: 'pillar1' as const, icon: 'medal' as const, num: '01' },
+  { key: 'pillar2' as const, icon: 'landmark' as const, num: '02' },
+  { key: 'pillar3' as const, icon: 'target' as const, num: '03' },
+];
 
 function AllianceLogoMark({
   entry,
@@ -27,15 +30,8 @@ function AllianceLogoMark({
 }) {
   if (!entry.src) {
     return (
-      <div
-        className={cn(
-          'flex h-10 w-full max-w-[8rem] items-center justify-center px-1 sm:h-11 sm:max-w-[8.5rem]',
-          className,
-        )}
-      >
-        <span className="line-clamp-2 text-center text-[10px] font-semibold leading-tight text-secondary/55">
-          {entry.name}
-        </span>
+      <div className={cn('flex h-12 items-center justify-center px-2 sm:h-14', className)}>
+        <span className="text-center text-xs font-semibold text-secondary/55">{entry.name}</span>
       </div>
     );
   }
@@ -43,75 +39,17 @@ function AllianceLogoMark({
   const fromCms = entry.src.startsWith('/cms-media/');
 
   return (
-    <div
-      className={cn(
-        'flex h-10 w-full max-w-[8rem] items-center justify-center sm:h-11 sm:max-w-[8.5rem]',
-        className,
-      )}
-      style={{ '--logo-scale': entry.scale } as React.CSSProperties}
-    >
-      <div className="partner-logo-slot h-9 w-full sm:h-10">
-        <Image
-          src={entry.src}
-          alt={entry.name}
-          width={168}
-          height={56}
-          sizes="150px"
-          quality={90}
-          unoptimized={fromCms}
-          className="partner-logo-img"
-        />
-      </div>
-    </div>
-  );
-}
-
-function AllianceLogoPanel({
-  partners,
-  className,
-}: {
-  partners: Partner[];
-  className?: string;
-}) {
-  const t = useTranslations('ebs');
-  const [unm, ebs] = getEbsAllianceLockup(partners);
-  const accreditations = getAccreditationLogos(partners);
-
-  return (
-    <div
-      className={cn('card-flat overflow-hidden', className)}
-      aria-label={t('title')}
-    >
-      {/* Lockup: UNM × EBS */}
-      <div className="flex items-center justify-center gap-3 bg-canvas/50 px-5 py-7 sm:gap-4 sm:px-8 sm:py-8 lg:flex-1 lg:min-w-0 lg:border-b-0 lg:border-r lg:border-warm-150/70 lg:py-10">
-        <AllianceLogoMark entry={unm} className="max-w-[38%] sm:max-w-[9rem]" />
-        <span
-          aria-hidden
-          className="shrink-0 font-display text-lg leading-none text-primary/25 sm:text-xl"
-        >
-          ×
-        </span>
-        <AllianceLogoMark entry={ebs} className="max-w-[38%] sm:max-w-[9rem]" />
-      </div>
-
-      {/* Accreditations */}
-      {accreditations.length > 0 && (
-        <div className="border-t border-warm-150/70 lg:flex lg:flex-1 lg:flex-col lg:border-t-0 lg:min-w-0">
-          <p className="border-b border-warm-150/50 bg-warm-50/40 px-4 py-2.5 text-center font-heading text-[10px] font-semibold uppercase tracking-[0.14em] text-secondary/45 lg:py-3">
-            {t('accreditationsLabel')}
-          </p>
-          <ul className="grid flex-1 grid-cols-3 divide-x divide-warm-150/70">
-            {accreditations.map((entry) => (
-              <li
-                key={entry.id}
-                className="flex items-center justify-center px-2 py-5 sm:px-4 sm:py-6 lg:py-7"
-              >
-                <AllianceLogoMark entry={entry} />
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+    <div className={cn('flex h-12 items-center justify-center sm:h-14', className)}>
+      <Image
+        src={entry.src}
+        alt={entry.name}
+        width={280}
+        height={84}
+        sizes="(max-width: 640px) 120px, 180px"
+        quality={95}
+        unoptimized={fromCms}
+        className="h-full w-auto max-w-[8.5rem] object-contain object-center sm:max-w-[10rem]"
+      />
     </div>
   );
 }
@@ -119,42 +57,87 @@ function AllianceLogoPanel({
 export function EBSPartnership({ partners = [] }: { partners?: Partner[] }) {
   const locale = useLocale() as Locale;
   const t = useTranslations('ebs');
+  const settings = useSiteSettings();
   const allianceHref = locale === 'en' ? '/en/university' : '/universite';
+  const [unm, ebs] = getEbsAllianceLockup(partners, getBrandLogoSrc(settings));
 
   return (
-    <SectionWrapper id="partenariat" tone="alt">
-      <ScrollReveal>
-        <SectionHeader
-          eyebrow={t('eyebrow')}
-          title={t('title')}
-          description={t('description')}
-          action={{ label: t('learnMore'), href: allianceHref }}
-          className="!mb-8 sm:!mb-10"
-        />
-      </ScrollReveal>
+    <SectionWrapper
+      id="partenariat"
+      tone="soft"
+      className="alliance-section !pb-16 !pt-14 sm:!pb-20 sm:!pt-16 lg:!pb-24 lg:!pt-20"
+    >
+      <div className="alliance-glow pointer-events-none absolute inset-0" aria-hidden />
 
-      <ScrollReveal delay={60}>
-        <AllianceLogoPanel
-          partners={partners}
-          className="mx-auto max-w-4xl lg:flex lg:items-stretch"
-        />
-      </ScrollReveal>
+      {/* Intro + lockup */}
+      <div className="relative grid min-w-0 items-center gap-12 lg:grid-cols-12 lg:gap-14">
+        <ScrollReveal className="lg:col-span-5">
+          <div className="flex items-center gap-3">
+            <span className="h-px w-8 bg-primary" aria-hidden />
+            <p className="eyebrow !mt-0">{t('eyebrow')}</p>
+          </div>
 
-      <ul className="mt-8 grid min-w-0 gap-4 sm:mt-10 md:grid-cols-3 lg:mt-12 lg:gap-5">
-        {PILLAR_KEYS.map((key, i) => (
-          <li key={key}>
-            <ScrollReveal delay={80 + i * 70} className="h-full">
-              <article className="card-interactive group h-full p-5 sm:p-6">
-                <IconBox name={PILLAR_ICONS[i]} size="sm" className="mb-4" />
-                <h3 className="font-display text-base font-semibold leading-snug text-secondary group-hover:text-primary sm:text-lg">
-                  {t(`${key}Title`)}
-                </h3>
-                <p className="mt-2 text-sm leading-relaxed text-secondary/70">{t(`${key}Body`)}</p>
-              </article>
-            </ScrollReveal>
-          </li>
-        ))}
-      </ul>
+          <h2 className="mt-4 font-display text-[2.15rem] leading-[1.05] tracking-tight text-secondary sm:text-[2.55rem] lg:text-[2.9rem]">
+            <span className="text-primary">UNM</span>
+            <span className="mx-2 text-primary/40">×</span>
+            <span>EBS Paris</span>
+          </h2>
+
+          <p className="mt-5 max-w-md text-[15px] leading-relaxed text-secondary/70 sm:text-base">
+            {t('description')}
+          </p>
+
+          <Link
+            href={allianceHref}
+            className="btn-uni btn-uni-primary mt-7 inline-flex h-11 items-center gap-2 rounded-lg px-5 text-sm"
+          >
+            {t('learnMore')}
+            <Icon name="arrow-right" size={16} className="btn-arrow" />
+          </Link>
+        </ScrollReveal>
+
+        <ScrollReveal delay={90} className="lg:col-span-7">
+          <div className="alliance-duo relative mx-auto w-full max-w-xl lg:ml-auto lg:max-w-none" aria-label={t('title')}>
+            <div className="alliance-duo-grid">
+              <div className="alliance-duo-tile alliance-duo-tile--unm">
+                <AllianceLogoMark entry={unm} />
+              </div>
+              <div className="alliance-duo-tile alliance-duo-tile--ebs">
+                <AllianceLogoMark entry={ebs} />
+              </div>
+            </div>
+            <span className="alliance-duo-badge" aria-hidden>
+              ×
+            </span>
+          </div>
+        </ScrollReveal>
+      </div>
+
+      {/* Pillars band */}
+      <div className="alliance-band relative mt-14 sm:mt-16 lg:mt-20">
+        <ul className="grid min-w-0 gap-4 md:grid-cols-3 md:gap-5 lg:gap-6">
+          {PILLARS.map((pillar, i) => (
+            <li key={pillar.key}>
+              <ScrollReveal delay={110 + i * 80} className="h-full">
+                <article className="alliance-pillar-card group h-full">
+                  <div className="flex items-start justify-between gap-3">
+                    <span className="alliance-pillar-icon" aria-hidden>
+                      <Icon name={pillar.icon} size={18} />
+                    </span>
+                    <span className="alliance-pillar-num">{pillar.num}</span>
+                  </div>
+                  <h3 className="mt-5 font-display text-lg leading-snug text-secondary transition-colors duration-300 group-hover:text-primary sm:text-xl">
+                    {t(`${pillar.key}Title`)}
+                  </h3>
+                  <p className="mt-2 text-sm leading-relaxed text-secondary/60">
+                    {t(`${pillar.key}Body`)}
+                  </p>
+                </article>
+              </ScrollReveal>
+            </li>
+          ))}
+        </ul>
+      </div>
     </SectionWrapper>
   );
 }

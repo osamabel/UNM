@@ -11,17 +11,17 @@ export type AllianceLogoEntry = {
   kind: 'svg-wordmark' | 'jpeg';
 };
 
-/** Visual scale tweaks so wordmarks feel balanced in the same tile. */
+/** Tight scale tweaks so wordmarks sit evenly in fixed white cards. */
 const PARTNER_LOGO_SCALE_BY_KEYWORD: { keyword: string; scale: number }[] = [
-  { keyword: 'ocp', scale: 0.8 },
-  { keyword: 'ebs', scale: 0.86 },
-  { keyword: 'mines', scale: 0.88 },
-  { keyword: 'maghrib', scale: 0.9 },
-  { keyword: 'bank al', scale: 0.9 },
-  { keyword: 'cgem', scale: 0.92 },
-  { keyword: 'efmd', scale: 0.94 },
-  { keyword: 'aacsb', scale: 1.04 },
-  { keyword: 'cefdg', scale: 1.08 },
+  { keyword: 'ocp', scale: 0.92 },
+  { keyword: 'ebs', scale: 0.94 },
+  { keyword: 'mines', scale: 0.94 },
+  { keyword: 'maghrib', scale: 0.96 },
+  { keyword: 'bank al', scale: 0.96 },
+  { keyword: 'cgem', scale: 0.96 },
+  { keyword: 'efmd', scale: 0.98 },
+  { keyword: 'aacsb', scale: 1 },
+  { keyword: 'cefdg', scale: 1 },
 ];
 
 /**
@@ -64,7 +64,7 @@ function partnerToAllianceEntry(
 }
 
 /**
- * UNM × EBS lockup — local brand mark + CMS Partners EBS logo.
+ * UNM × EBS lockup — Site Settings brandLogo (or local) + CMS Partners EBS logo.
  */
 export function getEbsAllianceLockup(
   partners: Partner[] = [],
@@ -80,7 +80,7 @@ export function getEbsAllianceLockup(
       scale: 1.02,
       kind: 'jpeg',
     },
-    partnerToAllianceEntry('ebs', ebsPartner, 'EBS Paris', 0.86),
+    partnerToAllianceEntry('ebs', ebsPartner, 'EBS Paris', 0.94),
   ];
 }
 
@@ -90,9 +90,9 @@ export function getEbsAllianceLockup(
  */
 export function getAccreditationLogos(partners: Partner[] = []): AllianceLogoEntry[] {
   const specs = [
-    { id: 'efmd', keywords: ['efmd'], fallbackName: 'EFMD', scale: 0.94 },
-    { id: 'aacsb', keywords: ['aacsb'], fallbackName: 'AACSB', scale: 1.04 },
-    { id: 'cefdg', keywords: ['cefdg'], fallbackName: 'CEFDG', scale: 1.08 },
+    { id: 'efmd', keywords: ['efmd'], fallbackName: 'EFMD', scale: 0.98 },
+    { id: 'aacsb', keywords: ['aacsb'], fallbackName: 'AACSB', scale: 1 },
+    { id: 'cefdg', keywords: ['cefdg'], fallbackName: 'CEFDG', scale: 1 },
   ] as const;
 
   return specs
@@ -102,12 +102,3 @@ export function getAccreditationLogos(partners: Partner[] = []): AllianceLogoEnt
     })
     .filter((entry) => Boolean(entry.src));
 }
-
-/** @deprecated Use getEbsAllianceLockup(partners) — kept for any leftover imports. */
-export const EBS_ALLIANCE_LOCKUP: AllianceLogoEntry[] = [
-  { id: 'unm', name: LOGO_ALT, src: LOGO_SRC, scale: 1.02, kind: 'jpeg' },
-  { id: 'ebs', name: 'EBS Paris', src: '', scale: 0.86, kind: 'jpeg' },
-];
-
-/** @deprecated Use getAccreditationLogos(partners). */
-export const ACCREDITATION_LOGOS: AllianceLogoEntry[] = [];

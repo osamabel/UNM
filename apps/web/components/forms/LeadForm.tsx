@@ -9,6 +9,8 @@ import { useLocale, useTranslations } from 'next-intl';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 import { Button } from '@/components/ui/Button';
+import { useSiteSettings } from '@/components/providers/SiteSettingsProvider';
+import { digitsOnly } from '@/lib/site-settings';
 import type { Locale, Program } from '@unm/types';
 import { localized } from '@/lib/utils';
 
@@ -33,6 +35,7 @@ export function LeadForm({ programs, defaultProgramSlug }: Props) {
   const t = useTranslations('forms');
   const tc = useTranslations('common');
   const params = useSearchParams();
+  const settings = useSiteSettings();
   const [submitted, setSubmitted] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
 
@@ -66,7 +69,9 @@ export function LeadForm({ programs, defaultProgramSlug }: Props) {
   };
 
   if (submitted) {
-    const whatsapp = (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '').replace(/[^0-9]/g, '');
+    const whatsapp =
+      digitsOnly(settings.contact.whatsapp) ||
+      digitsOnly(process.env.NEXT_PUBLIC_WHATSAPP_NUMBER);
     return (
       <div className="rounded-card bg-primary-50 p-6 text-center">
         <p className="font-heading text-secondary">{t('thankYou')}</p>

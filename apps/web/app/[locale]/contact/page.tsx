@@ -8,6 +8,9 @@ import { Icon } from '@/components/ui/Icon';
 import { ContactForm } from '@/components/forms/ContactForm';
 import { CallbackForm } from '@/components/forms/CallbackForm';
 import { CTABanner } from '@/components/home/CTABanner';
+import { getSiteSettings } from '@/lib/api';
+import { digitsOnly, mergeSiteSettings } from '@/lib/site-settings';
+import { localized } from '@/lib/utils';
 import type { Locale } from '@unm/types';
 
 const FAQS = [
@@ -32,9 +35,6 @@ const FAQS = [
     en: { q: 'Is there a scholarship programme?', a: 'Merit and need-based scholarships are available depending on the cohort. Contact admissions to learn more.' },
   },
 ];
-
-const PHONE = '+212 6 62 62 62 19';
-const WHATSAPP_RAW = '212662626219';
 
 export async function generateMetadata({ params }: { params: { locale: Locale } }): Promise<Metadata> {
   const t = await getTranslations({ locale: params.locale, namespace: 'contact' });
@@ -92,15 +92,22 @@ function FormBlock({
 
 export default async function ContactPage({ params }: { params: { locale: Locale } }) {
   setRequestLocale(params.locale);
-  const [t, tb, tc] = await Promise.all([
+  const [t, tb, tc, rawSettings] = await Promise.all([
     getTranslations({ locale: params.locale, namespace: 'contact' }),
     getTranslations({ locale: params.locale, namespace: 'breadcrumb' }),
     getTranslations({ locale: params.locale, namespace: 'common' }),
+    getSiteSettings(),
   ]);
+  const settings = mergeSiteSettings(rawSettings);
   const isEn = params.locale === 'en';
   const homeUrl = isEn ? '/en' : '/';
   const contactUrl = isEn ? '/en/contact' : '/contact';
   const waText = encodeURIComponent(isEn ? 'Hello UNM' : 'Bonjour UNM');
+  const phone = settings.contact.phone;
+  const phoneTel = digitsOnly(phone);
+  const waDigits = digitsOnly(settings.contact.whatsapp);
+  const email = settings.contact.email;
+  const address = localized(settings.contact.address, params.locale);
 
   return (
     <>
@@ -151,51 +158,38 @@ export default async function ContactPage({ params }: { params: { locale: Locale
               <ul className="space-y-3">
                 <li>
                   <a
-                    href={`tel:${PHONE.replace(/\s/g, '')}`}
+                    href={`tel:${phoneTel}`}
                     className="inline-flex items-center gap-2 font-medium text-primary transition-colors hover:text-primary-700"
                   >
                     <Icon name="phone" size={16} />
-                    {PHONE}
+                    {phone}
                   </a>
                 </li>
+                {waDigits && (
+                  <li>
+                    <a
+                      href={`https://wa.me/${waDigits}?text=${waText}`}
+                      className="glass-pill !h-9 w-full justify-center text-xs font-semibold text-secondary/80 hover:!bg-white/90"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {tc('whatsapp')}
+                    </a>
+                  </li>
+                )}
                 <li>
                   <a
-                    href={`https://wa.me/${WHATSAPP_RAW}?text=${waText}`}
-                    className="glass-pill !h-9 w-full justify-center text-xs font-semibold text-secondary/80 hover:!bg-white/90"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {tc('whatsapp')}
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="mailto:contact@unm.ma"
+                    href={`mailto:${email}`}
                     className="inline-flex items-center gap-2 font-medium text-primary transition-colors hover:text-primary-700"
                   >
                     <Icon name="mail" size={16} />
-                    contact@unm.ma
+                    {email}
                   </a>
                 </li>
               </ul>
             </ContactCard>
             <ContactCard icon="map-pin" title={t('campusMarrakech')}>
-              <p>
-                Borj Menara I
-                <br />
-                Av. Abdelkrim El Khattabi
-                <br />
-                Marrakech, Maroc
-              </p>
-            </ContactCard>
-            <ContactCard icon="map-pin" title={t('campusLaayoune')}>
-              <p>
-                N°8, Al Bouchra
-                <br />
-                Av. Alfourssane
-                <br />
-                Laâyoune, Maroc
-              </p>
+              <p className="whitespace-pre-line">{address}</p>
             </ContactCard>
             <div className="card-flat overflow-hidden p-0">
               <p className="sr-only">{t('mapTitle')}</p>

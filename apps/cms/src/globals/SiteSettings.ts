@@ -8,6 +8,14 @@ export const SiteSettings: GlobalConfig = {
   access: { read: () => true, update: isAdmin },
   fields: [
     {
+      name: 'brandLogo',
+      type: 'upload',
+      relationTo: 'media',
+      admin: {
+        description: 'Logo UNM (header, footer, alliance UNM × EBS). Remplace le fichier local si renseigné.',
+      },
+    },
+    {
       name: 'contact',
       type: 'group',
       fields: [

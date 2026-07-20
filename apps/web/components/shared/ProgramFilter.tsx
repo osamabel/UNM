@@ -53,7 +53,7 @@ export function ProgramFilter({ faculties }: Props) {
   const fields = (
     <div className="grid gap-4">
       <Select
-        label={t('overview')}
+        label={t('faculty')}
         placeholder={t('faculty')}
         value={current.faculty}
         onChange={(e) => update('faculty', e.target.value)}

@@ -13,7 +13,8 @@ import { cn } from '@/lib/utils';
 type NavKey =
   | 'university' | 'faculties' | 'programs' | 'admissions' | 'contact' | 'organisations'
   | 'manifesto' | 'presidentWord' | 'partners' | 'newsUnm' | 'events' | 'newsroom'
-  | 'facultyBusinessSchool' | 'facultyGovernance' | 'facultyTechnology' | 'facultySportBusiness';
+  | 'facultyBusinessSchool' | 'facultyGovernance' | 'facultyTechnology' | 'facultySportBusiness'
+  | 'programDba' | 'programMba' | 'programCertificate';
 
 interface LeafItem { kind: 'leaf'; key: NavKey; fr: string; en: string; comingSoon?: boolean; }
 interface ParentItem { kind: 'parent'; key: NavKey; fr: string; en: string; children: LeafItem[]; }
@@ -35,10 +36,16 @@ const FACULTIES_SUB: LeafItem[] = [
   { kind: 'leaf', key: 'facultySportBusiness', fr: '/facultes/school-of-sport-business', en: '/en/faculties/school-of-sport-business', comingSoon: true },
 ];
 
+const PROGRAMS_SUB: LeafItem[] = [
+  { kind: 'leaf', key: 'programDba', fr: '/programmes?type=DBA', en: '/en/programs?type=DBA' },
+  { kind: 'leaf', key: 'programMba', fr: '/programmes?type=MBA', en: '/en/programs?type=MBA' },
+  { kind: 'leaf', key: 'programCertificate', fr: '/programmes?type=Certificate', en: '/en/programs?type=Certificate' },
+];
+
 const ITEMS: Item[] = [
   { kind: 'parent', key: 'university', fr: '/universite', en: '/en/university', children: UNIVERSITY_SUB },
   { kind: 'parent', key: 'faculties', fr: '/facultes', en: '/en/faculties', children: FACULTIES_SUB },
-  { kind: 'leaf', key: 'programs', fr: '/programmes', en: '/en/programs' },
+  { kind: 'parent', key: 'programs', fr: '/programmes', en: '/en/programs', children: PROGRAMS_SUB },
   { kind: 'leaf', key: 'admissions', fr: '/admissions', en: '/en/admissions' },
   { kind: 'leaf', key: 'organisations', fr: '/organisations', en: '/en/organizations' },
   { kind: 'leaf', key: 'contact', fr: '/contact', en: '/en/contact' },
@@ -100,12 +107,12 @@ export function MobileNav() {
       ? createPortal(
           <>
             <div
-              className="fixed inset-0 z-[200] bg-secondary/50 backdrop-blur-sm lg:hidden"
+              className="fixed inset-0 z-[200] bg-secondary/50 backdrop-blur-sm 2xl:hidden"
               aria-hidden
               onClick={close}
             />
             <div
-              className="glass-strong fixed inset-0 z-[201] flex flex-col lg:hidden"
+              className="glass-strong fixed inset-0 z-[201] flex flex-col 2xl:hidden"
               role="dialog"
               aria-modal="true"
               aria-label="Navigation"
@@ -228,7 +235,7 @@ export function MobileNav() {
         aria-label={open ? 'Close menu' : 'Open menu'}
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
-        className="touch-target inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-warm-150/70 bg-white/60 text-secondary backdrop-blur-md transition-all duration-300 hover:border-primary/30 lg:hidden"
+        className="touch-target inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-warm-150/70 bg-white/60 text-secondary backdrop-blur-md transition-all duration-300 hover:border-primary/30 2xl:hidden"
       >
         <Icon name={open ? 'close' : 'menu'} size={22} weight="medium" />
       </button>

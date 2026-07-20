@@ -33,25 +33,36 @@ export function Header() {
         scrolled && 'shadow-[0_12px_40px_rgba(61,26,11,0.08)]',
       )}
     >
-      <div className="container-page flex h-14 min-w-0 items-center justify-between gap-2 sm:h-16 sm:gap-3 lg:h-[4.5rem] lg:gap-4">
+      {/*
+        Breakpoints:
+        - < 2xl: logo + utilities + hamburger (avoids crowded / wrapping links)
+        - ≥ 2xl: single-row desktop nav + Apply CTA
+      */}
+      <div className="container-page flex h-16 min-w-0 items-center gap-3 sm:h-[4.25rem] sm:gap-4 2xl:h-[4.75rem] 2xl:gap-6">
         <Link
           href={locale === 'en' ? '/en' : '/'}
-          aria-label="UNM Home"
-          className="flex min-w-0 shrink items-center transition-opacity duration-300 hover:opacity-90"
+          aria-label="UNM — Université Numérique du Maroc"
+          className="flex shrink-0 items-center transition-opacity duration-300 hover:opacity-90"
         >
-          <Logo surface="light" className="hidden sm:inline-flex" />
-          <Logo variant="mark" className="sm:hidden" />
+          <Logo surface="light" />
         </Link>
 
-        <nav aria-label="Primary" className="hidden min-w-0 lg:block">
+        <nav
+          aria-label="Primary"
+          className="hidden min-w-0 flex-1 items-center justify-center overflow-visible 2xl:flex"
+        >
           <Nav />
         </nav>
 
-        <div className="flex shrink-0 items-center gap-1 sm:gap-1.5 lg:gap-2">
-          <LanguageSwitcher />
+        <div className="ml-auto flex shrink-0 items-center gap-1 sm:gap-1.5 2xl:gap-2">
+          <LanguageSwitcher className="hidden sm:flex" />
           <span aria-hidden className="hidden h-4 w-px bg-warm-200/80 sm:inline-block" />
           <SearchModal />
-          <ButtonLink href={applyHref} size="sm" className="!shadow-lg hidden lg:inline-flex">
+          <ButtonLink
+            href={applyHref}
+            size="sm"
+            className="!shadow-lg hidden 2xl:inline-flex"
+          >
             {tCommon('apply')}
           </ButtonLink>
           <MobileNav />

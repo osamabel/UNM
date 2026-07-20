@@ -7,6 +7,7 @@ import { Icon } from '@/components/ui/Icon';
 import { StatsBar } from '@/components/home/StatsBar';
 import { EBSPartnership } from '@/components/home/EBSPartnership';
 import { CTABanner } from '@/components/home/CTABanner';
+import { getPartners } from '@/lib/api';
 import type { Locale } from '@unm/types';
 
 export async function generateMetadata({ params }: { params: { locale: Locale } }): Promise<Metadata> {
@@ -31,9 +32,10 @@ const CAMPUSES = [
 
 export default async function UniversityPage({ params }: { params: { locale: Locale } }) {
   setRequestLocale(params.locale);
-  const [t, tb] = await Promise.all([
+  const [t, tb, partners] = await Promise.all([
     getTranslations({ locale: params.locale, namespace: 'universityIndex' }),
     getTranslations({ locale: params.locale, namespace: 'breadcrumb' }),
+    getPartners(),
   ]);
   const isEn = params.locale === 'en';
   const homeUrl = isEn ? '/en' : '/';
@@ -84,7 +86,7 @@ export default async function UniversityPage({ params }: { params: { locale: Loc
       <StatsBar />
 
       <SectionWrapper tone="canvas" className="!pt-8 sm:!pt-10">
-        <EBSPartnership />
+        <EBSPartnership partners={partners} />
       </SectionWrapper>
 
       <SectionWrapper tone="soft">
@@ -116,6 +118,9 @@ export default async function UniversityPage({ params }: { params: { locale: Loc
         <h2 className="mt-12 font-display text-display-md text-secondary sm:mt-14">
           {t('accreditationsTitle')}
         </h2>
+        <p className="mt-3 max-w-2xl text-sm leading-relaxed text-secondary/65 sm:text-base">
+          {t('accreditationsSubtitle')}
+        </p>
         <ul className="mt-6 flex flex-wrap gap-2.5">
           {ACCREDITATIONS.map((label) => (
             <li key={label} className="glass-pill text-sm font-medium text-secondary/75">

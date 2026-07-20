@@ -1,20 +1,17 @@
 'use client';
 
 import Image from 'next/image';
-import { useMemo } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { SectionWrapper } from '@/components/ui/SectionWrapper';
 import { SectionHeader } from '@/components/patterns/SectionHeader';
 import { ScrollReveal } from '@/components/patterns/ScrollReveal';
 import { getPartnerLogoScale, getPartnerLogoSrc } from '@/lib/partner-logos';
-import type { Locale, Partner } from '@unm/types';
 import { cn } from '@/lib/utils';
+import type { Partner } from '@unm/types';
 
-interface Props {
+type PartnerLogosProps = {
   partners: Partner[];
-  /** Hide section title (e.g. on /partenaires page that has its own H1) */
-  hideHeader?: boolean;
-}
+};
 
 export function PartnerLogoTile({
   partner,
@@ -23,38 +20,32 @@ export function PartnerLogoTile({
   partner: Partner;
   layout?: 'marquee' | 'grid';
 }) {
-  const src = getPartnerLogoSrc(partner);
+  const logoSrc = getPartnerLogoSrc(partner);
   const scale = getPartnerLogoScale(partner.name);
 
   const inner = (
     <div
       className={cn(
-        'partner-logo-tile card-flat group flex items-center justify-center px-6 py-5',
-        'transition-all duration-300 ease-smooth hover:-translate-y-0.5',
-        layout === 'marquee'
-          ? 'h-20 w-[11.5rem] shrink-0 sm:h-[5.5rem] sm:w-[15.5rem] md:h-24 md:w-[17.5rem]'
-          : 'h-24 w-full sm:h-32',
+        'partner-logo-card group',
+        layout === 'grid' && 'partner-logo-card--grid',
       )}
-      style={{ '--logo-scale': scale } as React.CSSProperties}
+      style={{ ['--logo-scale' as string]: scale }}
     >
-      {src ? (
-        <div className="partner-logo-slot">
+      <div className="partner-logo-slot">
+        {logoSrc ? (
           <Image
-            src={src}
+            src={logoSrc}
             alt={partner.name}
-            width={240}
+            width={200}
             height={80}
-            sizes={layout === 'marquee' ? '280px' : '(max-width: 640px) 45vw, 220px'}
-            quality={90}
-            unoptimized={src.startsWith('/cms-media/')}
+            sizes={layout === 'marquee' ? '188px' : '(max-width: 640px) 45vw, 220px'}
+            unoptimized
             className="partner-logo-img"
           />
-        </div>
-      ) : (
-        <span className="line-clamp-2 px-2 text-center text-[11px] font-medium leading-tight text-secondary/65">
-          {partner.name}
-        </span>
-      )}
+        ) : (
+          <span className="partner-logo-fallback">{partner.name}</span>
+        )}
+      </div>
     </div>
   );
 
@@ -65,109 +56,77 @@ export function PartnerLogoTile({
         target="_blank"
         rel="noopener noreferrer"
         className={cn(
-          'shrink-0 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2',
-          layout === 'grid' && 'block w-full',
+          'block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-2',
+          layout === 'marquee' ? 'shrink-0' : 'w-full',
         )}
+        aria-label={partner.name}
       >
         {inner}
       </a>
     );
   }
 
-  return <div className={cn('shrink-0', layout === 'grid' && 'w-full')}>{inner}</div>;
+  return (
+    <div className={cn(layout === 'marquee' ? 'shrink-0' : 'w-full')}>{inner}</div>
+  );
 }
 
-function PartnerMarqueeRow({
+function MarqueeRow({
   partners,
-  reverse,
-  className,
+  reverse = false,
 }: {
   partners: Partner[];
   reverse?: boolean;
-  className?: string;
 }) {
-  const loop = useMemo(() => [...partners, ...partners], [partners]);
+  const loop = [...partners, ...partners];
 
   return (
-    <div className={cn('partner-marquee', className)}>
-      <ul
-        className={cn(
-          'partner-marquee-track list-none',
-          reverse && 'partner-marquee-track-reverse',
-        )}
+    <div className="partner-marquee">
+      <div
+        className={`partner-marquee-track${reverse ? ' partner-marquee-track-reverse' : ''}`}
       >
-        {loop.map((p, i) => (
-          <li key={`${p.id}-${i}`} className="list-none" aria-hidden={i >= partners.length}>
-            <PartnerLogoTile partner={p} layout="marquee" />
-          </li>
+        {loop.map((partner, index) => (
+          <PartnerLogoTile
+            key={`${partner.id}-${reverse ? 'b' : 'a'}-${index}`}
+            partner={partner}
+          />
         ))}
-      </ul>
+      </div>
     </div>
   );
 }
 
-function PartnerGrid({ partners }: { partners: Partner[] }) {
-  return (
-    <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5 lg:grid-cols-4">
-      {partners.map((p) => (
-        <li key={p.id} className="min-w-0">
-          <PartnerLogoTile partner={p} layout="grid" />
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-export function PartnerLogos({ partners, hideHeader }: Props) {
+export function PartnerLogos({ partners }: PartnerLogosProps) {
   const t = useTranslations('home');
-  const locale = useLocale() as Locale;
-  const partnersHref = locale === 'en' ? '/en/partners' : '/partenaires';
-
-  const { rowA, rowB } = useMemo(() => {
-    const mid = Math.ceil(partners.length / 2);
-    return {
-      rowA: partners.slice(0, mid),
-      rowB: partners.slice(mid),
-    };
-  }, [partners]);
-
+  const locale = useLocale();
   if (partners.length === 0) return null;
 
-  const useMarquee = partners.length >= 4;
+  const midpoint = Math.ceil(partners.length / 2);
+  const rowA = partners.slice(0, midpoint);
+  const rowB = partners.slice(midpoint);
+  const secondRow = rowB.length > 0 ? rowB : partners;
+  const partnersHref = locale === 'en' ? '/en/partners' : '/partenaires';
 
   return (
-    <SectionWrapper
-      id={hideHeader ? undefined : 'partenaires'}
-      tone="canvas"
-      className={cn(hideHeader ? 'pt-0' : undefined, 'overflow-x-clip')}
-    >
-      {!hideHeader && (
-        <ScrollReveal>
-          <SectionHeader
-            eyebrow={t('partnersEyebrow')}
-            icon="handshake"
-            title={t('partnersTitle')}
-            description={t('partnersSubtitle')}
-            action={{ label: t('partnersCta'), href: partnersHref }}
-          />
-        </ScrollReveal>
-      )}
-
-      <ScrollReveal delay={hideHeader ? 0 : 80}>
-        {useMarquee ? (
-          <>
-            <div className="space-y-4 sm:space-y-5 motion-reduce:hidden">
-              <PartnerMarqueeRow partners={rowA} />
-              {rowB.length > 0 && <PartnerMarqueeRow partners={rowB} reverse />}
-            </div>
-            <div className="hidden motion-reduce:block">
-              <PartnerGrid partners={partners} />
-            </div>
-          </>
-        ) : (
-          <PartnerGrid partners={partners} />
-        )}
+    <SectionWrapper id="partenaires" className="!bg-white !py-14 md:!py-16">
+      <ScrollReveal>
+        <SectionHeader
+          icon="handshake"
+          eyebrow={t('partnersEyebrow')}
+          title={t('partnersTitle')}
+          description={t('partnersSubtitle')}
+          action={{
+            label: t('partnersCta'),
+            href: partnersHref,
+          }}
+          className="!mb-8 sm:!mb-10"
+        />
       </ScrollReveal>
+
+      <div className="space-y-4">
+        <MarqueeRow partners={rowA} />
+        <MarqueeRow partners={secondRow} reverse />
+      </div>
     </SectionWrapper>
   );
 }

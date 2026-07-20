@@ -57,5 +57,10 @@ export default buildConfig({
   upload: {
     limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB
   },
-  rateLimit: { max: 200 },
+  // Local: Next.js + admin UI easily exceed the old max:200 and Save returns 429.
+  rateLimit: {
+    max: 5000,
+    window: 15 * 60 * 1000,
+    skip: () => process.env.NODE_ENV !== 'production',
+  },
 });
