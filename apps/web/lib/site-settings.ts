@@ -1,5 +1,6 @@
 import type { Media, SiteSettings } from '@unm/types';
 import { LOGO_SRC } from '@/lib/logo';
+import { toPublicMediaUrl } from '@/lib/cms-media';
 
 /** Safe defaults when CMS is unreachable (local build / downtime). */
 export const DEFAULT_SITE_SETTINGS: SiteSettings = {
@@ -28,24 +29,18 @@ export function digitsOnly(value: string | undefined | null): string {
   return (value ?? '').replace(/[^0-9]/g, '');
 }
 
-function normalizeMediaUrl(url?: string | null): string | null {
-  if (!url) return null;
-  if (/^https?:\/\//i.test(url)) return url;
-  if (url.startsWith('/')) {
-    const cmsBase = process.env.NEXT_PUBLIC_CMS_URL ?? 'http://localhost:3001';
-    return `${cmsBase}${url}`;
-  }
-  return url;
-}
-
-/** Absolute CMS URL for an upload, or null. */
+/** Absolute or same-origin public URL for an upload, or null. */
 export function mediaUrl(media?: Media | null): string | null {
-  return normalizeMediaUrl(media?.url);
+  return toPublicMediaUrl(media?.url);
 }
 
 /** Brand logo from CMS Site Settings, else local fallback. */
 export function getBrandLogoSrc(settings?: SiteSettings | null): string {
-  return mediaUrl(settings?.brandLogo) ?? LOGO_SRC;
+  const cms = mediaUrl(settings?.brandLogo);
+  // While CMS is HTTP-only, prefer the local transparent wordmark so header /
+  // footer never depend on a flaky proxy for the primary brand mark.
+  if (!cms || cms.startsWith('/cms-media/')) return LOGO_SRC;
+  return cms;
 }
 
 export function mergeSiteSettings(partial: SiteSettings | null | undefined): SiteSettings {

@@ -1,5 +1,6 @@
 import type { Partner } from '@unm/types';
 import { LOGO_ALT, LOGO_SRC } from '@/lib/logo';
+import { toPublicMediaUrl } from '@/lib/cms-media';
 
 export type AllianceLogoEntry = {
   id: string;
@@ -53,20 +54,12 @@ const PARTNER_LOGO_SCALE_BY_KEYWORD: { keyword: string; scale: number }[] = [
 ];
 
 function normalizeCmsMediaUrl(url?: string | null): string | null {
-  if (!url) return null;
-  if (/^https?:\/\//i.test(url)) return url;
-  if (url.startsWith('/LOGS/')) return url;
-  if (url.startsWith('/')) {
-    const cmsBase = process.env.NEXT_PUBLIC_CMS_URL ?? 'http://localhost:3001';
-    return `${cmsBase}${url}`;
-  }
-  return url;
+  return toPublicMediaUrl(url);
 }
 
 export function getPartnerLogoSrc(partner: Pick<Partner, 'name' | 'logo'>): string | null {
-  const cmsUrl = normalizeCmsMediaUrl(partner.logo?.url);
-  if (cmsUrl) return cmsUrl;
-
+  // Prefer local /public/LOGS assets — reliable on Vercel even when CMS
+  // uploads are missing or the media proxy is cold.
   const exact = FALLBACK_PARTNER_LOGO_BY_NAME[partner.name];
   if (exact) return exact;
 
@@ -75,7 +68,7 @@ export function getPartnerLogoSrc(partner: Pick<Partner, 'name' | 'logo'>): stri
     if (lower.includes(keyword)) return src;
   }
 
-  return null;
+  return normalizeCmsMediaUrl(partner.logo?.url);
 }
 
 const DEFAULT_EBS_ALLIANCE_LOCKUP: AllianceLogoEntry[] = [
