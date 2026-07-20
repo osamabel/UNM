@@ -4,10 +4,17 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 
-export function NewsletterForm({ className }: { className?: string }) {
+type NewsletterFormProps = {
+  className?: string;
+  /** stacked = full-width input + button (footer). row = side-by-side. */
+  layout?: 'row' | 'stacked';
+};
+
+export function NewsletterForm({ className, layout = 'row' }: NewsletterFormProps) {
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'ok' | 'error'>('idle');
   const t = useTranslations('footer');
+  const stacked = layout === 'stacked';
 
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -33,7 +40,7 @@ export function NewsletterForm({ className }: { className?: string }) {
       >
         {t('newsletter')}
       </label>
-      <div className="flex flex-col gap-2 sm:flex-row">
+      <div className={cn('flex gap-2', stacked ? 'flex-col sm:flex-row' : 'flex-col sm:flex-row')}>
         <input
           id="newsletter-email"
           type="email"
@@ -47,7 +54,10 @@ export function NewsletterForm({ className }: { className?: string }) {
         <button
           type="submit"
           disabled={status === 'loading'}
-          className="btn-uni btn-uni-primary h-11 shrink-0 rounded-xl px-6 text-sm sm:px-5"
+          className={cn(
+            'btn-uni btn-uni-primary h-11 shrink-0 rounded-xl px-6 text-sm sm:px-5',
+            stacked && 'sm:min-w-[7.5rem]',
+          )}
         >
           {t('newsletterSubmit')}
         </button>

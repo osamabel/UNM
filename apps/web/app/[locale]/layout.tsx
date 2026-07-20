@@ -8,6 +8,7 @@ import { Footer } from '@/components/layout/Footer';
 import { MainContent } from '@/components/layout/MainContent';
 import { MobileBottomBar } from '@/components/shared/MobileBottomBar';
 import { WhatsAppButton } from '@/components/shared/WhatsAppButton';
+import { InitialLoader } from '@/components/shared/InitialLoader';
 import { SiteSettingsProvider } from '@/components/providers/SiteSettingsProvider';
 import { JsonLd } from '@/components/shared/JsonLd';
 import { organizationSchema } from '@/lib/schema';
@@ -84,6 +85,7 @@ export default async function LocaleLayout({
       <body className={fontSans.className}>
         <NextIntlClientProvider locale={params.locale} messages={messages}>
           <SiteSettingsProvider settings={settings}>
+            <InitialLoader />
             <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-primary focus:px-4 focus:py-2 focus:text-white">
               {tCommon('skipToContent')}
             </a>

@@ -13,7 +13,8 @@ import { cn } from '@/lib/utils';
 type NavKey =
   | 'university' | 'faculties' | 'programs' | 'admissions' | 'contact' | 'organisations'
   | 'manifesto' | 'presidentWord' | 'partners' | 'newsUnm' | 'events' | 'newsroom'
-  | 'facultyBusinessSchool' | 'facultyGovernance' | 'facultyTechnology' | 'facultySportBusiness';
+  | 'facultyBusinessSchool' | 'facultyGovernance' | 'facultyTechnology' | 'facultySportBusiness'
+  | 'programDba' | 'programMba' | 'programCertificate';
 
 interface LeafItem { kind: 'leaf'; key: NavKey; fr: string; en: string; comingSoon?: boolean; }
 interface ParentItem { kind: 'parent'; key: NavKey; fr: string; en: string; children: LeafItem[]; }
@@ -35,10 +36,16 @@ const FACULTIES_SUB: LeafItem[] = [
   { kind: 'leaf', key: 'facultySportBusiness', fr: '/facultes/school-of-sport-business', en: '/en/faculties/school-of-sport-business', comingSoon: true },
 ];
 
+const PROGRAMS_SUB: LeafItem[] = [
+  { kind: 'leaf', key: 'programDba', fr: '/programmes?type=DBA', en: '/en/programs?type=DBA' },
+  { kind: 'leaf', key: 'programMba', fr: '/programmes?type=MBA', en: '/en/programs?type=MBA' },
+  { kind: 'leaf', key: 'programCertificate', fr: '/programmes?type=Certificate', en: '/en/programs?type=Certificate' },
+];
+
 const ITEMS: Item[] = [
   { kind: 'parent', key: 'university', fr: '/universite', en: '/en/university', children: UNIVERSITY_SUB },
   { kind: 'parent', key: 'faculties', fr: '/facultes', en: '/en/faculties', children: FACULTIES_SUB },
-  { kind: 'leaf', key: 'programs', fr: '/programmes', en: '/en/programs' },
+  { kind: 'parent', key: 'programs', fr: '/programmes', en: '/en/programs', children: PROGRAMS_SUB },
   { kind: 'leaf', key: 'admissions', fr: '/admissions', en: '/en/admissions' },
   { kind: 'leaf', key: 'organisations', fr: '/organisations', en: '/en/organizations' },
   { kind: 'leaf', key: 'contact', fr: '/contact', en: '/en/contact' },

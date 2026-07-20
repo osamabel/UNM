@@ -110,18 +110,21 @@ export function ApplicationForm({ programs }: Props) {
         <Input
           label={t('lastName')}
           required
+          autoComplete="family-name"
           {...register('lastName')}
           error={errors.lastName && t('errorRequired')}
         />
         <Input
           label={t('firstName')}
           required
+          autoComplete="given-name"
           {...register('firstName')}
           error={errors.firstName && t('errorRequired')}
         />
         <Input
           label={t('country')}
           required
+          autoComplete="country-name"
           {...register('country')}
           error={errors.country && t('errorRequired')}
         />
@@ -149,7 +152,7 @@ export function ApplicationForm({ programs }: Props) {
         />
       </div>
 
-      <label className="card-flat flex cursor-pointer items-start gap-3 p-4">
+      <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-warm-200/70 bg-white/60 p-4 transition-colors hover:border-primary/25">
         <input
           type="checkbox"
           required
@@ -166,13 +169,13 @@ export function ApplicationForm({ programs }: Props) {
       </label>
 
       {submitError && (
-        <p role="alert" className="card-flat flex gap-2 border-l-4 border-primary/40 px-4 py-3 text-sm text-primary">
+        <p role="alert" className="flex gap-2 rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 text-sm text-primary">
           <Icon name="alert" size={18} className="mt-0.5 shrink-0" />
           <span>{submitError}</span>
         </p>
       )}
 
-      <div className="divider-fine pt-2">
+      <div className="border-t border-warm-150/70 pt-5">
         <Button
           type="submit"
           loading={isSubmitting}

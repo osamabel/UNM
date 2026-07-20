@@ -11,7 +11,7 @@ interface LogoProps {
   /**
    * Surface the logo sits on:
    * - light → nav / light panels (logo as-is)
-   * - dark  → footer / dark panels (warm tile behind so the wordmark + subtitle stay readable)
+   * - dark  → footer / dark panels (wordmark recolored white, no light tile)
    */
   surface?: 'light' | 'dark';
   className?: string;
@@ -41,7 +41,7 @@ export function Logo({ variant = 'full', surface = 'light', className, src }: Lo
         width={isMark ? 240 : 400}
         height={isMark ? 111 : 185}
         quality={100}
-        sizes={onDark ? '240px' : '(max-width: 640px) 160px, (max-width: 1280px) 200px, 240px'}
+        sizes={onDark ? '296px' : '(max-width: 640px) 160px, (max-width: 1280px) 200px, 240px'}
         className={cn(
           'w-auto object-contain object-left select-none',
           isMark && 'logo-mark h-11 max-w-[7.5rem]',
@@ -50,7 +50,7 @@ export function Logo({ variant = 'full', surface = 'light', className, src }: Lo
             'logo-wordmark h-11 max-w-[12rem] sm:h-12 sm:max-w-[13.5rem] 2xl:h-14 2xl:max-w-[16rem]',
           onDark &&
             !isMark &&
-            'logo-wordmark h-14 max-w-[15.5rem] sm:h-16 sm:max-w-[18rem] lg:h-[4.5rem] lg:max-w-[20rem]',
+            'logo-wordmark h-auto w-full max-w-[18.5rem]',
         )}
         priority
       />

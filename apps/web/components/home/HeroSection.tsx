@@ -6,50 +6,91 @@ import { ButtonLink } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
 import type { Locale } from '@unm/types';
 
-const PROOF = [
-  { icon: 'handshake' as const, fr: 'Partenariat EBS Paris', en: 'EBS Paris partnership' },
-  { icon: 'briefcase' as const, fr: 'MBA · DBA · Executive', en: 'MBA · DBA · Executive' },
+const FLOAT_CARDS = [
+  {
+    icon: 'handshake' as const,
+    labelFr: 'Alliance',
+    labelEn: 'Alliance',
+    fr: 'Partenariat EBS Paris',
+    en: 'EBS Paris partnership',
+  },
+  {
+    icon: 'briefcase' as const,
+    labelFr: 'Programmes',
+    labelEn: 'Programs',
+    fr: 'MBA · DBA · Executive',
+    en: 'MBA · DBA · Executive',
+  },
 ] as const;
 
 export function HeroSection() {
   const locale = useLocale() as Locale;
   const t = useTranslations('home');
   const isEn = locale === 'en';
+  const gradAlt = isEn
+    ? 'UNM graduates celebrating their achievement'
+    : 'Diplômés UNM célébrant leur réussite';
 
   return (
     <section
       id="hero"
-      className="relative scroll-mt-24 overflow-hidden border-b border-warm-150/70 bg-canvas"
+      className="hero-bg-photo relative scroll-mt-24 overflow-hidden"
+      aria-label={gradAlt}
     >
-      <div
-        className="hero-blob -right-16 -top-16 h-64 w-64 bg-primary/8"
-        aria-hidden
-        style={{ animationDelay: '0s' }}
-      />
-      <div
-        className="hero-blob bottom-0 left-1/3 h-48 w-48 bg-secondary/5"
-        aria-hidden
-        style={{ animationDelay: '-4s', animationDuration: '18s' }}
-      />
-      <div className="hero-bg pointer-events-none absolute inset-0" aria-hidden />
+      <div className="absolute inset-0" aria-hidden>
+        <Image
+          src="/home1.png"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-[center_36%]"
+        />
+      </div>
 
-      <div className="container-page relative min-w-0">
-        <div className="grid min-w-0 items-stretch gap-6 py-10 sm:gap-8 sm:py-14 md:grid-cols-2 md:gap-8 md:py-16 lg:gap-10 lg:py-20 xl:gap-12">
-          {/* Copy */}
-          <div className="hero-enter flex min-w-0 flex-col justify-center overflow-hidden md:py-2 lg:py-4">
-            <p className="eyebrow animate-fade-in">{t('heroEyebrow')}</p>
-            <div
-              className="mt-3 h-0.5 w-12 origin-left animate-scale-in bg-primary"
-              style={{ animationDelay: '0.15s' }}
-              aria-hidden
-            />
-            <h1 className="mt-4 max-w-xl break-words font-display text-display-xl text-secondary sm:mt-5">
+      <div className="hero-bg-scrub pointer-events-none absolute inset-0" aria-hidden />
+
+      <ul
+        className="hero-float-rail"
+        aria-label={isEn ? 'Highlights' : 'Points clés'}
+      >
+        {FLOAT_CARDS.map((card, i) => (
+          <li key={card.icon} className={`hero-float-card hero-float-card--${i + 1}`}>
+            <span className="hero-float-card-glow" aria-hidden />
+            <span className="hero-float-card-icon" aria-hidden>
+              <Icon name={card.icon} size={16} />
+            </span>
+            <span className="hero-float-card-body">
+              <span className="hero-float-card-label">
+                {isEn ? card.labelEn : card.labelFr}
+              </span>
+              <span className="hero-float-card-title">
+                {isEn ? card.en : card.fr}
+              </span>
+            </span>
+          </li>
+        ))}
+      </ul>
+
+      <div className="container-page relative z-10 min-w-0">
+        <div className="flex min-w-0 items-center justify-start py-16 sm:py-20 md:py-24 lg:min-h-[min(82vh,48rem)] lg:py-28">
+          <div className="hero-enter hero-copy flex w-full max-w-xl min-w-0 flex-col text-left md:max-w-lg lg:max-w-xl">
+            <div className="flex items-center gap-3">
+              <span className="h-px w-8 bg-primary sm:w-10" aria-hidden />
+              <p className="font-heading text-[11px] font-bold uppercase tracking-[0.2em] text-primary-200">
+                {t('heroEyebrow')}
+              </p>
+            </div>
+
+            <h1 className="mt-4 font-display text-[2.4rem] leading-[1.05] tracking-tight text-warm-50 sm:mt-5 sm:text-[2.85rem] lg:text-[3.35rem]">
               {t('heroTitle')}
             </h1>
-            <p className="mt-4 max-w-lg text-base leading-relaxed text-secondary/75 sm:mt-5 sm:text-lg">
+
+            <p className="mt-4 max-w-md text-[15px] leading-relaxed text-white sm:mt-5 sm:text-base">
               {t('heroSubtitle')}
             </p>
-            <div className="mt-7 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:flex-wrap sm:items-center">
+
+            <div className="mt-7 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:items-center sm:gap-3">
               <ButtonLink
                 href={isEn ? '/en/programs' : '/programmes'}
                 size="lg"
@@ -62,43 +103,12 @@ export function HeroSection() {
                 href={isEn ? '/en/admissions' : '/admissions'}
                 variant="ghost"
                 size="lg"
-                className="w-full sm:w-auto"
+                className="hero-cta-outline w-full sm:w-auto"
               >
                 {t('heroCta2')}
               </ButtonLink>
             </div>
-            <ul className="proof-pills -mx-1 mt-7 border-t border-warm-150/80 px-1 pt-5 sm:mt-8 sm:pt-6">
-              {PROOF.map((p, i) => (
-                <li
-                  key={p.icon}
-                  className="glass-pill"
-                  style={{ animationDelay: `${0.5 + i * 0.08}s` }}
-                >
-                  <Icon name={p.icon} size={16} className="text-primary" />
-                  <span>{isEn ? p.en : p.fr}</span>
-                </li>
-              ))}
-            </ul>
           </div>
-
-          {/* Full graduation photo — 3:2 native ratio, no crop */}
-          <aside className="hero-enter relative flex min-w-0 items-center md:pl-1 lg:pl-2">
-            <div className="relative w-full overflow-hidden rounded-2xl border border-warm-150/60 bg-warm-50 shadow-[0_20px_50px_-24px_rgba(61,26,11,0.35)]">
-              <Image
-                src="/unmgrad.png"
-                alt={
-                  isEn
-                    ? 'UNM graduates celebrating their achievement'
-                    : 'Diplômés UNM célébrant leur réussite'
-                }
-                width={1536}
-                height={1024}
-                priority
-                sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 560px"
-                className="h-auto w-full"
-              />
-            </div>
-          </aside>
         </div>
       </div>
     </section>
