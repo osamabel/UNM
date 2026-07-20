@@ -7,6 +7,7 @@ import type {
   SiteSettings,
   Testimonial,
 } from '@unm/types';
+import { rewriteMedia } from '@/lib/cms-media';
 
 const CMS_API_URL = process.env.CMS_API_URL ?? 'http://localhost:3001/api';
 const CMS_API_TOKEN = process.env.CMS_API_TOKEN;
@@ -65,6 +66,7 @@ function unwrapLocalizedArray(arr: unknown, ...keys: string[]): any[] {
 function normalizeFaculty(raw: any): Faculty {
   return {
     ...raw,
+    coverImage: rewriteMedia(raw.coverImage),
     strengths: unwrapLocalizedArray(raw.strengths, 'text'),
     outcomes: unwrapLocalizedArray(raw.outcomes, 'text'),
     domains: unwrapLocalizedArray(raw.domains, 'name'),
@@ -125,6 +127,7 @@ export interface ProgramQuery {
 function normalizeProgram(raw: any): Program {
   return {
     ...raw,
+    brochureFile: rewriteMedia(raw.brochureFile),
     objectives: unwrapLocalizedArray(raw.objectives, 'text'),
     skills:     unwrapLocalizedArray(raw.skills, 'text'),
     outcomes:   unwrapLocalizedArray(raw.outcomes, 'text'),
@@ -189,7 +192,17 @@ export async function getArticles(page = 1, perPage = 12): Promise<{ docs: Artic
     `/articles?limit=${perPage}&page=${page}&sort=-publishedAt`,
     { tag: 'articles' },
   );
-  return data ?? { docs: [], totalPages: 0 };
+  if (!data) return { docs: [], totalPages: 0 };
+  return {
+    ...data,
+    docs: data.docs.map((a) => ({
+      ...a,
+      coverImage: rewriteMedia(a.coverImage) as Article['coverImage'],
+      author: a.author
+        ? { ...a.author, avatar: rewriteMedia(a.author.avatar) }
+        : a.author,
+    })),
+  };
 }
 
 export async function getArticle(slug: string): Promise<Article | null> {
@@ -197,7 +210,15 @@ export async function getArticle(slug: string): Promise<Article | null> {
     `/articles?where[slug][equals]=${encodeURIComponent(slug)}&limit=1`,
     { tag: `article:${slug}` },
   );
-  return data?.docs?.[0] ?? null;
+  const raw = data?.docs?.[0];
+  if (!raw) return null;
+  return {
+    ...raw,
+    coverImage: rewriteMedia(raw.coverImage) as Article['coverImage'],
+    author: raw.author
+      ? { ...raw.author, avatar: rewriteMedia(raw.author.avatar) }
+      : raw.author,
+  };
 }
 
 // ─── Testimonials, Partners, Settings ───────────────────
@@ -206,18 +227,31 @@ export async function getTestimonials(): Promise<Testimonial[]> {
   const data = await cmsFetch<{ docs: Testimonial[] }>(`/testimonials?limit=20`, {
     tag: 'testimonials',
   });
-  return data?.docs ?? [];
+  return (data?.docs ?? []).map((t) => ({
+    ...t,
+    avatar: rewriteMedia(t.avatar),
+  }));
 }
 
 export async function getPartners(): Promise<Partner[]> {
   const data = await cmsFetch<{ docs: Partner[] }>(`/partners?limit=50`, {
     tag: 'partners',
   });
-  return data?.docs ?? [];
+  return (data?.docs ?? []).map((p) => ({
+    ...p,
+    logo: rewriteMedia(p.logo) as Partner['logo'],
+  }));
 }
 
 export async function getSiteSettings(): Promise<SiteSettings | null> {
-  return cmsFetch<SiteSettings>(`/globals/site-settings?depth=1`, { tag: 'site-settings' });
+  const data = await cmsFetch<SiteSettings>(`/globals/site-settings?depth=1`, {
+    tag: 'site-settings',
+  });
+  if (!data) return null;
+  return {
+    ...data,
+    brandLogo: rewriteMedia(data.brandLogo),
+  };
 }
 
 // ─── Sitemap helpers ────────────────────────────────────
