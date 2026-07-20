@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 export const runtime = 'nodejs';
-export const revalidate = 86400;
 
 function cmsOrigin(): string {
   const raw =
@@ -13,7 +12,7 @@ function cmsOrigin(): string {
 
 /**
  * Runtime proxy: /cms-media/<file> → CMS /media/<file>
- * Uses server env at request time (unlike next.config rewrites baked at build).
+ * Short cache so Media tray edits show up quickly after ISR refresh.
  */
 export async function GET(
   _req: NextRequest,
@@ -35,7 +34,7 @@ export async function GET(
   try {
     const upstream = await fetch(target, {
       headers: { Accept: 'image/*,application/pdf,*/*' },
-      next: { revalidate: 86400 },
+      next: { revalidate: 60 },
     });
 
     if (!upstream.ok || !upstream.body) {
@@ -45,7 +44,7 @@ export async function GET(
     const contentType = upstream.headers.get('content-type') ?? 'application/octet-stream';
     const headers = new Headers();
     headers.set('Content-Type', contentType);
-    headers.set('Cache-Control', 'public, max-age=86400, stale-while-revalidate=604800');
+    headers.set('Cache-Control', 'public, max-age=60, stale-while-revalidate=300');
 
     return new NextResponse(upstream.body, { status: 200, headers });
   } catch {

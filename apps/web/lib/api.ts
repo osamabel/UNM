@@ -236,6 +236,7 @@ export async function getTestimonials(): Promise<Testimonial[]> {
 export async function getPartners(): Promise<Partner[]> {
   const data = await cmsFetch<{ docs: Partner[] }>(`/partners?limit=50&depth=1`, {
     tag: 'partners',
+    revalidate: 60,
   });
   return (data?.docs ?? []).map((p) => ({
     ...p,
