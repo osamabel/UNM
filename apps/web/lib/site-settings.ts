@@ -36,7 +36,11 @@ export function mediaUrl(media?: Media | null): string | null {
 
 /** Brand logo from CMS Site Settings, else local fallback. */
 export function getBrandLogoSrc(settings?: SiteSettings | null): string {
-  return mediaUrl(settings?.brandLogo) ?? LOGO_SRC;
+  const cms = mediaUrl(settings?.brandLogo);
+  // While CMS is HTTP-only, prefer the local transparent wordmark so header /
+  // footer never depend on a flaky proxy for the primary brand mark.
+  if (!cms || cms.startsWith('/cms-media/')) return LOGO_SRC;
+  return cms;
 }
 
 export function mergeSiteSettings(partial: SiteSettings | null | undefined): SiteSettings {

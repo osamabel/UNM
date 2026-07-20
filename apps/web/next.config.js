@@ -13,14 +13,6 @@ const securityHeaders = [
   },
 ];
 
-function cmsOrigin() {
-  const raw =
-    process.env.NEXT_PUBLIC_CMS_URL ||
-    (process.env.CMS_API_URL ? process.env.CMS_API_URL.replace(/\/api\/?$/, '') : '') ||
-    'http://localhost:3001';
-  return raw.replace(/\/$/, '').replace(/\/api$/, '');
-}
-
 const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
@@ -49,19 +41,6 @@ const nextConfig = {
       // canonical programme page so we keep one URL per programme (SEO).
       { source: '/dba', destination: '/programmes/dba-business-administration', permanent: true },
       { source: '/en/dba', destination: '/en/programs/dba-business-administration', permanent: true },
-    ];
-  },
-  /**
-   * Proxy CMS uploads through the Next.js host so HTTPS pages never
-   * request `http://IP:3001/media/...` (browser mixed-content block).
-   */
-  async rewrites() {
-    const origin = cmsOrigin();
-    return [
-      {
-        source: '/cms-media/:path*',
-        destination: `${origin}/media/:path*`,
-      },
     ];
   },
   experimental: {
