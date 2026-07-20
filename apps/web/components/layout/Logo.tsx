@@ -1,43 +1,59 @@
+'use client';
+
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { LOGO_ALT, LOGO_SRC } from '@/lib/logo';
+import { useSiteSettings } from '@/components/providers/SiteSettingsProvider';
+import { getBrandLogoSrc } from '@/lib/site-settings';
 
 interface LogoProps {
   variant?: 'full' | 'mark';
-  /** Kept for API compatibility — transparent PNG works on all surfaces. */
+  /**
+   * Surface the logo sits on:
+   * - light → nav / light panels (logo as-is)
+   * - dark  → footer / dark panels (wordmark recolored white, no light tile)
+   */
   surface?: 'light' | 'dark';
   className?: string;
   tone?: 'primary' | 'secondary' | 'inherit';
+  /** Override CMS / default src (rare). */
+  src?: string;
 }
 
-export function Logo({ variant = 'full', className }: LogoProps) {
-  if (variant === 'mark') {
-    return (
+/** Full wordmark — prefers CMS Site Settings → brandLogo, else local fallback. */
+export function Logo({ variant = 'full', surface = 'light', className, src }: LogoProps) {
+  const isMark = variant === 'mark';
+  const onDark = surface === 'dark';
+  const settings = useSiteSettings();
+  const logoSrc = src ?? getBrandLogoSrc(settings) ?? LOGO_SRC;
+
+  return (
+    <span
+      className={cn(
+        'logo-wrap inline-flex shrink-0 items-center justify-center',
+        onDark && 'logo-wrap-footer',
+        className,
+      )}
+    >
       <Image
-        src={LOGO_SRC}
+        src={logoSrc}
         alt={LOGO_ALT}
-        width={120}
-        height={48}
+        width={isMark ? 240 : 400}
+        height={isMark ? 111 : 185}
+        quality={100}
+        sizes={onDark ? '296px' : '(max-width: 640px) 160px, (max-width: 1280px) 200px, 240px'}
         className={cn(
-          'logo-mark h-9 w-auto max-w-[3.25rem] object-left object-contain select-none',
-          className,
+          'w-auto object-contain object-left select-none',
+          isMark && 'logo-mark h-11 max-w-[7.5rem]',
+          !isMark &&
+            !onDark &&
+            'logo-wordmark h-11 max-w-[12rem] sm:h-12 sm:max-w-[13.5rem] 2xl:h-14 2xl:max-w-[16rem]',
+          onDark &&
+            !isMark &&
+            'logo-wordmark h-auto w-full max-w-[18.5rem]',
         )}
         priority
       />
-    );
-  }
-
-  return (
-    <Image
-      src={LOGO_SRC}
-      alt={LOGO_ALT}
-      width={240}
-      height={64}
-      className={cn(
-        'logo-wordmark h-9 w-auto max-w-[12rem] select-none sm:h-10 sm:max-w-[14rem]',
-        className,
-      )}
-      priority
-    />
+    </span>
   );
 }

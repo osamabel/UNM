@@ -3,6 +3,8 @@
 import Link from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
 import { Icon } from '@/components/ui/Icon';
+import { useSiteSettings } from '@/components/providers/SiteSettingsProvider';
+import { digitsOnly } from '@/lib/site-settings';
 import type { Locale } from '@unm/types';
 
 interface CTABarProps {
@@ -13,7 +15,10 @@ interface CTABarProps {
 export function CTABar({ programSlug, hidden }: CTABarProps) {
   const locale = useLocale() as Locale;
   const t = useTranslations('common');
-  const whatsapp = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '';
+  const settings = useSiteSettings();
+  const whatsapp =
+    digitsOnly(settings.contact.whatsapp) ||
+    digitsOnly(process.env.NEXT_PUBLIC_WHATSAPP_NUMBER);
 
   if (hidden) return null;
 
@@ -51,9 +56,13 @@ export function CTABar({ programSlug, hidden }: CTABarProps) {
           </span>
         </Link>
         <a
-          href={`https://wa.me/${whatsapp.replace(/[^0-9]/g, '')}?text=${waMessage}`}
-          target="_blank"
-          rel="noopener noreferrer"
+          href={
+            whatsapp
+              ? `https://wa.me/${whatsapp}?text=${waMessage}`
+              : contactHref
+          }
+          target={whatsapp ? '_blank' : undefined}
+          rel={whatsapp ? 'noopener noreferrer' : undefined}
           className="flex min-h-[3.25rem] flex-col items-center justify-center gap-0.5 px-2 font-heading text-xs font-medium text-secondary sm:text-sm"
         >
           <Icon name="phone" size={16} className="text-[#25D366]" />

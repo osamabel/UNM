@@ -22,7 +22,8 @@ type NavKey =
   | 'home' | 'university' | 'faculties' | 'programs'
   | 'admissions' | 'contact' | 'organisations'
   | 'manifesto' | 'presidentWord' | 'partners' | 'newsUnm' | 'events' | 'newsroom'
-  | 'facultyBusinessSchool' | 'facultyGovernance' | 'facultyTechnology' | 'facultySportBusiness';
+  | 'facultyBusinessSchool' | 'facultyGovernance' | 'facultyTechnology' | 'facultySportBusiness'
+  | 'programDba' | 'programMba' | 'programCertificate';
 
 // `comingSoon` items are rendered as a static label (not a link) with a
 // "Bientôt" badge. They keep parity with the editorial CMS state where
@@ -53,10 +54,16 @@ const FACULTIES_SUB: LeafItem[] = [
   { kind: 'leaf', key: 'facultySportBusiness',  fr: '/facultes/school-of-sport-business', en: '/en/faculties/school-of-sport-business', comingSoon: true },
 ];
 
+const PROGRAMS_SUB: LeafItem[] = [
+  { kind: 'leaf', key: 'programDba',         fr: '/programmes?type=DBA',         en: '/en/programs?type=DBA' },
+  { kind: 'leaf', key: 'programMba',         fr: '/programmes?type=MBA',         en: '/en/programs?type=MBA' },
+  { kind: 'leaf', key: 'programCertificate', fr: '/programmes?type=Certificate', en: '/en/programs?type=Certificate' },
+];
+
 const ITEMS: NavItem[] = [
   { kind: 'parent', key: 'university',    fr: '/universite',    en: '/en/university',    children: UNIVERSITY_SUB },
   { kind: 'parent', key: 'faculties',     fr: '/facultes',      en: '/en/faculties',     children: FACULTIES_SUB },
-  { kind: 'leaf',   key: 'programs',      fr: '/programmes',    en: '/en/programs'   },
+  { kind: 'parent', key: 'programs',      fr: '/programmes',    en: '/en/programs',     children: PROGRAMS_SUB },
   { kind: 'leaf',   key: 'admissions',    fr: '/admissions',    en: '/en/admissions' },
   { kind: 'leaf',   key: 'organisations', fr: '/organisations', en: '/en/organizations' },
   { kind: 'leaf',   key: 'contact',       fr: '/contact',       en: '/en/contact' },
@@ -64,16 +71,17 @@ const ITEMS: NavItem[] = [
 
 // Shared classes for level-1 items: UPPERCASE, narrow tracking, no shadow.
 // Inspired by HBS / Wharton / INSEAD main nav.
-const L1_LINK = 'nav-link rounded px-3 py-2.5';
+const L1_LINK =
+  'nav-link !px-2 !py-2 !text-[12px] !tracking-[0.06em] whitespace-nowrap 2xl:!px-2.5 2xl:!text-[13px]';
 
 export function Nav() {
   const locale = useLocale() as Locale;
   const t = useTranslations('nav');
   return (
-    <ul className="flex items-center gap-1">
+    <ul className="flex flex-nowrap items-center justify-center gap-0">
       {ITEMS.map((item) =>
         item.kind === 'leaf' ? (
-          <li key={item.key}>
+          <li key={item.key} className="shrink-0">
             <Link
               href={locale === 'en' ? item.en : item.fr}
               className={L1_LINK}
@@ -162,7 +170,7 @@ function Dropdown({ label, parentHref, items, comingSoonLabel }: DropdownProps) 
   return (
     <li
       ref={wrapperRef}
-      className="relative"
+      className="relative shrink-0"
       onMouseEnter={() => {
         cancelClose();
         setOpen(true);
@@ -171,8 +179,8 @@ function Dropdown({ label, parentHref, items, comingSoonLabel }: DropdownProps) 
       onFocus={() => setOpen(true)}
       onBlur={scheduleClose}
     >
-      <span className="nav-link inline-flex items-center rounded">
-        <Link href={parentHref} className="rounded-l px-3 py-2.5">
+      <span className="nav-link inline-flex items-center rounded !px-0 !py-0 whitespace-nowrap">
+        <Link href={parentHref} className="rounded-l px-2 py-2 2xl:px-2.5">
           {label}
         </Link>
         <button
@@ -194,7 +202,7 @@ function Dropdown({ label, parentHref, items, comingSoonLabel }: DropdownProps) 
               });
             }
           }}
-          className="rounded-r px-2 py-2.5 transition-transform duration-300"
+          className="rounded-r px-1.5 py-2 transition-transform duration-300"
         >
           <svg
             aria-hidden="true"

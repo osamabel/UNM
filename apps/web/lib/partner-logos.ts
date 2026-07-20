@@ -11,10 +11,11 @@ export type AllianceLogoEntry = {
 };
 
 /**
- * Real partner logos in /public/LOGS (user-provided assets).
- * Always preferred over CMS uploads (which may still be placeholders).
+ * Local fallback logos in /public/LOGS.
+ * CMS partner uploads are the source of truth; these are only used when a
+ * partner has no usable CMS logo yet.
  */
-export const PARTNER_LOGO_BY_NAME: Record<string, string> = {
+const FALLBACK_PARTNER_LOGO_BY_NAME: Record<string, string> = {
   'European Business School (EBS Paris)': '/LOGS/EBS.jpeg',
   EFMD: '/LOGS/EFMD.jpeg',
   'AACSB Business Education Alliance': '/LOGS/aac.jpeg',
@@ -25,8 +26,8 @@ export const PARTNER_LOGO_BY_NAME: Record<string, string> = {
   'Bank Al-Maghrib': '/LOGS/bankmagreb.jpeg',
 };
 
-/** Fuzzy match when CMS partner name differs slightly from seed labels. */
-const PARTNER_LOGO_BY_KEYWORD: { keyword: string; src: string }[] = [
+/** Fuzzy fallback when CMS partner name differs slightly from seed labels. */
+const FALLBACK_PARTNER_LOGO_BY_KEYWORD: { keyword: string; src: string }[] = [
   { keyword: 'ebs', src: '/LOGS/EBS.jpeg' },
   { keyword: 'efmd', src: '/LOGS/EFMD.jpeg' },
   { keyword: 'aacsb', src: '/LOGS/aac.jpeg' },
@@ -38,39 +39,79 @@ const PARTNER_LOGO_BY_KEYWORD: { keyword: string; src: string }[] = [
   { keyword: 'bank al', src: '/LOGS/bankmagreb.jpeg' },
 ];
 
-/** Visual scale tweaks so wordmarks feel balanced in the same tile. */
+/** Tight scale tweaks so wordmarks sit evenly in fixed white cards. */
 const PARTNER_LOGO_SCALE_BY_KEYWORD: { keyword: string; scale: number }[] = [
-  { keyword: 'ocp', scale: 0.8 },
-  { keyword: 'ebs', scale: 0.86 },
-  { keyword: 'mines', scale: 0.88 },
-  { keyword: 'maghrib', scale: 0.9 },
-  { keyword: 'bank al', scale: 0.9 },
-  { keyword: 'cgem', scale: 0.92 },
-  { keyword: 'efmd', scale: 0.94 },
-  { keyword: 'aacsb', scale: 1.04 },
-  { keyword: 'cefdg', scale: 1.08 },
+  { keyword: 'ocp', scale: 0.92 },
+  { keyword: 'ebs', scale: 0.94 },
+  { keyword: 'mines', scale: 0.94 },
+  { keyword: 'maghrib', scale: 0.96 },
+  { keyword: 'bank al', scale: 0.96 },
+  { keyword: 'cgem', scale: 0.96 },
+  { keyword: 'efmd', scale: 0.98 },
+  { keyword: 'aacsb', scale: 1 },
+  { keyword: 'cefdg', scale: 1 },
 ];
 
+function normalizeCmsMediaUrl(url?: string | null): string | null {
+  if (!url) return null;
+  if (/^https?:\/\//i.test(url)) return url;
+  if (url.startsWith('/LOGS/')) return url;
+  if (url.startsWith('/')) {
+    const cmsBase = process.env.NEXT_PUBLIC_CMS_URL ?? 'http://localhost:3001';
+    return `${cmsBase}${url}`;
+  }
+  return url;
+}
+
 export function getPartnerLogoSrc(partner: Pick<Partner, 'name' | 'logo'>): string | null {
-  const exact = PARTNER_LOGO_BY_NAME[partner.name];
+  const cmsUrl = normalizeCmsMediaUrl(partner.logo?.url);
+  if (cmsUrl) return cmsUrl;
+
+  const exact = FALLBACK_PARTNER_LOGO_BY_NAME[partner.name];
   if (exact) return exact;
 
   const lower = partner.name.toLowerCase();
-  for (const { keyword, src } of PARTNER_LOGO_BY_KEYWORD) {
+  for (const { keyword, src } of FALLBACK_PARTNER_LOGO_BY_KEYWORD) {
     if (lower.includes(keyword)) return src;
   }
-
-  const cmsUrl = partner.logo?.url ?? '';
-  if (cmsUrl.includes('/LOGS/')) return cmsUrl;
 
   return null;
 }
 
-/** UNM × EBS lockup in the alliance section (home). */
-export const EBS_ALLIANCE_LOCKUP: AllianceLogoEntry[] = [
+const DEFAULT_EBS_ALLIANCE_LOCKUP: AllianceLogoEntry[] = [
   { id: 'unm', name: LOGO_ALT, src: LOGO_SRC, scale: 1.02, kind: 'jpeg' },
   { id: 'ebs', name: 'EBS Paris', src: '/LOGS/EBS.jpeg', scale: 0.86, kind: 'jpeg' },
 ];
+
+function findEbsPartner(partners: Partner[] = []): Partner | undefined {
+  return partners.find((partner) => {
+    const name = partner.name.toLowerCase();
+    return name.includes('ebs') || name.includes('european business school');
+  });
+}
+
+/** UNM × EBS lockup — both sides prefer CMS (Site Settings brandLogo + Partners EBS). */
+export function getEbsAllianceLockup(
+  partners: Partner[] = [],
+  brandLogoSrc?: string | null,
+): AllianceLogoEntry[] {
+  const [fallbackUnm, fallbackEbs] = DEFAULT_EBS_ALLIANCE_LOCKUP;
+  const ebsPartner = findEbsPartner(partners);
+  const cmsEbsLogo = ebsPartner ? getPartnerLogoSrc(ebsPartner) : null;
+
+  return [
+    {
+      ...fallbackUnm,
+      src: brandLogoSrc || fallbackUnm.src,
+    },
+    {
+      ...fallbackEbs,
+      name: ebsPartner?.name ?? fallbackEbs.name,
+      src: cmsEbsLogo ?? fallbackEbs.src,
+      scale: ebsPartner ? getPartnerLogoScale(ebsPartner.name) : fallbackEbs.scale,
+    },
+  ];
+}
 
 /** Accreditation wordmarks in the alliance section (home). */
 export const ACCREDITATION_LOGOS: AllianceLogoEntry[] = [
