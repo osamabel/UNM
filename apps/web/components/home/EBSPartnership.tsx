@@ -24,17 +24,14 @@ const PILLARS = [
 function AllianceLogoMark({
   entry,
   side,
-  caption,
 }: {
   entry: AllianceLogoEntry;
   side: "unm" | "ebs";
-  caption: string;
 }) {
   if (!entry.src) {
     return (
       <div className={cn("alliance-mark", `alliance-mark--${side}`)}>
         <span className="alliance-mark-fallback">{entry.name}</span>
-        <span className="alliance-mark-caption">{caption}</span>
       </div>
     );
   }
@@ -57,7 +54,6 @@ function AllianceLogoMark({
         className="alliance-mark-img"
         priority
       />
-      <span className="alliance-mark-caption">{caption}</span>
     </div>
   );
 }
@@ -108,11 +104,11 @@ export function EBSPartnership({ partners = [] }: { partners?: Partner[] }) {
 
         <ScrollReveal delay={80} className="lg:col-span-7">
           <div className="alliance-lockup" aria-label={t("title")}>
-            <AllianceLogoMark entry={unm} side="unm" caption="UNM" />
+            <AllianceLogoMark entry={unm} side="unm" />
             <span className="alliance-lockup-x" aria-hidden>
               ×
             </span>
-            <AllianceLogoMark entry={ebs} side="ebs" caption="EBS Paris" />
+            <AllianceLogoMark entry={ebs} side="ebs" />
           </div>
         </ScrollReveal>
       </div>
