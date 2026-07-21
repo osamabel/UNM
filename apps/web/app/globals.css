@@ -693,164 +693,251 @@
       radial-gradient(ellipse 50% 45% at 0% 100%, rgba(255, 255, 255, 0.06) 0%, transparent 52%);
   }
 
-  /* Alliance stratégique */
+  /* Alliance stratégique — open editorial, no cards */
   .alliance-section {
     overflow: hidden;
+    isolation: isolate;
+    background:
+      linear-gradient(
+        165deg,
+        #fbf6f1 0%,
+        #f7efe7 42%,
+        #f3e8df 72%,
+        #faf6f2 100%
+      );
   }
 
   .alliance-glow {
+    inset: 0;
     background:
-      radial-gradient(ellipse 50% 42% at 92% 12%, rgba(181, 52, 26, 0.11) 0%, transparent 62%),
-      radial-gradient(ellipse 36% 30% at 6% 88%, rgba(61, 26, 11, 0.05) 0%, transparent 58%);
+      radial-gradient(ellipse 65% 58% at 92% -4%, rgba(181, 52, 26, 0.16) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 48% at 4% 100%, rgba(61, 26, 11, 0.07) 0%, transparent 55%),
+      radial-gradient(ellipse 40% 36% at 62% 38%, rgba(255, 255, 255, 0.5) 0%, transparent 68%);
+    pointer-events: none;
   }
 
-  .alliance-duo {
-    isolation: isolate;
-  }
-
-  .alliance-duo-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.85rem;
-  }
-
-  @media (min-width: 640px) {
-    .alliance-duo-grid {
-      gap: 1rem;
-    }
-  }
-
-  .alliance-duo-tile {
-    display: flex;
-    min-height: 8.5rem;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    border-radius: 1.25rem;
-    padding: 1.35rem 1rem;
-    transition: transform 0.35s var(--unm-ease), box-shadow 0.35s var(--unm-ease);
-  }
-
-  @media (min-width: 640px) {
-    .alliance-duo-tile {
-      min-height: 9.5rem;
-      padding: 1.6rem 1.25rem;
-    }
-  }
-
-  .alliance-duo-tile--unm {
-    border: 1px solid rgba(181, 52, 26, 0.16);
-    background:
-      linear-gradient(160deg, rgba(181, 52, 26, 0.08) 0%, rgba(253, 250, 247, 0.95) 55%);
-    box-shadow: 0 22px 48px -30px rgba(61, 26, 11, 0.35);
-  }
-
-  .alliance-duo-tile--ebs {
-    border: 1px solid rgba(61, 26, 11, 0.08);
-    background:
-      linear-gradient(200deg, #fff 0%, rgba(246, 240, 233, 0.9) 100%);
-    box-shadow: 0 22px 48px -30px rgba(61, 26, 11, 0.28);
-  }
-
-  .alliance-duo:hover .alliance-duo-tile--unm {
-    transform: translateY(-3px) rotate(-0.4deg);
-  }
-
-  .alliance-duo:hover .alliance-duo-tile--ebs {
-    transform: translateY(-3px) rotate(0.4deg);
-  }
-
-  .alliance-duo-badge {
+  .alliance-glow::after {
+    content: '';
     position: absolute;
-    left: 50%;
-    top: 50%;
-    z-index: 2;
-    display: flex;
-    height: 2.75rem;
-    width: 2.75rem;
-    align-items: center;
-    justify-content: center;
-    border-radius: 9999px;
-    border: 2px solid rgba(253, 250, 247, 0.95);
-    background: linear-gradient(145deg, var(--unm-primary-light), var(--unm-primary));
-    color: #fdfaf7;
-    font-family: Georgia, 'Times New Roman', serif;
-    font-size: 1.15rem;
-    line-height: 1;
-    box-shadow: 0 14px 28px -12px rgba(181, 52, 26, 0.75);
-    transform: translate(-50%, -50%);
+    inset: 0;
+    opacity: 0.28;
+    background-image:
+      radial-gradient(rgba(61, 26, 11, 0.04) 0.55px, transparent 0.65px);
+    background-size: 3.5px 3.5px;
+    mask-image: linear-gradient(180deg, transparent 0%, #000 20%, #000 80%, transparent 100%);
   }
 
-  .alliance-band {
-    border-radius: 1.5rem;
-    border: 1px solid rgba(61, 26, 11, 0.07);
+  .alliance-title {
+    font-family: var(--font-display, Georgia, serif);
+    font-size: clamp(2.2rem, 4.4vw, 3.15rem);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    color: var(--unm-secondary, #3d1a0b);
+    text-align: left;
+  }
+
+  .alliance-title-x {
+    margin-inline: 0.28em;
+    color: rgba(181, 52, 26, 0.35);
+    font-weight: 400;
+  }
+
+  .alliance-lead {
+    font-size: 0.98rem;
+    line-height: 1.65;
+    color: rgba(61, 26, 11, 0.68);
+    text-align: left;
+  }
+
+  @media (min-width: 640px) {
+    .alliance-lead {
+      font-size: 1.05rem;
+    }
+  }
+
+  /* Soft plinth under logos — atmosphere only, not a card */
+  .alliance-lockup {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: flex-start;
+    gap: 1rem 1.35rem;
+    padding: 1.35rem 1.15rem 1.15rem;
+    border-radius: 1.35rem;
     background:
-      linear-gradient(180deg, rgba(255, 252, 249, 0.7) 0%, rgba(246, 240, 233, 0.55) 100%);
-    padding: 1rem;
+      linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.28) 0%,
+        rgba(255, 252, 249, 0.55) 100%
+      );
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
   }
 
-  @media (min-width: 768px) {
-    .alliance-band {
-      padding: 1.15rem;
+  @media (min-width: 640px) {
+    .alliance-lockup {
+      gap: 1.25rem 1.85rem;
+      padding: 1.6rem 1.6rem 1.35rem;
     }
   }
 
-  .alliance-pillar-card {
-    height: 100%;
-    border-radius: 1.15rem;
-    border: 1px solid rgba(61, 26, 11, 0.06);
-    background: rgba(253, 250, 247, 0.92);
-    padding: 1.25rem 1.2rem 1.35rem;
-    box-shadow: 0 16px 36px -28px rgba(61, 26, 11, 0.35);
-    transition:
-      transform 0.35s var(--unm-ease),
-      border-color 0.35s var(--unm-ease),
-      box-shadow 0.35s var(--unm-ease);
-  }
-
-  @media (min-width: 768px) {
-    .alliance-pillar-card {
-      padding: 1.4rem 1.35rem 1.5rem;
+  @media (min-width: 1024px) {
+    .alliance-lockup {
+      justify-content: center;
+      min-height: 11.5rem;
     }
   }
 
-  .alliance-pillar-card:hover {
-    transform: translateY(-4px);
-    border-color: rgba(181, 52, 26, 0.18);
-    box-shadow: 0 24px 44px -26px rgba(61, 26, 11, 0.4);
+  .alliance-lockup-x {
+    display: flex;
+    height: 2.4rem;
+    width: 2.4rem;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    align-self: center;
+    margin-bottom: 1.35rem;
+    border-radius: 9999px;
+    background: linear-gradient(145deg, var(--unm-primary-light), var(--unm-primary));
+    color: #fdfaf7;
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 1.1rem;
+    line-height: 1;
+    box-shadow: 0 12px 24px -12px rgba(181, 52, 26, 0.7);
+  }
+
+  @media (min-width: 640px) {
+    .alliance-lockup-x {
+      height: 2.65rem;
+      width: 2.65rem;
+      font-size: 1.2rem;
+      margin-bottom: 1.5rem;
+    }
+  }
+
+  .alliance-mark {
+    display: flex;
+    width: min(100%, 11.5rem);
+    flex: 1 1 9rem;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.7rem;
+  }
+
+  @media (min-width: 640px) {
+    .alliance-mark {
+      width: min(100%, 14rem);
+      flex-basis: 11rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .alliance-mark {
+      width: min(100%, 15rem);
+    }
+  }
+
+  .alliance-mark-img {
+    width: 100%;
+    height: auto;
+    max-height: 5.25rem;
+    object-fit: contain;
+    object-position: center;
+    transform: scale(var(--logo-scale, 1));
+    transform-origin: center bottom;
+    transition: transform 0.4s var(--unm-ease, cubic-bezier(0.22, 1, 0.36, 1));
+  }
+
+  @media (min-width: 640px) {
+    .alliance-mark-img {
+      max-height: 6.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .alliance-mark-img {
+      max-height: 7.25rem;
+    }
+  }
+
+  .alliance-lockup:hover .alliance-mark-img {
+    transform: scale(calc(var(--logo-scale, 1) * 1.035));
+  }
+
+  .alliance-mark-caption {
+    font-family: var(--font-heading, sans-serif);
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(61, 26, 11, 0.4);
+  }
+
+  .alliance-mark-fallback {
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-align: center;
+    color: rgba(61, 26, 11, 0.5);
+  }
+
+  .alliance-pillars {
+    display: grid;
+    gap: 1.65rem;
+    margin-top: 0;
+    border-top: 1px solid rgba(61, 26, 11, 0.1);
+    padding-top: 1.65rem;
+  }
+
+  @media (min-width: 768px) {
+    .alliance-pillars {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      padding-top: 1.85rem;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .alliance-pillar + .alliance-pillar {
+      border-left: 1px solid rgba(61, 26, 11, 0.1);
+      padding-left: 1.6rem;
+      margin-left: 1.6rem;
+    }
   }
 
   .alliance-pillar-num {
     font-family: var(--font-heading, sans-serif);
-    font-size: 0.72rem;
+    font-size: 0.68rem;
     font-weight: 700;
-    letter-spacing: 0.16em;
-    color: rgba(181, 52, 26, 0.7);
+    letter-spacing: 0.18em;
+    color: rgba(181, 52, 26, 0.75);
   }
 
-  .alliance-pillar-icon {
-    display: inline-flex;
-    height: 2.4rem;
-    width: 2.4rem;
-    align-items: center;
-    justify-content: center;
-    border-radius: 0.8rem;
-    background: rgba(181, 52, 26, 0.1);
-    color: var(--unm-primary);
-    transition: background 0.3s var(--unm-ease), color 0.3s var(--unm-ease);
+  .alliance-pillar-title {
+    margin-top: 0.7rem;
+    font-family: var(--font-display, Georgia, serif);
+    font-size: 1.12rem;
+    line-height: 1.25;
+    color: var(--unm-secondary, #3d1a0b);
+    max-width: 16rem;
   }
 
-  .alliance-pillar-card:hover .alliance-pillar-icon {
-    background: var(--unm-primary);
-    color: #fdfaf7;
+  @media (min-width: 640px) {
+    .alliance-pillar-title {
+      font-size: 1.22rem;
+    }
+  }
+
+  .alliance-pillar-body {
+    margin-top: 0.45rem;
+    max-width: 20rem;
+    font-size: 0.9rem;
+    line-height: 1.55;
+    color: rgba(61, 26, 11, 0.58);
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .alliance-duo:hover .alliance-duo-tile--unm,
-    .alliance-duo:hover .alliance-duo-tile--ebs,
-    .alliance-pillar-card:hover {
-      transform: none;
+    .alliance-lockup:hover .alliance-mark-img {
+      transform: scale(var(--logo-scale, 1));
     }
   }
 

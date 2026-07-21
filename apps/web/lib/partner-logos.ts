@@ -71,16 +71,17 @@ export function getEbsAllianceLockup(
   brandLogoSrc?: string | null,
 ): AllianceLogoEntry[] {
   const ebsPartner = findPartnerByKeywords(partners, ['ebs', 'european business school']);
+  const ebs = partnerToAllianceEntry('ebs', ebsPartner, 'EBS Paris', 1.1);
 
   return [
     {
       id: 'unm',
       name: LOGO_ALT,
       src: brandLogoSrc || LOGO_SRC,
-      scale: 1.02,
+      scale: 1.08,
       kind: 'jpeg',
     },
-    partnerToAllianceEntry('ebs', ebsPartner, 'EBS Paris', 0.94),
+    { ...ebs, scale: 1.12 },
   ];
 }
 

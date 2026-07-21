@@ -1,61 +1,62 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { useLocale, useTranslations } from 'next-intl';
-import { SectionWrapper } from '@/components/ui/SectionWrapper';
-import { SectionHeader } from '@/components/patterns/SectionHeader';
-import { ScrollReveal } from '@/components/patterns/ScrollReveal';
-import { Icon } from '@/components/ui/Icon';
-import { iconForProgramType } from '@/lib/program-meta-icons';
-import type { Locale, ProgramType } from '@unm/types';
-import { cn } from '@/lib/utils';
+import Link from "next/link";
+import { useLocale, useTranslations } from "next-intl";
+import { SectionWrapper } from "@/components/ui/SectionWrapper";
+import { SectionHeader } from "@/components/patterns/SectionHeader";
+import { ScrollReveal } from "@/components/patterns/ScrollReveal";
+import { Icon } from "@/components/ui/Icon";
+import { iconForProgramType } from "@/lib/program-meta-icons";
+import type { Locale, ProgramType } from "@unm/types";
+import { cn } from "@/lib/utils";
 
 const CATEGORIES: {
   type: ProgramType;
-  titleKey: 'dbaTitle' | 'mbaTitle' | 'certificateTitle';
-  descriptionKey: 'dbaDescription' | 'mbaDescription' | 'certificateDescription';
-  ctaKey: 'discoverDba' | 'discoverMba' | 'discoverCertificate';
+  titleKey: "dbaTitle" | "mbaTitle" | "certificateTitle";
+  descriptionKey:
+    "dbaDescription" | "mbaDescription" | "certificateDescription";
+  ctaKey: "discoverDba" | "discoverMba" | "discoverCertificate";
   accent: string;
 }[] = [
   {
-    type: 'DBA',
-    titleKey: 'dbaTitle',
-    descriptionKey: 'dbaDescription',
-    ctaKey: 'discoverDba',
-    accent: '#1E3A5F',
+    type: "DBA",
+    titleKey: "dbaTitle",
+    descriptionKey: "dbaDescription",
+    ctaKey: "discoverDba",
+    accent: "#1E3A5F",
   },
   {
-    type: 'MBA',
-    titleKey: 'mbaTitle',
-    descriptionKey: 'mbaDescription',
-    ctaKey: 'discoverMba',
-    accent: '#B5341A',
+    type: "MBA",
+    titleKey: "mbaTitle",
+    descriptionKey: "mbaDescription",
+    ctaKey: "discoverMba",
+    accent: "#B5341A",
   },
   {
-    type: 'Certificate',
-    titleKey: 'certificateTitle',
-    descriptionKey: 'certificateDescription',
-    ctaKey: 'discoverCertificate',
-    accent: '#2D6A4F',
+    type: "Certificate",
+    titleKey: "certificateTitle",
+    descriptionKey: "certificateDescription",
+    ctaKey: "discoverCertificate",
+    accent: "#2D6A4F",
   },
 ];
 
 export function FeaturedPrograms() {
   const locale = useLocale() as Locale;
-  const t = useTranslations('home');
-  const tf = useTranslations('featuredPrograms');
-  const tc = useTranslations('common');
-  const programsBase = locale === 'en' ? '/en/programs' : '/programmes';
+  const t = useTranslations("home");
+  const tf = useTranslations("featuredPrograms");
+  const tc = useTranslations("common");
+  const programsBase = locale === "en" ? "/en/programs" : "/programmes";
 
   return (
     <SectionWrapper id="programmes" tone="soft">
       <ScrollReveal>
         <SectionHeader
           icon="library"
-          title={t('featuredProgramsTitle')}
-          description={tf('subtitle')}
+          title={t("featuredProgramsTitle")}
+          description={tf("subtitle")}
           action={{
-            label: tc('viewAllPrograms'),
+            label: tc("viewAllPrograms"),
             href: programsBase,
           }}
           className="!mb-8 sm:!mb-10"
@@ -79,7 +80,7 @@ export function FeaturedPrograms() {
   );
 }
 
-type FeaturedT = ReturnType<typeof useTranslations<'featuredPrograms'>>;
+type FeaturedT = ReturnType<typeof useTranslations<"featuredPrograms">>;
 
 function ProgramCategoryCard({
   category,
@@ -103,7 +104,10 @@ function ProgramCategoryCard({
       <div className="relative flex items-start gap-4">
         <span
           className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl"
-          style={{ backgroundColor: `${category.accent}14`, color: category.accent }}
+          style={{
+            backgroundColor: `${category.accent}14`,
+            color: category.accent,
+          }}
         >
           <Icon name={typeIcon} size={24} weight="medium" />
         </span>
@@ -122,9 +126,9 @@ function ProgramCategoryCard({
         <Link
           href={href}
           className={cn(
-            'inline-flex h-11 w-full items-center justify-center gap-2 rounded-lg px-5 text-sm font-semibold transition-colors',
-            'bg-secondary text-warm-50',
-            '[@media(hover:hover)]:hover:bg-primary',
+            "inline-flex h-11 w-full items-center justify-center gap-2 rounded-lg px-5 text-sm font-semibold transition-colors",
+            "bg-secondary text-warm-50",
+            "[@media(hover:hover)]:hover:bg-primary",
           )}
         >
           {tf(category.ctaKey)}

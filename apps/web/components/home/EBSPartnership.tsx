@@ -16,22 +16,25 @@ import { cn } from '@/lib/utils';
 import type { Locale, Partner } from '@unm/types';
 
 const PILLARS = [
-  { key: 'pillar1' as const, icon: 'medal' as const, num: '01' },
-  { key: 'pillar2' as const, icon: 'landmark' as const, num: '02' },
-  { key: 'pillar3' as const, icon: 'target' as const, num: '03' },
+  { key: 'pillar1' as const, num: '01' },
+  { key: 'pillar2' as const, num: '02' },
+  { key: 'pillar3' as const, num: '03' },
 ];
 
 function AllianceLogoMark({
   entry,
-  className,
+  side,
+  caption,
 }: {
   entry: AllianceLogoEntry;
-  className?: string;
+  side: 'unm' | 'ebs';
+  caption: string;
 }) {
   if (!entry.src) {
     return (
-      <div className={cn('flex h-12 items-center justify-center px-2 sm:h-14', className)}>
-        <span className="text-center text-xs font-semibold text-secondary/55">{entry.name}</span>
+      <div className={cn('alliance-mark', `alliance-mark--${side}`)}>
+        <span className="alliance-mark-fallback">{entry.name}</span>
+        <span className="alliance-mark-caption">{caption}</span>
       </div>
     );
   }
@@ -39,17 +42,22 @@ function AllianceLogoMark({
   const fromCms = entry.src.startsWith('/cms-media/');
 
   return (
-    <div className={cn('flex h-12 items-center justify-center sm:h-14', className)}>
+    <div
+      className={cn('alliance-mark', `alliance-mark--${side}`)}
+      style={{ ['--logo-scale' as string]: entry.scale }}
+    >
       <Image
         src={entry.src}
         alt={entry.name}
-        width={280}
-        height={84}
-        sizes="(max-width: 640px) 120px, 180px"
+        width={480}
+        height={180}
+        sizes="(max-width: 640px) 44vw, 280px"
         quality={95}
         unoptimized={fromCms}
-        className="h-full w-auto max-w-[8.5rem] object-contain object-center sm:max-w-[10rem]"
+        className="alliance-mark-img"
+        priority
       />
+      <span className="alliance-mark-caption">{caption}</span>
     </div>
   );
 }
@@ -65,27 +73,26 @@ export function EBSPartnership({ partners = [] }: { partners?: Partner[] }) {
     <SectionWrapper
       id="partenariat"
       tone="soft"
-      className="alliance-section !pb-16 !pt-14 sm:!pb-20 sm:!pt-16 lg:!pb-24 lg:!pt-20"
+      className="alliance-section !bg-transparent !pb-16 !pt-14 sm:!pb-20 sm:!pt-16 lg:!pb-24 lg:!pt-20"
     >
       <div className="alliance-glow pointer-events-none absolute inset-0" aria-hidden />
 
-      {/* Intro + lockup */}
-      <div className="relative grid min-w-0 items-center gap-12 lg:grid-cols-12 lg:gap-14">
+      <div className="relative grid min-w-0 items-center gap-10 lg:grid-cols-12 lg:gap-10 xl:gap-14">
         <ScrollReveal className="lg:col-span-5">
           <div className="flex items-center gap-3">
             <span className="h-px w-8 bg-primary" aria-hidden />
             <p className="eyebrow !mt-0">{t('eyebrow')}</p>
           </div>
 
-          <h2 className="mt-4 font-display text-[2.15rem] leading-[1.05] tracking-tight text-secondary sm:text-[2.55rem] lg:text-[2.9rem]">
+          <h2 className="alliance-title mt-4">
             <span className="text-primary">UNM</span>
-            <span className="mx-2 text-primary/40">×</span>
+            <span className="alliance-title-x" aria-hidden>
+              ×
+            </span>
             <span>EBS Paris</span>
           </h2>
 
-          <p className="mt-5 max-w-md text-[15px] leading-relaxed text-secondary/70 sm:text-base">
-            {t('description')}
-          </p>
+          <p className="alliance-lead mt-5 max-w-md">{t('description')}</p>
 
           <Link
             href={allianceHref}
@@ -96,48 +103,28 @@ export function EBSPartnership({ partners = [] }: { partners?: Partner[] }) {
           </Link>
         </ScrollReveal>
 
-        <ScrollReveal delay={90} className="lg:col-span-7">
-          <div className="alliance-duo relative mx-auto w-full max-w-xl lg:ml-auto lg:max-w-none" aria-label={t('title')}>
-            <div className="alliance-duo-grid">
-              <div className="alliance-duo-tile alliance-duo-tile--unm">
-                <AllianceLogoMark entry={unm} />
-              </div>
-              <div className="alliance-duo-tile alliance-duo-tile--ebs">
-                <AllianceLogoMark entry={ebs} />
-              </div>
-            </div>
-            <span className="alliance-duo-badge" aria-hidden>
+        <ScrollReveal delay={80} className="lg:col-span-7">
+          <div className="alliance-lockup" aria-label={t('title')}>
+            <AllianceLogoMark entry={unm} side="unm" caption="UNM" />
+            <span className="alliance-lockup-x" aria-hidden>
               ×
             </span>
+            <AllianceLogoMark entry={ebs} side="ebs" caption="EBS Paris" />
           </div>
         </ScrollReveal>
       </div>
 
-      {/* Pillars band */}
-      <div className="alliance-band relative mt-14 sm:mt-16 lg:mt-20">
-        <ul className="grid min-w-0 gap-4 md:grid-cols-3 md:gap-5 lg:gap-6">
-          {PILLARS.map((pillar, i) => (
-            <li key={pillar.key}>
-              <ScrollReveal delay={110 + i * 80} className="h-full">
-                <article className="alliance-pillar-card group h-full">
-                  <div className="flex items-start justify-between gap-3">
-                    <span className="alliance-pillar-icon" aria-hidden>
-                      <Icon name={pillar.icon} size={18} />
-                    </span>
-                    <span className="alliance-pillar-num">{pillar.num}</span>
-                  </div>
-                  <h3 className="mt-5 font-display text-lg leading-snug text-secondary transition-colors duration-300 group-hover:text-primary sm:text-xl">
-                    {t(`${pillar.key}Title`)}
-                  </h3>
-                  <p className="mt-2 text-sm leading-relaxed text-secondary/60">
-                    {t(`${pillar.key}Body`)}
-                  </p>
-                </article>
-              </ScrollReveal>
-            </li>
-          ))}
-        </ul>
-      </div>
+      <ul className="alliance-pillars relative mt-12 sm:mt-14 lg:mt-16">
+        {PILLARS.map((pillar, i) => (
+          <li key={pillar.key} className="alliance-pillar">
+            <ScrollReveal delay={100 + i * 70}>
+              <p className="alliance-pillar-num">{pillar.num}</p>
+              <h3 className="alliance-pillar-title">{t(`${pillar.key}Title`)}</h3>
+              <p className="alliance-pillar-body">{t(`${pillar.key}Body`)}</p>
+            </ScrollReveal>
+          </li>
+        ))}
+      </ul>
     </SectionWrapper>
   );
 }
