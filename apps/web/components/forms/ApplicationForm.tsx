@@ -2,23 +2,30 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useLocale, useTranslations } from 'next-intl';
 import { useSearchParams } from 'next/navigation';
 import { Input } from '@/components/ui/Input';
+import { PhoneInput } from '@/components/ui/PhoneInput';
 import { Select } from '@/components/ui/Select';
 import { Button } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
 import type { Locale, Program } from '@unm/types';
 import { localized } from '@/lib/utils';
+import { PHONE_VALUE_RE } from '@/lib/phone-countries';
 
 const EXPERIENCE_LEVELS = ['0-5', '5-10', '10-15', '15+'] as const;
 
 export const applicationSchema = z.object({
   firstName: z.string().min(2).max(50),
   lastName: z.string().min(2).max(50),
+  email: z.string().email(),
+  phone: z
+    .string()
+    .min(1)
+    .regex(PHONE_VALUE_RE),
   country: z.string().min(2),
   highestDegree: z.string().min(2),
   experienceLevel: z.enum(EXPERIENCE_LEVELS),
@@ -43,6 +50,7 @@ export function ApplicationForm({ programs }: Props) {
     register,
     handleSubmit,
     setValue,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<ApplicationData>({
     resolver: zodResolver(applicationSchema),
@@ -120,6 +128,37 @@ export function ApplicationForm({ programs }: Props) {
           autoComplete="given-name"
           {...register('firstName')}
           error={errors.firstName && t('errorRequired')}
+        />
+        <Input
+          label={t('email')}
+          type="email"
+          required
+          autoComplete="email"
+          {...register('email')}
+          error={errors.email && t('errorEmail')}
+        />
+        <Controller
+          name="phone"
+          control={control}
+          render={({ field }) => (
+            <PhoneInput
+              label={t('phone')}
+              locale={locale}
+              required
+              autoComplete="tel"
+              value={field.value}
+              onChange={field.onChange}
+              onBlur={field.onBlur}
+              name={field.name}
+              error={
+                errors.phone?.type === 'too_small'
+                  ? t('errorRequired')
+                  : errors.phone
+                    ? t('errorPhone')
+                    : undefined
+              }
+            />
+          )}
         />
         <Input
           label={t('country')}

@@ -1,17 +1,22 @@
 import { NextResponse } from 'next/server';
 import { Resend } from 'resend';
 import { getClientIp, rateLimit } from '@/lib/rate-limit';
+import { PHONE_VALUE_RE } from '@/lib/phone-countries';
 
 export const runtime = 'nodejs';
 
 const REQUIRED = [
   'firstName',
   'lastName',
+  'email',
+  'phone',
   'country',
   'highestDegree',
   'experienceLevel',
   'programSlug',
 ] as const;
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export async function POST(req: Request) {
   const ip = getClientIp(req);
@@ -29,6 +34,15 @@ export async function POST(req: Request) {
   }
   if (formData.get('consentGiven') !== 'true') {
     return NextResponse.json({ error: 'consent_required' }, { status: 400 });
+  }
+
+  const email = String(formData.get('email'));
+  const phone = String(formData.get('phone'));
+  if (!EMAIL_RE.test(email)) {
+    return NextResponse.json({ error: 'invalid_email' }, { status: 400 });
+  }
+  if (!PHONE_VALUE_RE.test(phone)) {
+    return NextResponse.json({ error: 'invalid_phone' }, { status: 400 });
   }
 
   const programSlug = String(formData.get('programSlug'));
@@ -57,6 +71,8 @@ export async function POST(req: Request) {
   const payload = {
     firstName: String(formData.get('firstName')),
     lastName: String(formData.get('lastName')),
+    email,
+    phone,
     country: String(formData.get('country')),
     highestDegree: String(formData.get('highestDegree')),
     experienceLevel: String(formData.get('experienceLevel')),
@@ -82,7 +98,7 @@ export async function POST(req: Request) {
         from: 'UNM <noreply@unm.ma>',
         to: process.env.LEAD_NOTIFICATION_EMAIL,
         subject: `Nouvelle candidature — ${programSlug}`,
-        text: `Candidature reçue pour ${programSlug} de ${name} (${payload.country}).`,
+        text: `Candidature reçue pour ${programSlug} de ${name} (${payload.country}).\nEmail: ${payload.email}\nTéléphone: ${payload.phone}`,
       })
       .catch(() => null);
   }

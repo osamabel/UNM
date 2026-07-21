@@ -177,6 +177,8 @@ export interface Application {
   id: string;
   firstName: string;
   lastName: string;
+  email: string;
+  phone: string;
   country: string;
   highestDegree: string;
   experienceLevel: '0-5' | '5-10' | '10-15' | '15+';

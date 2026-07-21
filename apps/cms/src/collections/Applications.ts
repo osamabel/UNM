@@ -7,7 +7,7 @@ export const Applications: CollectionConfig = {
   admin: {
     useAsTitle: 'lastName',
     group: 'Admissions',
-    defaultColumns: ['lastName', 'firstName', 'program', 'experienceLevel', 'status', 'submittedAt'],
+    defaultColumns: ['lastName', 'firstName', 'email', 'phone', 'program', 'experienceLevel', 'status', 'submittedAt'],
   },
   access: {
     create: () => true,
@@ -18,6 +18,8 @@ export const Applications: CollectionConfig = {
   fields: [
     { name: 'firstName', type: 'text', required: true },
     { name: 'lastName', type: 'text', required: true },
+    { name: 'email', type: 'email', required: true },
+    { name: 'phone', type: 'text', required: true },
     { name: 'country', type: 'text', required: true },
     { name: 'highestDegree', type: 'text', required: true },
     {
