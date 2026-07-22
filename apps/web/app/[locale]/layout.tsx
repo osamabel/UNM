@@ -9,7 +9,6 @@ import { MainContent } from '@/components/layout/MainContent';
 import { MobileBottomBar } from '@/components/shared/MobileBottomBar';
 import { WhatsAppButton } from '@/components/shared/WhatsAppButton';
 import { InitialLoader } from '@/components/shared/InitialLoader';
-import { RenovationNotice } from '@/components/shared/RenovationNotice';
 import { SiteSettingsProvider } from '@/components/providers/SiteSettingsProvider';
 import { JsonLd } from '@/components/shared/JsonLd';
 import { organizationSchema } from '@/lib/schema';
@@ -93,7 +92,6 @@ export default async function LocaleLayout({
             >
               {tCommon('skipToContent')}
             </a>
-            <RenovationNotice />
             <Header />
             <MainContent>{children}</MainContent>
             <Footer settings={settings} />

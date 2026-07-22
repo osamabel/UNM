@@ -42,13 +42,13 @@ export function Logo({ variant = 'full', surface = 'light', className, src }: Lo
         height={isMark ? 111 : 185}
         quality={100}
         unoptimized={logoSrc.startsWith('/cms-media/')}
-        sizes={onDark ? '296px' : '(max-width: 640px) 160px, (max-width: 1280px) 200px, 240px'}
+        sizes={onDark ? '296px' : '(max-width: 640px) 200px, (max-width: 1280px) 260px, 320px'}
         className={cn(
           'w-auto object-contain object-left select-none',
-          isMark && 'logo-mark h-11 max-w-[7.5rem]',
+          isMark && 'logo-mark h-12 max-w-[8.5rem]',
           !isMark &&
             !onDark &&
-            'logo-wordmark h-11 max-w-[12rem] sm:h-12 sm:max-w-[13.5rem] 2xl:h-14 2xl:max-w-[16rem]',
+            'logo-wordmark h-14 max-w-[15rem] sm:h-16 sm:max-w-[17.5rem] 2xl:h-[4.5rem] 2xl:max-w-[20rem]',
           onDark &&
             !isMark &&
             'logo-wordmark h-auto w-full max-w-[18.5rem]',

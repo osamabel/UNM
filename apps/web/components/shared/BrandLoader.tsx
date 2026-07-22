@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import Image from 'next/image';
 import { LOGO_ALT, LOGO_SRC } from '@/lib/logo';
 import { cn } from '@/lib/utils';
@@ -7,13 +8,19 @@ interface BrandLoaderProps {
   fullscreen?: boolean;
   className?: string;
   label?: string;
+  /** Optional line under the logo (e.g. typing caption). */
+  caption?: ReactNode;
+  /** Show the label text under the mark (default true when not sr-only). */
+  showLabel?: boolean;
 }
 
-/** UNM logo loader — soft pulse + thin progress ring. */
+/** UNM logo loader — ambient glow, triple rings, soft progress. */
 export function BrandLoader({
   fullscreen = false,
   className,
   label = 'Chargement…',
+  caption,
+  showLabel = true,
 }: BrandLoaderProps) {
   return (
     <div
@@ -22,27 +29,44 @@ export function BrandLoader({
       aria-busy="true"
       aria-label={label}
       className={cn(
-        'flex flex-col items-center justify-center gap-6',
-        fullscreen &&
-          'fixed inset-0 z-[100] bg-[var(--unm-canvas)]',
+        'brand-loader',
+        fullscreen && 'brand-loader-fullscreen',
         className,
       )}
     >
-      <div className="brand-loader-mark relative flex h-28 w-28 items-center justify-center sm:h-32 sm:w-32">
-        <span className="brand-loader-ring absolute inset-0" aria-hidden />
-        <span className="brand-loader-ring brand-loader-ring-delayed absolute inset-2" aria-hidden />
-        <div className="brand-loader-logo relative z-[1] flex h-[4.5rem] w-[4.5rem] items-center justify-center sm:h-20 sm:w-20">
-          <Image
-            src={LOGO_SRC}
-            alt={LOGO_ALT}
-            width={160}
-            height={74}
-            priority
-            className="h-auto w-full object-contain"
-          />
+      {fullscreen && (
+        <div className="brand-loader-bg" aria-hidden="true">
+          <span className="brand-loader-orb brand-loader-orb-a" />
+          <span className="brand-loader-orb brand-loader-orb-b" />
         </div>
+      )}
+
+      <div className="brand-loader-stage">
+        <div className="brand-loader-mark">
+          <span className="brand-loader-glow" aria-hidden />
+          <span className="brand-loader-ring brand-loader-ring-a" aria-hidden />
+          <span className="brand-loader-ring brand-loader-ring-b" aria-hidden />
+          <span className="brand-loader-ring brand-loader-ring-c" aria-hidden />
+          <div className="brand-loader-logo">
+            <Image
+              src={LOGO_SRC}
+              alt={LOGO_ALT}
+              width={280}
+              height={130}
+              priority
+              className="h-auto w-full object-contain"
+            />
+          </div>
+        </div>
+
+        <div className="brand-loader-bar" aria-hidden="true">
+          <span />
+        </div>
+
+        {showLabel && <p className="brand-loader-label">{label}</p>}
+        {caption}
+        {!showLabel && <span className="sr-only">{label}</span>}
       </div>
-      <span className="sr-only">{label}</span>
     </div>
   );
 }

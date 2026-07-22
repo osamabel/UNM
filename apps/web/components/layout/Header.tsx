@@ -38,7 +38,7 @@ export function Header() {
         - < 2xl: logo + utilities + hamburger (avoids crowded / wrapping links)
         - ≥ 2xl: single-row desktop nav + Apply CTA
       */}
-      <div className="container-page flex h-16 min-w-0 items-center gap-3 sm:h-[4.25rem] sm:gap-4 2xl:h-[4.75rem] 2xl:gap-6">
+      <div className="container-page flex h-[4.5rem] min-w-0 items-center gap-3 sm:h-[5rem] sm:gap-4 2xl:h-[5.5rem] 2xl:gap-6">
         <Link
           href={locale === 'en' ? '/en' : '/'}
           aria-label="UNM — Université Numérique du Maroc"

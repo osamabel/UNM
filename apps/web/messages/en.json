@@ -41,9 +41,19 @@
     "skipToContent": "Skip to content"
   },
   "renovation": {
-    "eyebrow": "Notice",
+    "eyebrow": "In progress",
     "title": "Site under renovation",
     "message": "We're currently improving your experience. Thank you for your patience.",
+    "splashEyebrow": "Update in progress",
+    "splashTitle": "The website is under renovation",
+    "splashSubtitle": "We're crafting a faster, more elegant and more intuitive digital experience to better support your academic journey.",
+    "splashLine1": "We're preparing a faster, clearer, and more beautiful experience.",
+    "splashLine2": "Thank you for your patience — we'll be back soon.",
+    "splashStatus": "Work in progress • Reopening soon",
+    "splashContact": "Contact us",
+    "splashHint": "The site will reopen as soon as the update is complete.",
+    "splashFooter": "© Université Numérique du Maroc",
+    "splashContinue": "Continue",
     "cta": "Got it",
     "close": "Close"
   },
