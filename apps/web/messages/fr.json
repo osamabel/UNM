@@ -40,6 +40,13 @@
     "home": "Accueil",
     "skipToContent": "Aller au contenu"
   },
+  "renovation": {
+    "eyebrow": "Information",
+    "title": "Site en cours de rénovation",
+    "message": "Nous travaillons actuellement à l’amélioration de votre expérience. Merci de votre patience.",
+    "cta": "J’ai compris",
+    "close": "Fermer"
+  },
   "breadcrumb": {
     "home": "Accueil"
   },

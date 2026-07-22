@@ -40,6 +40,13 @@
     "home": "Home",
     "skipToContent": "Skip to content"
   },
+  "renovation": {
+    "eyebrow": "Notice",
+    "title": "Site under renovation",
+    "message": "We're currently improving your experience. Thank you for your patience.",
+    "cta": "Got it",
+    "close": "Close"
+  },
   "breadcrumb": {
     "home": "Home"
   },
