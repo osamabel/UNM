@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { Playfair_Display } from 'next/font/google';
 import { useLocale, useTranslations } from 'next-intl';
@@ -9,11 +9,15 @@ import { useSiteSettings } from '@/components/providers/SiteSettingsProvider';
 import { getBrandLogoSrc } from '@/lib/site-settings';
 import { cn } from '@/lib/utils';
 
+/** Hide splash for the rest of the browser session after Continuer. */
+const STORAGE_KEY = 'unm-improvement-splash-v5';
+const FADE_MS = 720;
+
 /**
- * Set NEXT_PUBLIC_SITE_LOCK=0 in env to reopen the site after the update.
- * Default: locked (full-screen maintenance only).
+ * Set NEXT_PUBLIC_SHOW_RENOVATION_SPLASH=0 to hide the splash entirely.
+ * Default: show once per session until the visitor clicks Continuer.
  */
-const SITE_LOCKED = process.env.NEXT_PUBLIC_SITE_LOCK !== '0';
+const SPLASH_ENABLED = process.env.NEXT_PUBLIC_SHOW_RENOVATION_SPLASH !== '0';
 
 const playfair = Playfair_Display({
   subsets: ['latin'],
@@ -33,9 +37,14 @@ const PARTICLES = Array.from({ length: 24 }, (_, i) => ({
   tone: i % 3,
 }));
 
+function clearSiteLock() {
+  document.documentElement.classList.remove('unm-site-locked');
+  document.documentElement.style.overflow = '';
+  document.body.style.overflow = '';
+}
+
 /**
- * Premium full-screen maintenance experience for UNM.
- * Blocks site navigation until NEXT_PUBLIC_SITE_LOCK=0.
+ * Premium renovation splash. Visitors can continue into the site.
  */
 export function InitialLoader() {
   const locale = useLocale();
@@ -44,13 +53,20 @@ export function InitialLoader() {
   const logoSrc = getBrandLogoSrc(settings) ?? LOGO_SRC;
 
   const rootRef = useRef<HTMLElement>(null);
-  const [mounted, setMounted] = useState(false);
+  const [visible, setVisible] = useState(false);
   const [ready, setReady] = useState(false);
+  const [exiting, setExiting] = useState(false);
 
   useEffect(() => {
-    if (!SITE_LOCKED) return;
+    if (!SPLASH_ENABLED) return;
 
-    setMounted(true);
+    try {
+      if (window.sessionStorage.getItem(STORAGE_KEY) === '1') return;
+    } catch {
+      /* ignore */
+    }
+
+    setVisible(true);
     document.documentElement.classList.add('unm-site-locked');
     document.documentElement.style.overflow = 'hidden';
     document.body.style.overflow = 'hidden';
@@ -58,14 +74,12 @@ export function InitialLoader() {
     const id = window.setTimeout(() => setReady(true), 32);
     return () => {
       window.clearTimeout(id);
-      document.documentElement.classList.remove('unm-site-locked');
-      document.documentElement.style.overflow = '';
-      document.body.style.overflow = '';
+      clearSiteLock();
     };
   }, []);
 
   useEffect(() => {
-    if (!SITE_LOCKED || !mounted) return;
+    if (!visible || exiting) return;
 
     const root = rootRef.current;
     if (!root) return;
@@ -89,9 +103,38 @@ export function InitialLoader() {
       cancelAnimationFrame(frame);
       window.removeEventListener('pointermove', onMove);
     };
-  }, [mounted]);
+  }, [visible, exiting]);
 
-  if (!SITE_LOCKED || !mounted) return null;
+  const continueToSite = useCallback(() => {
+    if (exiting) return;
+
+    try {
+      window.sessionStorage.setItem(STORAGE_KEY, '1');
+    } catch {
+      /* ignore */
+    }
+
+    setExiting(true);
+    clearSiteLock();
+
+    window.setTimeout(() => setVisible(false), FADE_MS);
+  }, [exiting]);
+
+  useEffect(() => {
+    if (!visible || exiting) return;
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' || e.key === 'Enter') {
+        e.preventDefault();
+        continueToSite();
+      }
+    };
+
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [visible, exiting, continueToSite]);
+
+  if (!visible) return null;
 
   const progressLabel =
     locale === 'en' ? 'Update in progress' : 'Mise à jour en cours';
@@ -103,10 +146,14 @@ export function InitialLoader() {
       aria-modal="true"
       aria-labelledby="unm-maint-title"
       aria-describedby="unm-maint-subtitle"
-      className={cn('unm-maint', playfair.variable, ready && 'is-ready')}
+      className={cn(
+        'unm-maint',
+        playfair.variable,
+        ready && 'is-ready',
+        exiting && 'is-exiting',
+      )}
       style={{ ['--mx' as string]: '0', ['--my' as string]: '0' }}
     >
-      {/* Frosted homepage shows through via backdrop-filter */}
       <div className="unm-maint-frost" aria-hidden="true" />
 
       <div className="unm-maint-bg" aria-hidden="true">
@@ -185,13 +232,23 @@ export function InitialLoader() {
           </div>
 
           <p className="unm-maint-status">{t('splashStatus')}</p>
+
+          <div className="unm-maint-actions">
+            <button
+              type="button"
+              className="unm-maint-cta"
+              onClick={continueToSite}
+              disabled={exiting}
+            >
+              {t('splashContinue')}
+            </button>
+          </div>
         </article>
 
         <footer className="unm-maint-footer">
           <p>{t('splashFooter')}</p>
         </footer>
       </div>
-
     </section>
   );
 }

@@ -866,7 +866,7 @@
   .unm-maint.is-ready .unm-maint-subtitle { animation: unm-maint-rise 0.9s var(--maint-ease-out) 0.6s both; }
   .unm-maint.is-ready .unm-maint-loader { animation: unm-maint-rise 0.85s var(--maint-ease-out) 0.72s both; }
   .unm-maint.is-ready .unm-maint-status { animation: unm-maint-rise 0.85s var(--maint-ease-out) 0.82s both; }
-  .unm-maint.is-ready .unm-maint-footer { animation: unm-maint-rise 0.85s var(--maint-ease-out) 0.96s both; }
+  .unm-maint.is-ready .unm-maint-footer { animation: unm-maint-rise 0.85s var(--maint-ease-out) 1.02s both; }
 
   .unm-maint-badge {
     display: inline-flex;
@@ -979,6 +979,81 @@
     font-weight: 500;
     letter-spacing: 0.03em;
     color: rgba(59, 34, 25, 0.58);
+  }
+
+  .unm-maint-actions {
+    position: relative;
+    z-index: 1;
+    margin: 1.65rem 0 0;
+    opacity: 0;
+  }
+
+  .unm-maint.is-ready .unm-maint-actions {
+    animation: unm-maint-rise 0.85s var(--maint-ease-out) 0.9s both;
+  }
+
+  .unm-maint-cta {
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 11.5rem;
+    padding: 0.85rem 1.85rem;
+    border: 1px solid rgba(150, 50, 28, 0.18);
+    border-radius: 999px;
+    background: linear-gradient(180deg, #a63c24 0%, var(--maint-primary) 100%);
+    color: #fff;
+    font-family: inherit;
+    font-size: 0.92rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.22) inset,
+      0 12px 28px rgba(150, 50, 28, 0.28);
+    transition:
+      transform 0.35s var(--maint-ease),
+      box-shadow 0.35s var(--maint-ease),
+      background 0.35s var(--maint-ease),
+      opacity 0.25s ease;
+  }
+
+  .unm-maint-cta:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.28) inset,
+      0 16px 34px rgba(150, 50, 28, 0.34);
+    background: linear-gradient(180deg, #b3472c 0%, #8a2d18 100%);
+  }
+
+  .unm-maint-cta:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  .unm-maint-cta:focus-visible {
+    outline: 2px solid var(--maint-accent);
+    outline-offset: 3px;
+  }
+
+  .unm-maint-cta:disabled {
+    cursor: default;
+    opacity: 0.7;
+  }
+
+  .unm-maint.is-exiting {
+    pointer-events: none;
+    animation: unm-maint-exit 0.72s var(--maint-ease-out) forwards;
+  }
+
+  @keyframes unm-maint-exit {
+    from {
+      opacity: 1;
+      transform: scale(1);
+    }
+    to {
+      opacity: 0;
+      transform: scale(1.02);
+    }
   }
 
   .unm-maint-footer {
@@ -1236,11 +1311,17 @@
     .unm-maint-subtitle,
     .unm-maint-loader,
     .unm-maint-status,
+    .unm-maint-actions,
     .unm-maint-footer,
     .unm-maint-logo {
       opacity: 1 !important;
       transform: none !important;
       animation: none !important;
+    }
+
+    .unm-maint.is-exiting {
+      animation: none !important;
+      opacity: 0 !important;
     }
 
     .unm-maint-stage {
