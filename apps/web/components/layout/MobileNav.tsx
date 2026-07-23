@@ -116,6 +116,7 @@ export function MobileNav() {
               role="dialog"
               aria-modal="true"
               aria-label="Navigation"
+              translate="no"
             >
               <div className="flex shrink-0 items-center justify-between border-b border-warm-150/80 px-4 py-3 pt-[max(0.75rem,env(safe-area-inset-top))]">
                 <span className="eyebrow">Menu</span>

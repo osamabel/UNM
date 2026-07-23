@@ -1,8 +1,6 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import Image from 'next/image';
-import { Playfair_Display } from 'next/font/google';
 import { useLocale, useTranslations } from 'next-intl';
 import { LOGO_ALT, LOGO_SRC } from '@/lib/logo';
 import { useSiteSettings } from '@/components/providers/SiteSettingsProvider';
@@ -11,7 +9,7 @@ import { cn } from '@/lib/utils';
 
 /** Hide splash for the rest of the browser session after Continuer. */
 const STORAGE_KEY = 'unm-improvement-splash-v5';
-const FADE_MS = 720;
+const FADE_MS = 420;
 
 /**
  * Set NEXT_PUBLIC_SHOW_RENOVATION_SPLASH=0 to hide the splash entirely.
@@ -19,15 +17,8 @@ const FADE_MS = 720;
  */
 const SPLASH_ENABLED = process.env.NEXT_PUBLIC_SHOW_RENOVATION_SPLASH !== '0';
 
-const playfair = Playfair_Display({
-  subsets: ['latin'],
-  weight: ['500', '600', '700'],
-  display: 'swap',
-  variable: '--font-splash-display',
-});
-
 /** Deterministic ambient particles — no runtime randomness. */
-const PARTICLES = Array.from({ length: 24 }, (_, i) => ({
+const PARTICLES = Array.from({ length: 18 }, (_, i) => ({
   id: i,
   left: `${3 + ((i * 19) % 94)}%`,
   top: `${5 + ((i * 31) % 90)}%`,
@@ -38,13 +29,24 @@ const PARTICLES = Array.from({ length: 24 }, (_, i) => ({
 }));
 
 function clearSiteLock() {
+  if (typeof document === 'undefined') return;
   document.documentElement.classList.remove('unm-site-locked');
-  document.documentElement.style.overflow = '';
-  document.body.style.overflow = '';
+  document.documentElement.style.removeProperty('overflow');
+  document.body.style.removeProperty('overflow');
 }
 
+function applySiteLock() {
+  document.documentElement.classList.add('unm-site-locked');
+  document.documentElement.style.overflow = 'hidden';
+  document.body.style.overflow = 'hidden';
+}
+
+type Phase = 'idle' | 'open' | 'leaving' | 'gone';
+
 /**
- * Premium renovation splash. Visitors can continue into the site.
+ * Renovation splash.
+ * Once shown, stays mounted and is only hidden with CSS (never unmounted)
+ * to prevent React "removeChild" crashes with translators / HMR / portals.
  */
 export function InitialLoader() {
   const locale = useLocale();
@@ -53,39 +55,41 @@ export function InitialLoader() {
   const logoSrc = getBrandLogoSrc(settings) ?? LOGO_SRC;
 
   const rootRef = useRef<HTMLElement>(null);
-  const [visible, setVisible] = useState(false);
+  const exitTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [phase, setPhase] = useState<Phase>('idle');
   const [ready, setReady] = useState(false);
-  const [exiting, setExiting] = useState(false);
+  /** True after splash has been opened this session render — never unmount after. */
+  const [mountedOnce, setMountedOnce] = useState(false);
 
   useEffect(() => {
     if (!SPLASH_ENABLED) return;
 
+    let skipped = false;
     try {
-      if (window.sessionStorage.getItem(STORAGE_KEY) === '1') return;
+      skipped = window.sessionStorage.getItem(STORAGE_KEY) === '1';
     } catch {
       /* ignore */
     }
+    if (skipped) return;
 
-    setVisible(true);
-    document.documentElement.classList.add('unm-site-locked');
-    document.documentElement.style.overflow = 'hidden';
-    document.body.style.overflow = 'hidden';
-
+    setMountedOnce(true);
+    setPhase('open');
+    applySiteLock();
     const id = window.setTimeout(() => setReady(true), 32);
+
     return () => {
       window.clearTimeout(id);
+      if (exitTimer.current) clearTimeout(exitTimer.current);
       clearSiteLock();
     };
   }, []);
 
   useEffect(() => {
-    if (!visible || exiting) return;
+    if (phase !== 'open') return;
 
     const root = rootRef.current;
     if (!root) return;
-
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduce) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
     let frame = 0;
     const onMove = (e: PointerEvent) => {
@@ -103,10 +107,10 @@ export function InitialLoader() {
       cancelAnimationFrame(frame);
       window.removeEventListener('pointermove', onMove);
     };
-  }, [visible, exiting]);
+  }, [phase]);
 
   const continueToSite = useCallback(() => {
-    if (exiting) return;
+    if (phase !== 'open') return;
 
     try {
       window.sessionStorage.setItem(STORAGE_KEY, '1');
@@ -114,14 +118,17 @@ export function InitialLoader() {
       /* ignore */
     }
 
-    setExiting(true);
+    setPhase('leaving');
     clearSiteLock();
 
-    window.setTimeout(() => setVisible(false), FADE_MS);
-  }, [exiting]);
+    if (exitTimer.current) clearTimeout(exitTimer.current);
+    exitTimer.current = setTimeout(() => {
+      setPhase('gone');
+    }, FADE_MS);
+  }, [phase]);
 
   useEffect(() => {
-    if (!visible || exiting) return;
+    if (phase !== 'open') return;
 
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape' || e.key === 'Enter') {
@@ -132,25 +139,29 @@ export function InitialLoader() {
 
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [visible, exiting, continueToSite]);
+  }, [phase, continueToSite]);
 
-  if (!visible) return null;
+  if (!mountedOnce) return null;
 
   const progressLabel =
     locale === 'en' ? 'Update in progress' : 'Mise à jour en cours';
+  const leaving = phase === 'leaving';
+  const gone = phase === 'gone';
 
   return (
     <section
       ref={rootRef}
+      translate="no"
       role="alertdialog"
-      aria-modal="true"
+      aria-modal={phase === 'open'}
+      aria-hidden={leaving || gone}
       aria-labelledby="unm-maint-title"
       aria-describedby="unm-maint-subtitle"
       className={cn(
         'unm-maint',
-        playfair.variable,
         ready && 'is-ready',
-        exiting && 'is-exiting',
+        leaving && 'is-exiting',
+        gone && 'is-gone',
       )}
       style={{ ['--mx' as string]: '0', ['--my' as string]: '0' }}
     >
@@ -193,14 +204,15 @@ export function InitialLoader() {
               <span className="unm-maint-ring unm-maint-ring-b" aria-hidden="true" />
               <span className="unm-maint-ring unm-maint-ring-c" aria-hidden="true" />
               <div className="unm-maint-logo-core">
-                <Image
+                {/* Plain img avoids next/image DOM churn during HMR / dismiss */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
                   src={logoSrc}
                   alt={LOGO_ALT}
                   width={320}
                   height={148}
-                  priority
-                  unoptimized={logoSrc.startsWith('/cms-media/')}
                   className="unm-maint-logo-img"
+                  decoding="async"
                 />
               </div>
             </div>
@@ -238,7 +250,7 @@ export function InitialLoader() {
               type="button"
               className="unm-maint-cta"
               onClick={continueToSite}
-              disabled={exiting}
+              disabled={leaving || gone}
             >
               {t('splashContinue')}
             </button>

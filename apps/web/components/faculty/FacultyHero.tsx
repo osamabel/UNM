@@ -3,6 +3,7 @@
 import { useLocale, useTranslations } from 'next-intl';
 import { Icon } from '@/components/ui/Icon';
 import { FacultyHeroPanel } from '@/components/faculty/FacultyHeroPanel';
+import { getFacultyCoverSrc } from '@/lib/faculty-images';
 import type { Faculty, Locale } from '@unm/types';
 import { localized } from '@/lib/utils';
 
@@ -17,6 +18,7 @@ export function FacultyHero({ faculty }: Props) {
   const accent = faculty.color || '#B5341A';
   const count = faculty.programCount ?? 0;
   const programLabel = count > 1 ? ts('programPlural') : ts('programSingular');
+  const cover = getFacultyCoverSrc(faculty);
 
   return (
     <section className="relative overflow-hidden border-b border-warm-150/50 bg-canvas">
@@ -32,12 +34,14 @@ export function FacultyHero({ faculty }: Props) {
       />
       <div className="hero-bg pointer-events-none absolute inset-0" aria-hidden />
 
-      <div className="container-page relative min-w-0 py-10 sm:py-14 lg:py-16 lg:pr-[13rem] xl:pr-[15rem]">
+      <div className="container-page relative min-w-0 py-10 sm:py-14 lg:py-16">
         <FacultyHeroPanel
           eyebrow={t('eyebrow')}
           title={localized(faculty.name, locale)}
           description={localized(faculty.description, locale)}
           accent={accent}
+          imageSrc={cover}
+          imageAlt={localized(faculty.name, locale)}
         >
           {count > 0 && (
             <span className="glass-pill inline-flex max-w-full text-xs font-semibold text-secondary/80">

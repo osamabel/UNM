@@ -4,6 +4,7 @@ import { SectionWrapper } from '@/components/ui/SectionWrapper';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
 import { PageHeader } from '@/components/patterns/PageHeader';
 import { PartnersShowcase } from '@/components/partners/PartnersShowcase';
+import { PartnersEbsFeature } from '@/components/partners/PartnersEbsFeature';
 import { CTABanner } from '@/components/home/CTABanner';
 import { getPartners } from '@/lib/api';
 import type { Locale } from '@unm/types';
@@ -43,6 +44,10 @@ export default async function PartnersPage({ params }: { params: { locale: Local
           description={t('subtitle')}
           className="border-0 pb-0"
         />
+      </SectionWrapper>
+
+      <SectionWrapper tone="canvas" className="!pb-6 !pt-0 sm:!pb-8">
+        <PartnersEbsFeature locale={params.locale} />
       </SectionWrapper>
 
       <SectionWrapper tone="canvas" className="!pt-8 sm:!pt-10">

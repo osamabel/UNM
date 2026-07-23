@@ -1,0 +1,97 @@
+import Image from 'next/image';
+import Link from 'next/link';
+import { getTranslations } from 'next-intl/server';
+import { Icon } from '@/components/ui/Icon';
+import { EBS_PHOTOS } from '@/lib/program-images';
+import type { Locale } from '@unm/types';
+
+const PRINCIPLES = ['principle1', 'principle2', 'principle3', 'principle4'] as const;
+const WHY = [
+  { title: 'why1Title', body: 'why1Body' },
+  { title: 'why2Title', body: 'why2Body' },
+  { title: 'why3Title', body: 'why3Body' },
+  { title: 'why4Title', body: 'why4Body' },
+] as const;
+
+export async function PartnersEbsFeature({ locale }: { locale: Locale }) {
+  const [tIndex, t] = await Promise.all([
+    getTranslations({ locale, namespace: 'partnersIndex' }),
+    getTranslations({ locale, namespace: 'ebs' }),
+  ]);
+  const programsHref = locale === 'en' ? '/en/programs' : '/programmes';
+
+  return (
+    <article className="relative overflow-hidden rounded-2xl border border-warm-200/60 bg-warm-50/80 shadow-sm">
+      <div className="grid min-w-0 lg:grid-cols-12">
+        <div className="relative min-h-[240px] sm:min-h-[320px] lg:col-span-5">
+          <Image
+            src={EBS_PHOTOS.students}
+            alt={t('photoAlt')}
+            fill
+            sizes="(max-width: 1024px) 100vw, 42vw"
+            className="object-cover"
+            priority
+          />
+          <div
+            className="absolute inset-0 bg-gradient-to-t from-secondary/55 to-transparent lg:bg-gradient-to-r lg:from-transparent lg:to-secondary/25"
+            aria-hidden
+          />
+        </div>
+
+        <div className="flex flex-col justify-center p-6 sm:p-8 lg:col-span-7 lg:p-10">
+          <p className="eyebrow">{tIndex('ebsEyebrow')}</p>
+          <h2 className="mt-3 font-display text-2xl text-secondary text-balance sm:text-3xl">
+            {tIndex('ebsTitle')}
+          </h2>
+          <p className="mt-4 text-base font-medium leading-snug text-secondary/80 sm:text-lg">
+            {tIndex('ebsTagline')}
+          </p>
+          <p className="mt-4 text-sm leading-relaxed text-secondary/70 sm:text-[0.95rem]">
+            {t('intro1')}
+          </p>
+          <p className="mt-3 text-sm leading-relaxed text-secondary/68 sm:text-[0.95rem]">
+            {t('intro2')}
+          </p>
+          <p className="mt-3 text-sm leading-relaxed text-secondary/68 sm:text-[0.95rem]">
+            {t('intro3')}
+          </p>
+
+          <Link
+            href={programsHref}
+            className="btn-uni btn-uni-primary mt-7 inline-flex h-11 w-fit items-center gap-2 rounded-lg px-5 text-sm"
+          >
+            {tIndex('ebsCta')}
+            <Icon name="arrow-right" size={16} className="btn-arrow" />
+          </Link>
+        </div>
+      </div>
+
+      <div className="border-t border-warm-200/70 px-6 py-8 sm:px-8 lg:px-10">
+        <h3 className="font-display text-xl text-secondary sm:text-2xl">{t('allianceTitle')}</h3>
+        <p className="mt-3 max-w-4xl text-sm leading-relaxed text-secondary/68 sm:text-[0.95rem]">
+          {t('allianceLead')}
+        </p>
+        <p className="mt-5 text-xs font-semibold uppercase tracking-[0.12em] text-primary">
+          {t('principlesLabel')}
+        </p>
+        <ul className="alliance-principles mt-3 max-w-3xl">
+          {PRINCIPLES.map((key) => (
+            <li key={key}>{t(key)}</li>
+          ))}
+        </ul>
+
+        <h3 className="mt-10 font-display text-xl text-secondary sm:text-2xl">{t('whyTitle')}</h3>
+        <ul className="mt-6 grid gap-5 sm:grid-cols-2">
+          {WHY.map((item) => (
+            <li key={item.title} className="min-w-0">
+              <h4 className="font-heading text-sm font-semibold text-secondary sm:text-base">
+                {t(item.title)}
+              </h4>
+              <p className="mt-2 text-sm leading-relaxed text-secondary/65">{t(item.body)}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </article>
+  );
+}

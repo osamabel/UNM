@@ -8,7 +8,8 @@ import { Footer } from '@/components/layout/Footer';
 import { MainContent } from '@/components/layout/MainContent';
 import { MobileBottomBar } from '@/components/shared/MobileBottomBar';
 import { WhatsAppButton } from '@/components/shared/WhatsAppButton';
-import { InitialLoader } from '@/components/shared/InitialLoader';
+import { InitialLoaderClient } from '@/components/shared/InitialLoaderClient';
+import { DomStability } from '@/components/shared/DomStability';
 import { SiteSettingsProvider } from '@/components/providers/SiteSettingsProvider';
 import { JsonLd } from '@/components/shared/JsonLd';
 import { organizationSchema } from '@/lib/schema';
@@ -75,17 +76,18 @@ export default async function LocaleLayout({
   const plausibleDomain = process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN;
 
   return (
-    <html lang={params.locale} className={`${fontSans.variable} ${fontDisplay.variable}`}>
+    <html lang={params.locale} className={`${fontSans.variable} ${fontDisplay.variable}`} suppressHydrationWarning>
       <head>
         <link
           rel="preconnect"
           href={process.env.NEXT_PUBLIC_CMS_URL ?? 'https://cms.unm.ma'}
         />
       </head>
-      <body className={fontSans.className}>
+      <body className={fontSans.className} suppressHydrationWarning>
         <NextIntlClientProvider locale={params.locale} messages={messages}>
           <SiteSettingsProvider settings={settings}>
-            <InitialLoader />
+            <DomStability />
+            <InitialLoaderClient />
             <a
               href="#main"
               className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-primary focus:px-4 focus:py-2 focus:text-white"
