@@ -5,7 +5,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import { SectionWrapper } from '@/components/ui/SectionWrapper';
 import { SectionHeader } from '@/components/patterns/SectionHeader';
 import { ScrollReveal } from '@/components/patterns/ScrollReveal';
-import { getPartnerLogoSrc } from '@/lib/partner-logos';
+import { getPartnerLogoSrc, getEcosystemPartners } from '@/lib/partner-logos';
 import { cn } from '@/lib/utils';
 import type { Partner } from '@unm/types';
 
@@ -45,9 +45,9 @@ export function PartnerLogoTile({
           <Image
             src={logoSrc}
             alt={partner.name}
-            width={160}
-            height={48}
-            sizes={layout === 'marquee' ? '160px' : '(max-width: 640px) 45vw, 180px'}
+            width={240}
+            height={88}
+            sizes={layout === 'marquee' ? '220px' : '(max-width: 640px) 45vw, 240px'}
             unoptimized
             className="partner-logo-img"
           />
@@ -84,22 +84,19 @@ function MarqueeRow({
   partners,
   reverse = false,
   duration = 56,
-  className,
 }: {
   partners: Partner[];
   reverse?: boolean;
   duration?: number;
-  className?: string;
 }) {
-  // Pad just enough for a continuous ribbon, then mirror once for a seamless -50% loop
   let base = [...partners];
-  while (base.length > 0 && base.length < 6) {
+  while (base.length > 0 && base.length < 8) {
     base = [...base, ...partners];
   }
   const loop = [...base, ...base];
 
   return (
-    <div className={cn('partner-marquee', className)}>
+    <div className="partner-marquee">
       <div
         className={cn('partner-marquee-track', reverse && 'partner-marquee-track-reverse')}
         style={{ ['--marquee-duration' as string]: `${duration}s` }}
@@ -117,13 +114,11 @@ function MarqueeRow({
 
 export function PartnerLogos({ partners }: PartnerLogosProps) {
   const t = useTranslations('home');
-  const tCat = useTranslations('partnersIndex.categoryTitle');
   const locale = useLocale();
-  const list = usablePartners(partners);
+  const list = usablePartners(getEcosystemPartners(partners));
   if (list.length === 0) return null;
 
   const partnersHref = locale === 'en' ? '/en/partners' : '/partenaires';
-  const categories = Array.from(new Set(list.map((p) => p.category)));
 
   return (
     <SectionWrapper id="partenaires" tone="soft" className="partners-section !py-10 sm:!py-12 lg:!py-14">
@@ -141,27 +136,15 @@ export function PartnerLogos({ partners }: PartnerLogosProps) {
         />
       </ScrollReveal>
 
-      {categories.length > 0 ? (
-        <ScrollReveal from="up" delay={60} duration={700} blur={false}>
-          <ul className="partner-cats" aria-label={t('partnersEyebrow')}>
-            {categories.map((cat) => (
-              <li key={cat} className="partner-cat">
-                {tCat(cat)}
-              </li>
-            ))}
-          </ul>
-        </ScrollReveal>
-      ) : null}
-
-      <ScrollReveal from="up" delay={120} duration={1000} blur={false}>
+      <ScrollReveal from="up" delay={100} duration={1000} blur={false}>
         <div className="partner-stage" aria-label={t('partnersTitle')}>
           <div className="partner-stage-glow" aria-hidden />
           <div className="partner-stage-grid" aria-hidden />
           <div className="partner-stage-sheen" aria-hidden />
 
           <div className="partner-stage-rows">
-            <MarqueeRow partners={list} duration={64} />
-            <MarqueeRow partners={rotate(list, 3)} reverse duration={72} />
+            <MarqueeRow partners={list} duration={48} />
+            <MarqueeRow partners={rotate(list, 2)} reverse duration={56} />
           </div>
         </div>
       </ScrollReveal>

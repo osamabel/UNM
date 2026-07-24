@@ -2,8 +2,8 @@ import type { Partner } from '@unm/types';
 import { LOGO_ALT, LOGO_SRC } from '@/lib/logo';
 import { toPublicMediaUrl } from '@/lib/cms-media';
 
-/** Local fallback only when CMS has no EBS logo uploaded. */
-export const EBS_LOGO_FALLBACK_SRC = '/partners/ebs/logo-wordmark.png';
+/** Local fallback — official EBS wordmark (crisp SVG on light plates). */
+export const EBS_LOGO_FALLBACK_SRC = '/partners/ebs/logo-european.svg';
 
 export type AllianceLogoEntry = {
   id: string;
@@ -31,6 +31,27 @@ const PARTNER_LOGO_SCALE_BY_KEYWORD: { keyword: string; scale: number }[] = [
 function isEbsPartner(name: string): boolean {
   const lower = name.toLowerCase();
   return lower.includes('ebs') || lower.includes('european business');
+}
+
+/** Accreditation / label bodies stored as CMS partners — not ecosystem partners. */
+const ACCREDITATION_NAME_KEYWORDS = [
+  'efmd',
+  'aacsb',
+  'cefdg',
+  'cdefm',
+  'conférence des grandes écoles',
+] as const;
+
+export function isAccreditationPartner(partner: Pick<Partner, 'name'>): boolean {
+  const name = partner.name.toLowerCase();
+  if (ACCREDITATION_NAME_KEYWORDS.some((k) => name.includes(k))) return true;
+  // Exact CGE acronym only — avoid matching CGEM / other names.
+  return /\bcge\b/i.test(partner.name) && !/cgem/i.test(partner.name);
+}
+
+/** Partners shown in the ecosystem / Partenaires UI (excludes accreditation logos). */
+export function getEcosystemPartners(partners: Partner[]): Partner[] {
+  return partners.filter((partner) => !isAccreditationPartner(partner));
 }
 
 /**
@@ -76,16 +97,33 @@ function partnerToAllianceEntry(
 }
 
 /**
- * UNM × EBS lockup — brand logo + CMS EBS partner logo (local fallback).
+ * EBS partner logo — CMS upload preferred, local wordmark as fallback.
+ */
+export function getEbsLogoSrc(partners: Partner[] = []): { src: string; name: string; fromCms: boolean } {
+  const ebsPartner = findPartnerByKeywords(partners, ['ebs', 'european business school']);
+  const cmsSrc = ebsPartner ? toPublicMediaUrl(ebsPartner.logo?.url) : null;
+  if (cmsSrc) {
+    return {
+      src: cmsSrc,
+      name: ebsPartner?.name ?? 'EBS Paris',
+      fromCms: true,
+    };
+  }
+  return {
+    src: EBS_LOGO_FALLBACK_SRC,
+    name: ebsPartner?.name ?? 'European Business School',
+    fromCms: false,
+  };
+}
+
+/**
+ * UNM × EBS lockup — brand logo + official EBS wordmark (crisp SVG in the sphere).
  */
 export function getEbsAllianceLockup(
   partners: Partner[] = [],
   brandLogoSrc?: string | null,
 ): AllianceLogoEntry[] {
   const ebsPartner = findPartnerByKeywords(partners, ['ebs', 'european business school']);
-  const ebsSrc = ebsPartner
-    ? getPartnerLogoSrc(ebsPartner)
-    : EBS_LOGO_FALLBACK_SRC;
 
   return [
     {
@@ -97,10 +135,10 @@ export function getEbsAllianceLockup(
     },
     {
       id: 'ebs',
-      name: ebsPartner?.name ?? 'EBS Paris',
-      src: ebsSrc || EBS_LOGO_FALLBACK_SRC,
-      scale: ebsPartner ? getPartnerLogoScale(ebsPartner.name) : 1,
-      kind: 'jpeg',
+      name: ebsPartner?.name ?? 'European Business School',
+      src: EBS_LOGO_FALLBACK_SRC,
+      scale: 1.08,
+      kind: 'svg-wordmark',
     },
   ];
 }

@@ -16,7 +16,7 @@ export default async function HomePage({ params }: { params: { locale: Locale } 
 
   return (
     <div className="home-page flex flex-col">
-      <HeroSection />
+      <HeroSection partners={partners} />
       <EBSPartnership partners={partners} />
       <FeaturedPrograms />
       <FacultyGrid faculties={faculties} />

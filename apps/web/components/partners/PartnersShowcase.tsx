@@ -10,6 +10,7 @@ import {
   iconForPartnerCategory,
   partnerCategoryLabel,
 } from '@/lib/partner-category';
+import { getEcosystemPartners } from '@/lib/partner-logos';
 import type { Locale, Partner } from '@unm/types';
 
 interface Props {
@@ -20,19 +21,24 @@ export function PartnersShowcase({ partners }: Props) {
   const locale = useLocale() as Locale;
   const t = useTranslations('partnersIndex');
 
+  const ecosystemPartners = useMemo(
+    () => getEcosystemPartners(partners),
+    [partners],
+  );
+
   const grouped = useMemo(() => {
     const map: Record<Partner['category'], Partner[]> = {
       academic: [],
       industry: [],
       government: [],
     };
-    for (const p of partners) {
+    for (const p of ecosystemPartners) {
       map[p.category]?.push(p);
     }
     return map;
-  }, [partners]);
+  }, [ecosystemPartners]);
 
-  if (partners.length === 0) {
+  if (ecosystemPartners.length === 0) {
     return (
       <div className="card-flat px-6 py-16 text-center">
         <p className="text-secondary/60">{t('empty')}</p>

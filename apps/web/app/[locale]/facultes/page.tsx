@@ -4,6 +4,7 @@ import { Breadcrumb } from '@/components/ui/Breadcrumb';
 import { PhotoHero } from '@/components/patterns/PhotoHero';
 import { SectionWrapper } from '@/components/ui/SectionWrapper';
 import { Icon } from '@/components/ui/Icon';
+import { ButtonLink } from '@/components/ui/Button';
 import { FacultiesShowcase } from '@/components/faculty/FacultiesShowcase';
 import { CTABanner } from '@/components/home/CTABanner';
 import { getFaculties } from '@/lib/api';
@@ -18,7 +19,7 @@ export async function generateMetadata({
   params: { locale: Locale };
 }): Promise<Metadata> {
   const t = await getTranslations({ locale: params.locale, namespace: 'facultiesIndex' });
-  return { title: t('metaTitle') };
+  return { title: t('metaTitle'), description: t('metaDescription') };
 }
 
 export default async function FacultiesIndex({ params }: { params: { locale: Locale } }) {
@@ -31,6 +32,7 @@ export default async function FacultiesIndex({ params }: { params: { locale: Loc
   const isEn = params.locale === 'en';
   const homeUrl = isEn ? '/en' : '/';
   const facultiesUrl = isEn ? '/en/faculties' : '/facultes';
+  const programsUrl = isEn ? '/en/programs' : '/programmes';
   const active = faculties.filter((f) => !f.comingSoon).length;
   const upcoming = faculties.filter((f) => f.comingSoon).length;
 
@@ -55,7 +57,25 @@ export default async function FacultiesIndex({ params }: { params: { locale: Loc
         }
         imagePosition="center 40%"
       >
-        <ul className="photo-hero-trust">
+        <div className="faculties-hero-actions">
+          <ButtonLink
+            href="#facultes-liste"
+            size="lg"
+            trailingIcon={<Icon name="arrow-right" size={18} />}
+          >
+            {t('ctaExplore')}
+          </ButtonLink>
+          <ButtonLink
+            href={programsUrl}
+            size="lg"
+            variant="ghost"
+            className="faculties-hero-ghost"
+            trailingIcon={<Icon name="arrow-right" size={16} />}
+          >
+            {t('ctaPrograms')}
+          </ButtonLink>
+        </div>
+        <ul className="photo-hero-trust mt-5">
           <li>
             <Icon name="check-circle" size={14} className="text-[rgba(255,196,170,0.95)]" />
             {t('trustActive', { count: active })}
@@ -67,7 +87,7 @@ export default async function FacultiesIndex({ params }: { params: { locale: Loc
         </ul>
       </PhotoHero>
 
-      <SectionWrapper tone="canvas" className="!pt-8 sm:!pt-10">
+      <SectionWrapper tone="canvas" className="!pt-9 sm:!pt-11" id="facultes-liste">
         <FacultiesShowcase faculties={faculties} />
       </SectionWrapper>
 

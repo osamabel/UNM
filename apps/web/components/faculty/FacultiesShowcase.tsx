@@ -1,11 +1,14 @@
 'use client';
 
+import Image from 'next/image';
+import Link from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
 import type { Faculty, Locale } from '@unm/types';
-import { facultyPath, localized } from '@/lib/utils';
 import { ButtonLink } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
-import { cn } from '@/lib/utils';
+import { ScrollReveal } from '@/components/patterns/ScrollReveal';
+import { getFacultyCoverSrc } from '@/lib/faculty-images';
+import { facultyPath, localized } from '@/lib/utils';
 
 interface Props {
   faculties: Faculty[];
@@ -23,47 +26,68 @@ export function FacultiesShowcase({ faculties }: Props) {
   const upcoming = ordered.filter((f) => f.comingSoon);
 
   return (
-    <div className="min-w-0 space-y-16 sm:space-y-20">
-      {active.length > 0 && (
-        <section aria-labelledby="active-faculties-heading">
-          <header className="mb-8 flex items-baseline justify-between gap-4">
-            <p id="active-faculties-heading" className="eyebrow">
-              {ts('activeHeading')}
-            </p>
-            <p className="shrink-0 font-heading text-[11px] tabular-nums text-secondary/45">
-              {active.length} / {ordered.length}
-            </p>
-          </header>
-          <div className="space-y-6">
-            {active.map((f) => (
-              <ActiveFacultyCard key={f.id} faculty={f} locale={locale} />
+    <div className="faculties-showcase">
+      {active.length > 0 ? (
+        <section aria-labelledby="active-faculties-heading" className="faculties-block">
+          <ScrollReveal>
+            <header className="faculties-block-head">
+              <div className="min-w-0">
+                <p id="active-faculties-heading" className="faculties-kicker">
+                  {ts('activeHeading')}
+                </p>
+                <h2 className="faculties-block-title">{ts('activeTitle')}</h2>
+                <p className="faculties-block-intro">{ts('activeIntro')}</p>
+              </div>
+              <p className="faculties-count">
+                {active.length}
+                <span> / {ordered.length}</span>
+              </p>
+            </header>
+          </ScrollReveal>
+          <div className="faculties-active-list">
+            {active.map((f, i) => (
+              <ScrollReveal key={f.id} delay={i * 70}>
+                <ActiveFacultyCard faculty={f} locale={locale} />
+              </ScrollReveal>
             ))}
           </div>
         </section>
-      )}
+      ) : null}
 
-      {upcoming.length > 0 && (
-        <section aria-labelledby="upcoming-faculties-heading" className="divider-fine pt-12 sm:pt-14">
-          <header className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-            <div className="min-w-0">
-              <p id="upcoming-faculties-heading" className="eyebrow text-secondary/50">
-                {ts('upcomingHeading')}
+      {upcoming.length > 0 ? (
+        <section
+          aria-labelledby="upcoming-faculties-heading"
+          className="faculties-block faculties-block--upcoming"
+        >
+          <ScrollReveal>
+            <header className="faculties-block-head">
+              <div className="min-w-0">
+                <p id="upcoming-faculties-heading" className="faculties-kicker faculties-kicker--muted">
+                  {ts('upcomingHeading')}
+                </p>
+                <h2 className="faculties-block-title">{ts('upcomingTitle')}</h2>
+                <p className="faculties-block-intro">{ts('upcomingIntro')}</p>
+              </div>
+              <p className="faculties-count">
+                {upcoming.length}
+                <span> / {ordered.length}</span>
               </p>
-              <p className="mt-2 max-w-xl text-sm leading-relaxed text-secondary/55">
-                {ts('upcomingIntro')}
-              </p>
-            </div>
-            <p className="shrink-0 font-heading text-[11px] tabular-nums text-secondary/45">
-              {upcoming.length} / {ordered.length}
-            </p>
-          </header>
-          <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5">
-            {upcoming.map((f) => (
-              <UpcomingFacultyCard key={f.id} faculty={f} locale={locale} comingSoonLabel={tn('comingSoon')} />
+            </header>
+          </ScrollReveal>
+          <ul className="faculties-upcoming-grid">
+            {upcoming.map((f, i) => (
+              <ScrollReveal key={f.id} delay={i * 60} as="li">
+                <UpcomingFacultyCard
+                  faculty={f}
+                  locale={locale}
+                  comingSoonLabel={tn('comingSoon')}
+                  exploreLabel={ts('learnMore')}
+                />
+              </ScrollReveal>
             ))}
           </ul>
         </section>
-      )}
+      ) : null}
     </div>
   );
 }
@@ -74,63 +98,53 @@ function ActiveFacultyCard({ faculty: f, locale }: { faculty: Faculty; locale: L
   const count = f.programCount ?? 0;
   const programLabel = count > 1 ? ts('programPlural') : ts('programSingular');
   const shortName = localized(f.name, locale).replace(/^UNM\s+/i, '');
+  const cover = getFacultyCoverSrc(f);
+  const fromCms = cover.startsWith('/cms-media/');
+  const href = facultyPath(f.slug, locale);
+  const programsHref =
+    locale === 'en' ? `/en/programs?faculty=${f.slug}` : `/programmes?faculty=${f.slug}`;
 
   return (
-    <article className="card-interactive group overflow-hidden p-0">
-      <div className="grid min-w-0 md:grid-cols-[minmax(0,12rem)_1fr] lg:grid-cols-[minmax(0,14rem)_1fr] xl:grid-cols-[minmax(0,16rem)_1fr]">
+    <article className="faculty-index-card">
+      <div className="faculty-index-card-media">
+        <Image
+          src={cover}
+          alt={shortName}
+          fill
+          sizes="(max-width: 768px) 100vw, 42vw"
+          className="object-cover object-[center_30%]"
+          unoptimized={fromCms}
+        />
+        <div className="faculty-index-card-scrub" aria-hidden />
         <div
-          className="relative flex flex-col justify-between px-5 py-7 text-warm-50 sm:px-7 sm:py-9"
+          className="faculty-index-card-accent"
           style={{
-            background: `linear-gradient(155deg, ${accent}e8 0%, ${accent}c9 45%, #3D1A0B 100%)`,
+            background: `radial-gradient(ellipse 70% 60% at 30% 80%, ${accent}66, transparent 70%)`,
           }}
-        >
-          <div
-            className="pointer-events-none absolute -right-6 -top-6 h-28 w-28 rounded-full bg-white/15 blur-2xl"
-            aria-hidden
-          />
-          <div className="relative">
-            <p className="font-heading text-[10px] font-semibold uppercase tracking-[0.18em] text-warm-100/90">
-              UNM
-            </p>
-            <h2 className="mt-3 font-display text-2xl leading-snug text-warm-50 sm:text-[1.65rem]">
-              {shortName}
-            </h2>
-          </div>
-          <div className="relative mt-8">
-            <p className="font-display text-4xl font-light tabular-nums text-warm-50">{count}</p>
-            <p className="mt-1 font-heading text-[10px] font-semibold uppercase tracking-[0.14em] text-warm-100/85">
-              {programLabel}
-            </p>
-          </div>
-        </div>
-
-        <div className="relative flex min-w-0 flex-col justify-between gap-6 px-6 py-8 sm:px-8 lg:px-10">
-          <div
-            className="pointer-events-none absolute -right-10 -top-10 h-36 w-36 rounded-full opacity-[0.08] blur-2xl transition-opacity group-hover:opacity-[0.14]"
-            style={{ backgroundColor: accent }}
-            aria-hidden
-          />
-          <p className="relative text-sm leading-relaxed text-secondary/75 sm:text-[15px]">
-            {localized(f.description, locale)}
+          aria-hidden
+        />
+        <div className="faculty-index-card-meta">
+          <p className="faculty-index-card-brand">UNM</p>
+          <p className="faculty-index-card-stat">
+            <span className="faculty-index-card-stat-num">{count}</span>
+            <span className="faculty-index-card-stat-label">{programLabel}</span>
           </p>
-          <div className="relative flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:gap-3">
-            <ButtonLink
-              href={facultyPath(f.slug, locale)}
-              fullWidth
-              className="sm:!w-auto"
-              trailingIcon={<Icon name="arrow-right" size={16} />}
-            >
-              {ts('exploreFaculty')}
-            </ButtonLink>
-            <ButtonLink
-              href={locale === 'en' ? '/en/programs' : '/programmes'}
-              variant="ghost"
-              fullWidth
-              className="sm:!w-auto"
-            >
-              {ts('seeAllPrograms')}
-            </ButtonLink>
-          </div>
+        </div>
+      </div>
+
+      <div className="faculty-index-card-body">
+        <p className="faculties-kicker">{ts('activeBadge')}</p>
+        <h3 className="faculty-index-card-title">
+          <Link href={href}>{shortName}</Link>
+        </h3>
+        <p className="faculty-index-card-desc">{localized(f.description, locale)}</p>
+        <div className="faculty-index-card-actions">
+          <ButtonLink href={href} trailingIcon={<Icon name="arrow-right" size={16} />}>
+            {ts('exploreFaculty')}
+          </ButtonLink>
+          <ButtonLink href={programsHref} variant="ghost">
+            {ts('seeFacultyPrograms')}
+          </ButtonLink>
         </div>
       </div>
     </article>
@@ -141,33 +155,44 @@ function UpcomingFacultyCard({
   faculty: f,
   locale,
   comingSoonLabel,
+  exploreLabel,
 }: {
   faculty: Faculty;
   locale: Locale;
   comingSoonLabel: string;
+  exploreLabel: string;
 }) {
   const shortName = localized(f.name, locale).replace(/^UNM\s+/i, '');
+  const cover = getFacultyCoverSrc(f);
+  const fromCms = cover.startsWith('/cms-media/');
+  const href = facultyPath(f.slug, locale);
 
   return (
-    <li>
-      <div className="card-flat flex h-full flex-col p-5 sm:p-6">
-        <p className="font-heading text-[10px] font-semibold uppercase tracking-[0.16em] text-secondary/40">
-          UNM
-        </p>
-        <h3 className="mt-2 font-display text-lg text-secondary/70">{shortName}</h3>
-        <p className="mt-3 flex-1 text-sm leading-relaxed text-secondary/50 line-clamp-4">
-          {localized(f.description, locale)}
-        </p>
-        <p
-          className={cn(
-            'mt-5 inline-flex w-fit items-center gap-1.5 rounded-full border border-warm-200/80',
-            'bg-white/50 px-3 py-1 font-heading text-[10px] font-semibold uppercase tracking-[0.12em] text-secondary/45',
-          )}
-        >
-          <Icon name="clock" size={12} className="opacity-60" />
+    <Link href={href} className="faculty-upcoming-card group">
+      <div className="faculty-upcoming-media">
+        <Image
+          src={cover}
+          alt=""
+          fill
+          sizes="(max-width: 640px) 100vw, 33vw"
+          className="object-cover object-[center_35%] transition-transform duration-700 ease-out group-hover:scale-105"
+          unoptimized={fromCms}
+        />
+        <div className="faculty-upcoming-scrub" aria-hidden />
+        <span className="faculty-upcoming-badge">
+          <Icon name="clock" size={12} />
           {comingSoonLabel}
-        </p>
+        </span>
       </div>
-    </li>
+      <div className="faculty-upcoming-body">
+        <p className="faculty-upcoming-brand">UNM</p>
+        <h3 className="faculty-upcoming-title">{shortName}</h3>
+        <p className="faculty-upcoming-desc">{localized(f.description, locale)}</p>
+        <span className="faculty-upcoming-cta">
+          {exploreLabel}
+          <Icon name="arrow-right" size={14} className="transition-transform group-hover:translate-x-0.5" />
+        </span>
+      </div>
+    </Link>
   );
 }

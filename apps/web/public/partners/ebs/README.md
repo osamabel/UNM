@@ -2,7 +2,8 @@
 
 ## Logo
 - Partner logos on the site are fetched from **CMS** (`Partner.logo` → `/cms-media/...`).
-- `logo-wordmark.png` is a **fallback only** when CMS has no EBS upload (`EBS_LOGO_FALLBACK_SRC`).
+- `logo-european.svg` is the official EBS wordmark fallback (`EBS_LOGO_FALLBACK_SRC`), used on the homepage hero plate.
+- `logo-wordmark.png` / `logo-european.png` are legacy raster copies.
 
 ## Photos
 Photos under `/partners/ebs/` are sourced from the public EBS Paris website

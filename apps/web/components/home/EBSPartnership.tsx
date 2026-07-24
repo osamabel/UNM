@@ -21,6 +21,34 @@ const PILLARS = [
   { key: "pillar3" as const, num: "03" },
 ];
 
+const ACCREDITATIONS = [
+  {
+    id: "cge",
+    src: "/partners/ebs/accreditations/cge.png",
+    name: "Conférence des Grandes Écoles",
+  },
+  {
+    id: "cefdg",
+    src: "/partners/ebs/accreditations/cefdg.png",
+    name: "CEFDG",
+  },
+  {
+    id: "cdefm",
+    src: "/partners/ebs/accreditations/cdefm.png",
+    name: "CDEFM",
+  },
+  {
+    id: "efmd",
+    src: "/partners/ebs/accreditations/efmd.png",
+    name: "EFMD Accredited",
+  },
+  {
+    id: "aacsb",
+    src: "/partners/ebs/accreditations/aacsb.png",
+    name: "AACSB Business Education Alliance",
+  },
+] as const;
+
 function AllianceLogoMark({
   entry,
   side,
@@ -125,13 +153,16 @@ export function EBSPartnership({ partners = [] }: { partners?: Partner[] }) {
             <div className="alliance-duo">
               <ScrollReveal
                 delay={40}
-                from="left"
+                from="scale"
                 className="alliance-duo-cell"
               >
                 <div className="alliance-sphere-wrap alliance-sphere-wrap--a">
                   <span className="alliance-ring" aria-hidden />
                   <div className="alliance-sphere alliance-sphere--unm">
-                    <span className="alliance-sphere-shine" aria-hidden />
+                    <div className="alliance-sphere-spin" aria-hidden>
+                      <span className="alliance-sphere-band" />
+                      <span className="alliance-sphere-shine" />
+                    </div>
                     <AllianceLogoMark entry={unm} side="unm" />
                   </div>
                   <span className="alliance-sphere-shadow" aria-hidden />
@@ -152,7 +183,7 @@ export function EBSPartnership({ partners = [] }: { partners?: Partner[] }) {
 
               <ScrollReveal
                 delay={220}
-                from="right"
+                from="scale"
                 className="alliance-duo-cell"
               >
                 <div className="alliance-sphere-wrap alliance-sphere-wrap--b">
@@ -161,7 +192,10 @@ export function EBSPartnership({ partners = [] }: { partners?: Partner[] }) {
                     aria-hidden
                   />
                   <div className="alliance-sphere alliance-sphere--ebs">
-                    <span className="alliance-sphere-shine" aria-hidden />
+                    <div className="alliance-sphere-spin alliance-sphere-spin--reverse" aria-hidden>
+                      <span className="alliance-sphere-band" />
+                      <span className="alliance-sphere-shine" />
+                    </div>
                     <AllianceLogoMark entry={ebs} side="ebs" />
                   </div>
                   <span className="alliance-sphere-shadow" aria-hidden />
@@ -173,14 +207,29 @@ export function EBSPartnership({ partners = [] }: { partners?: Partner[] }) {
       </div>
 
       <ScrollReveal delay={120} from="up" duration={900}>
-        <aside className="alliance-partner glass-soft relative mt-11 sm:mt-12 lg:mt-14">
-          <div className="alliance-partner-meta">
-            <p className="alliance-partner-label">{t("ebsPartnerLabel")}</p>
-            <p className="alliance-partner-year" aria-hidden>
-              1967
-            </p>
-          </div>
-          <p className="alliance-partner-body">{t("ebsAbout")}</p>
+        <aside
+          className="alliance-partner glass-soft relative mt-11 sm:mt-12 lg:mt-14"
+          aria-label={t("accreditationsLabel")}
+        >
+          <p className="alliance-accred-label">{t("accreditationsLabel")}</p>
+
+          <ul className="alliance-accred-row">
+            {ACCREDITATIONS.map((item, index) => (
+              <li
+                key={item.id}
+                className="alliance-accred-item"
+                style={{ ["--accred-i" as string]: index }}
+              >
+                <Image
+                  src={item.src}
+                  alt={item.name}
+                  width={338}
+                  height={176}
+                  className="alliance-accred-img"
+                />
+              </li>
+            ))}
+          </ul>
         </aside>
       </ScrollReveal>
 

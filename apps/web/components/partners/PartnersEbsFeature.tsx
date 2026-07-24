@@ -2,8 +2,11 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
 import { Icon } from '@/components/ui/Icon';
-import { EBS_PHOTOS } from '@/lib/program-images';
+import { LOGO_ALT, LOGO_SRC } from '@/lib/logo';
 import type { Locale } from '@unm/types';
+
+const ALLIANCE_BG_SRC = '/partners/ebs/alliance-collage.jpg';
+const EBS_WORDMARK_SRC = '/partners/ebs/logo-european.svg';
 
 const PRINCIPLES = ['principle1', 'principle2', 'principle3', 'principle4'] as const;
 const WHY = [
@@ -23,19 +26,42 @@ export async function PartnersEbsFeature({ locale }: { locale: Locale }) {
   return (
     <article className="relative overflow-hidden rounded-2xl border border-warm-200/60 bg-warm-50/80 shadow-sm">
       <div className="grid min-w-0 lg:grid-cols-12">
-        <div className="relative min-h-[240px] sm:min-h-[320px] lg:col-span-5">
+        <div className="partners-ebs-feature-media relative min-h-[300px] sm:min-h-[380px] lg:col-span-5 lg:min-h-full">
           <Image
-            src={EBS_PHOTOS.students}
-            alt={t('photoAlt')}
+            src={ALLIANCE_BG_SRC}
+            alt=""
             fill
             sizes="(max-width: 1024px) 100vw, 42vw"
-            className="object-cover"
+            className="partners-ebs-feature-bg"
             priority
-          />
-          <div
-            className="absolute inset-0 bg-gradient-to-t from-secondary/55 to-transparent lg:bg-gradient-to-r lg:from-transparent lg:to-secondary/25"
             aria-hidden
           />
+          <div className="partners-ebs-feature-scrim" aria-hidden />
+          <div className="partners-ebs-feature-logos">
+            <div className="partners-ebs-feature-logo-slot">
+              <Image
+                src={LOGO_SRC}
+                alt={LOGO_ALT}
+                width={280}
+                height={96}
+                className="partners-ebs-feature-logo-img"
+                priority
+              />
+            </div>
+            <span className="partners-ebs-feature-logos-x" aria-hidden>
+              ×
+            </span>
+            <div className="partners-ebs-feature-logo-slot">
+              <Image
+                src={EBS_WORDMARK_SRC}
+                alt="European Business School"
+                width={296}
+                height={120}
+                className="partners-ebs-feature-logo-img"
+                priority
+              />
+            </div>
+          </div>
         </div>
 
         <div className="flex flex-col justify-center p-6 sm:p-8 lg:col-span-7 lg:p-10">

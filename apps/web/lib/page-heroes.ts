@@ -25,7 +25,7 @@ export const PAGE_HERO_IMAGE = {
   contact: AFRICAN_HERO.executive,
   news: AFRICAN_HERO.graduates,
   organisations: AFRICAN_HERO.executive,
-  partners: AFRICAN_HERO.executive,
+  partners: AFRICAN_HERO.graduates,
   /** Editorial side figures (Manifeste intro, etc.) */
   editorial: AFRICAN_HERO.executive,
 } as const;
