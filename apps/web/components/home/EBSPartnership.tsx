@@ -1,24 +1,24 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
-import Link from 'next/link';
-import { useLocale, useTranslations } from 'next-intl';
-import { SectionWrapper } from '@/components/ui/SectionWrapper';
-import { ScrollReveal } from '@/components/patterns/ScrollReveal';
-import { Icon } from '@/components/ui/Icon';
+import Image from "next/image";
+import Link from "next/link";
+import { useLocale, useTranslations } from "next-intl";
+import { SectionWrapper } from "@/components/ui/SectionWrapper";
+import { ScrollReveal } from "@/components/patterns/ScrollReveal";
+import { Icon } from "@/components/ui/Icon";
 import {
   getEbsAllianceLockup,
   type AllianceLogoEntry,
-} from '@/lib/partner-logos';
-import { useSiteSettings } from '@/components/providers/SiteSettingsProvider';
-import { getBrandLogoSrc } from '@/lib/site-settings';
-import { cn } from '@/lib/utils';
-import type { Locale, Partner } from '@unm/types';
+} from "@/lib/partner-logos";
+import { useSiteSettings } from "@/components/providers/SiteSettingsProvider";
+import { getBrandLogoSrc } from "@/lib/site-settings";
+import { cn } from "@/lib/utils";
+import type { Locale, Partner } from "@unm/types";
 
 const PILLARS = [
-  { key: 'pillar1' as const, num: '01' },
-  { key: 'pillar2' as const, num: '02' },
-  { key: 'pillar3' as const, num: '03' },
+  { key: "pillar1" as const, num: "01" },
+  { key: "pillar2" as const, num: "02" },
+  { key: "pillar3" as const, num: "03" },
 ];
 
 function AllianceLogoMark({
@@ -26,22 +26,22 @@ function AllianceLogoMark({
   side,
 }: {
   entry: AllianceLogoEntry;
-  side: 'unm' | 'ebs';
+  side: "unm" | "ebs";
 }) {
   if (!entry.src) {
     return (
-      <div className={cn('alliance-mark', `alliance-mark--${side}`)}>
+      <div className={cn("alliance-mark", `alliance-mark--${side}`)}>
         <span className="alliance-mark-fallback">{entry.name}</span>
       </div>
     );
   }
 
-  const fromCms = entry.src.startsWith('/cms-media/');
+  const fromCms = entry.src.startsWith("/cms-media/");
 
   return (
     <div
-      className={cn('alliance-mark', `alliance-mark--${side}`)}
-      style={{ ['--logo-scale' as string]: entry.scale }}
+      className={cn("alliance-mark", `alliance-mark--${side}`)}
+      style={{ ["--logo-scale" as string]: entry.scale }}
     >
       <Image
         src={entry.src}
@@ -60,10 +60,10 @@ function AllianceLogoMark({
 
 export function EBSPartnership({ partners = [] }: { partners?: Partner[] }) {
   const locale = useLocale() as Locale;
-  const t = useTranslations('ebs');
+  const t = useTranslations("ebs");
   const settings = useSiteSettings();
-  const programsHref = locale === 'en' ? '/en/programs' : '/programmes';
-  const partnersHref = locale === 'en' ? '/en/partners' : '/partenaires';
+  const programsHref = locale === "en" ? "/en/programs" : "/programmes";
+  const partnersHref = locale === "en" ? "/en/partners" : "/partenaires";
   const [unm, ebs] = getEbsAllianceLockup(partners, getBrandLogoSrc(settings));
 
   return (
@@ -72,13 +72,16 @@ export function EBSPartnership({ partners = [] }: { partners?: Partner[] }) {
       tone="canvas"
       className="alliance-section !pb-14 !pt-12 sm:!pb-16 sm:!pt-14 lg:!pb-20 lg:!pt-16"
     >
-      <div className="alliance-glow pointer-events-none absolute inset-0" aria-hidden />
+      <div
+        className="alliance-glow pointer-events-none absolute inset-0"
+        aria-hidden
+      />
 
       <div className="relative grid min-w-0 items-center gap-10 lg:grid-cols-12 lg:gap-12 xl:gap-16">
         <ScrollReveal className="lg:col-span-5" from="left" duration={950}>
           <div className="flex items-center gap-3">
             <span className="h-px w-8 bg-primary" aria-hidden />
-            <p className="eyebrow !mt-0">{t('eyebrow')}</p>
+            <p className="eyebrow !mt-0">{t("eyebrow")}</p>
           </div>
 
           <h2 className="alliance-title mt-4">
@@ -89,32 +92,42 @@ export function EBSPartnership({ partners = [] }: { partners?: Partner[] }) {
             <span>EBS Paris</span>
           </h2>
 
-          <p className="alliance-lead mt-5 max-w-md">{t('description')}</p>
+          <p className="alliance-lead mt-5 max-w-md">{t("description")}</p>
 
           <div className="mt-7 flex flex-wrap gap-3">
             <Link
               href={programsHref}
               className="btn-uni btn-uni-primary inline-flex h-11 items-center gap-2 rounded-lg px-5 text-sm"
             >
-              {t('learnMore')}
+              {t("learnMore")}
               <Icon name="arrow-right" size={16} className="btn-arrow" />
             </Link>
             <Link
               href={partnersHref}
               className="btn-uni btn-uni-ghost inline-flex h-11 items-center gap-2 rounded-lg px-5 text-sm"
             >
-              {t('partnersLink')}
+              {t("partnersLink")}
             </Link>
           </div>
         </ScrollReveal>
 
-        <div className="lg:col-span-7" aria-label={t('title')}>
+        <div className="lg:col-span-7" aria-label={t("title")}>
           <div className="alliance-stage">
-            <div className="alliance-stage-orb alliance-stage-orb--a" aria-hidden />
-            <div className="alliance-stage-orb alliance-stage-orb--b" aria-hidden />
+            <div
+              className="alliance-stage-orb alliance-stage-orb--a"
+              aria-hidden
+            />
+            <div
+              className="alliance-stage-orb alliance-stage-orb--b"
+              aria-hidden
+            />
 
             <div className="alliance-duo">
-              <ScrollReveal delay={40} from="left" className="alliance-duo-cell">
+              <ScrollReveal
+                delay={40}
+                from="left"
+                className="alliance-duo-cell"
+              >
                 <div className="alliance-sphere-wrap alliance-sphere-wrap--a">
                   <span className="alliance-ring" aria-hidden />
                   <div className="alliance-sphere alliance-sphere--unm">
@@ -125,7 +138,11 @@ export function EBSPartnership({ partners = [] }: { partners?: Partner[] }) {
                 </div>
               </ScrollReveal>
 
-              <ScrollReveal delay={140} from="scale" className="alliance-duo-join">
+              <ScrollReveal
+                delay={140}
+                from="scale"
+                className="alliance-duo-join"
+              >
                 <div className="alliance-bridge" aria-hidden>
                   <span className="alliance-bridge-line" />
                   <span className="alliance-lockup-x">×</span>
@@ -133,9 +150,16 @@ export function EBSPartnership({ partners = [] }: { partners?: Partner[] }) {
                 </div>
               </ScrollReveal>
 
-              <ScrollReveal delay={220} from="right" className="alliance-duo-cell">
+              <ScrollReveal
+                delay={220}
+                from="right"
+                className="alliance-duo-cell"
+              >
                 <div className="alliance-sphere-wrap alliance-sphere-wrap--b">
-                  <span className="alliance-ring alliance-ring--ebs" aria-hidden />
+                  <span
+                    className="alliance-ring alliance-ring--ebs"
+                    aria-hidden
+                  />
                   <div className="alliance-sphere alliance-sphere--ebs">
                     <span className="alliance-sphere-shine" aria-hidden />
                     <AllianceLogoMark entry={ebs} side="ebs" />
@@ -151,12 +175,12 @@ export function EBSPartnership({ partners = [] }: { partners?: Partner[] }) {
       <ScrollReveal delay={120} from="up" duration={900}>
         <aside className="alliance-partner glass-soft relative mt-11 sm:mt-12 lg:mt-14">
           <div className="alliance-partner-meta">
-            <p className="alliance-partner-label">{t('ebsPartnerLabel')}</p>
+            <p className="alliance-partner-label">{t("ebsPartnerLabel")}</p>
             <p className="alliance-partner-year" aria-hidden>
               1967
             </p>
           </div>
-          <p className="alliance-partner-body">{t('ebsAbout')}</p>
+          <p className="alliance-partner-body">{t("ebsAbout")}</p>
         </aside>
       </ScrollReveal>
 
@@ -165,7 +189,9 @@ export function EBSPartnership({ partners = [] }: { partners?: Partner[] }) {
           <li key={pillar.key} className="alliance-pillar">
             <ScrollReveal delay={160 + i * 90} from="up" duration={820}>
               <p className="alliance-pillar-num">{pillar.num}</p>
-              <h3 className="alliance-pillar-title">{t(`${pillar.key}Title`)}</h3>
+              <h3 className="alliance-pillar-title">
+                {t(`${pillar.key}Title`)}
+              </h3>
               <p className="alliance-pillar-body">{t(`${pillar.key}Body`)}</p>
             </ScrollReveal>
           </li>

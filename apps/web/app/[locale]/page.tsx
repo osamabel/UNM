@@ -5,23 +5,14 @@ import { EBSPartnership } from '@/components/home/EBSPartnership';
 import { FacultyGrid } from '@/components/home/FacultyGrid';
 import { FeaturedPrograms } from '@/components/home/FeaturedPrograms';
 import { PartnerLogos } from '@/components/home/PartnerLogos';
-import { TestimonialsSlider } from '@/components/home/TestimonialsSlider';
 import { CTABanner } from '@/components/home/CTABanner';
-import {
-  getFaculties,
-  getPartners,
-  getTestimonials,
-} from '@/lib/api';
+import { getFaculties, getPartners } from '@/lib/api';
 
 export const revalidate = 60;
 
 export default async function HomePage({ params }: { params: { locale: Locale } }) {
   setRequestLocale(params.locale);
-  const [faculties, partners, testimonials] = await Promise.all([
-    getFaculties(),
-    getPartners(),
-    getTestimonials(),
-  ]);
+  const [faculties, partners] = await Promise.all([getFaculties(), getPartners()]);
 
   return (
     <div className="home-page flex flex-col">
@@ -30,7 +21,7 @@ export default async function HomePage({ params }: { params: { locale: Locale } 
       <FeaturedPrograms />
       <FacultyGrid faculties={faculties} />
       <PartnerLogos partners={partners} />
-      <TestimonialsSlider testimonials={testimonials} />
+      {/* Testimonials temporarily hidden */}
       <CTABanner />
     </div>
   );

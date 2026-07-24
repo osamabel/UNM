@@ -1,6 +1,7 @@
 /**
  * Home page section order and anchors.
- * Flow: hook → partnership → offerings → faculties → ecosystem → social proof → apply
+ * Flow: hook → partnership → offerings → faculties → ecosystem → apply
+ * (Testimonials temporarily hidden)
  */
 export const HOME_SECTIONS = [
   { id: 'hero', component: 'HeroSection' as const },
@@ -8,7 +9,6 @@ export const HOME_SECTIONS = [
   { id: 'programmes', component: 'FeaturedPrograms' as const },
   { id: 'facultes', component: 'FacultyGrid' as const },
   { id: 'partenaires', component: 'PartnerLogos' as const },
-  { id: 'temoignages', component: 'TestimonialsSlider' as const },
   { id: 'candidater', component: 'CTABanner' as const },
 ] as const;
 
