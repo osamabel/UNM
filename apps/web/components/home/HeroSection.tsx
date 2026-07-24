@@ -1,10 +1,12 @@
 'use client';
 
+import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { useLocale, useTranslations } from 'next-intl';
 import { ButtonLink } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
 import { HeroFloatCards } from '@/components/home/HeroFloatCards';
+import { cn } from '@/lib/utils';
 import type { Locale, Partner } from '@unm/types';
 
 interface Props {
@@ -19,6 +21,14 @@ export function HeroSection({ partners = [] }: Props) {
     ? 'UNM graduates celebrating their achievement'
     : 'Diplômés UNM célébrant leur réussite';
 
+  const imgRef = useRef<HTMLImageElement>(null);
+  const [loaded, setLoaded] = useState(false);
+
+  // A cached image can finish before hydration, so its load event never fires.
+  useEffect(() => {
+    if (imgRef.current?.complete) setLoaded(true);
+  }, []);
+
   return (
     <section
       id="hero"
@@ -27,13 +37,19 @@ export function HeroSection({ partners = [] }: Props) {
     >
       <div className="absolute inset-0" aria-hidden>
         <Image
+          ref={imgRef}
           src="/hero-home.jpg"
           alt=""
           fill
           priority
           quality={90}
           sizes="100vw"
-          className="hero-bg-image object-cover"
+          onLoad={() => setLoaded(true)}
+          className={cn(
+            // opacity only — .hero-bg-image owns transform for the crop framing
+            'hero-bg-image object-cover transition-opacity duration-[1200ms] ease-out motion-reduce:transition-none',
+            loaded ? 'opacity-100' : 'opacity-0',
+          )}
         />
       </div>
 

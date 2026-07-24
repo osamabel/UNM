@@ -1,31 +1,45 @@
-/** Shared African photography for page heroes (local public assets). */
+/**
+ * Shared photography for page heroes (local public assets).
+ *
+ * Chosen for the Executive audience: senior decision-makers (40+), not
+ * undergraduates. Sourced from Pexels (free licence, no attribution required).
+ * See CONTENT_MANAGEMENT.md for the sourcing/licence notes before swapping.
+ */
 export const AFRICAN_HERO = {
-  /** UNM African graduates — celebration / community */
-  graduates: '/home1.png',
-  /** African executive at work — leadership / programmes */
-  executive: '/programme.jpg',
+  /** Senior executive on institutional steps — wide, copy-safe on the left */
+  leadership: '/hero-leadership.jpg',
+  /** Suit-led boardroom session, Lagos — collective decision-making */
+  boardroom: '/hero-boardroom-lagos.jpg',
+  /** Executive seminar audience — the learning context */
+  seminar: '/hero-seminar.jpg',
+  /** Bright open boardroom, standing collaboration */
+  boardroomBright: '/faculties/business-school.jpg',
+  /** Training room with a presenter — short-format learning */
+  training: '/programs/certificate-executive.jpg',
+  /** Portrait of a senior executive — for tall editorial figures */
+  portrait: '/portrait-executive.jpg',
 } as const;
 
 export type AfricanHeroKey = keyof typeof AFRICAN_HERO;
 
 /**
- * Page → image assignment.
- * Only brand African assets (graduates + executive). The old walking-stock
- * photo (`section1.jpeg`) is retired site-wide.
+ * Page → image assignment. Varied deliberately so neighbouring pages never
+ * repeat the same photograph.
  */
 export const PAGE_HERO_IMAGE = {
-  university: AFRICAN_HERO.graduates,
-  manifesto: AFRICAN_HERO.graduates,
-  president: AFRICAN_HERO.graduates,
-  events: AFRICAN_HERO.graduates,
-  newsroom: AFRICAN_HERO.executive,
-  programs: AFRICAN_HERO.executive,
-  faculties: AFRICAN_HERO.graduates,
-  admissions: AFRICAN_HERO.executive,
-  contact: AFRICAN_HERO.executive,
-  news: AFRICAN_HERO.graduates,
-  organisations: AFRICAN_HERO.executive,
-  partners: AFRICAN_HERO.graduates,
-  /** Editorial side figures (Manifeste intro, etc.) */
-  editorial: AFRICAN_HERO.executive,
+  university: AFRICAN_HERO.leadership,
+  manifesto: AFRICAN_HERO.boardroom,
+  president: AFRICAN_HERO.leadership,
+  events: AFRICAN_HERO.training,
+  newsroom: AFRICAN_HERO.boardroomBright,
+  programs: AFRICAN_HERO.seminar,
+  // not boardroomBright: that photo is the Business School card on this page
+  faculties: AFRICAN_HERO.leadership,
+  admissions: AFRICAN_HERO.training,
+  contact: AFRICAN_HERO.boardroom,
+  news: AFRICAN_HERO.seminar,
+  organisations: AFRICAN_HERO.boardroomBright,
+  partners: AFRICAN_HERO.boardroom,
+  /** Editorial side figures (Manifeste intro, etc.) — tall crop */
+  editorial: AFRICAN_HERO.portrait,
 } as const;

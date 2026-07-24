@@ -1,12 +1,15 @@
-import { EBS_PHOTOS } from '@/lib/program-images';
 import type { Faculty } from '@unm/types';
 
-/** Dedicated local covers — Business School uses EBS programme photography. */
+/**
+ * Dedicated covers, one per pole, each showing that faculty's own subject.
+ * Deliberately not EBS campus photography: those frames show undergraduates,
+ * which misreads the Executive audience these faculties actually serve.
+ */
 const FACULTY_COVERS: Record<string, string> = {
-  'business-school': EBS_PHOTOS.businessSchool,
+  'business-school': '/faculties/business-school.jpg',
   'school-of-governance': '/programs/mba-gouvernance-management-public.jpg',
-  'school-of-technology': EBS_PHOTOS.featuredCertificate,
-  'school-of-sport-business': EBS_PHOTOS.campusLife,
+  'school-of-technology': '/faculties/technology.jpg',
+  'school-of-sport-business': '/faculties/sport-business.jpg',
 };
 
 /**
@@ -20,5 +23,5 @@ export function getFacultyCoverSrc(faculty: Pick<Faculty, 'slug' | 'coverImage'>
   const cmsUrl = faculty.coverImage?.url?.trim();
   if (cmsUrl && !cmsUrl.includes('placeholder')) return cmsUrl;
 
-  return EBS_PHOTOS.campus;
+  return FACULTY_COVERS['business-school'];
 }

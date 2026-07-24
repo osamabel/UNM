@@ -19,11 +19,17 @@ const PROGRAM_COVERS: Record<string, string> = {
   'mba-tourisme-hospitality': '/programs/mba-tourisme-hospitality.jpg',
 };
 
+/**
+ * Fallback per programme type, and the covers shown on the home "type" cards.
+ * Executive-appropriate frames — the EBS campus set shows undergraduates.
+ * Each type gets a distinct photo: these three render side by side on the
+ * homepage, so any reuse reads immediately as a mistake.
+ */
 const TYPE_COVERS: Record<string, string> = {
-  DBA: '/partners/ebs/featured-dba.jpg',
-  MBA: '/partners/ebs/featured-mba.jpg',
-  Certificate: '/partners/ebs/featured-certificate.jpg',
-  Bachelor: '/partners/ebs/campus-life.jpg',
+  DBA: '/programs/dba-business-administration.jpg',
+  MBA: '/hero-seminar.jpg',
+  Certificate: '/programs/certificate-executive.jpg',
+  Bachelor: '/faculties/business-school.jpg',
 };
 
 export function getProgramCoverSrc(slug: string, type?: string): string {

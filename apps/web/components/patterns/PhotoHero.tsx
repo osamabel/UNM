@@ -1,6 +1,6 @@
 'use client';
 
-import type { ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import Image from 'next/image';
 import { ScrollReveal } from '@/components/patterns/ScrollReveal';
 import { cn } from '@/lib/utils';
@@ -28,15 +28,28 @@ export function PhotoHero({
   className,
   children,
 }: PhotoHeroProps) {
+  const imgRef = useRef<HTMLImageElement>(null);
+  const [loaded, setLoaded] = useState(false);
+
+  // A cached image can finish before hydration, so its load event never fires.
+  useEffect(() => {
+    if (imgRef.current?.complete) setLoaded(true);
+  }, []);
+
   return (
     <section className={cn('photo-hero relative flex flex-col overflow-hidden', className)}>
       <Image
+        ref={imgRef}
         src={imageSrc}
         alt={imageAlt}
         fill
         priority
         sizes="100vw"
-        className="object-cover"
+        onLoad={() => setLoaded(true)}
+        className={cn(
+          'object-cover transition-[opacity,transform] duration-[1200ms] ease-out motion-reduce:transition-none',
+          loaded ? 'scale-100 opacity-100' : 'scale-105 opacity-0',
+        )}
         style={{ objectPosition: imagePosition }}
       />
       <div className="photo-hero-scrub" aria-hidden />

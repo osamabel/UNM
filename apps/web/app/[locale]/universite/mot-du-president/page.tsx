@@ -4,6 +4,7 @@ import { setRequestLocale } from 'next-intl/server';
 import { SectionWrapper } from '@/components/ui/SectionWrapper';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
 import { PhotoHero } from '@/components/patterns/PhotoHero';
+import { LetterRail } from '@/components/university/LetterRail';
 import { ScrollReveal } from '@/components/patterns/ScrollReveal';
 import { CTABanner } from '@/components/home/CTABanner';
 import { Icon } from '@/components/ui/Icon';
@@ -74,6 +75,12 @@ export default function PresidentWordPage({ params }: { params: { locale: Locale
   const pillars = isEn ? PILLARS_EN : PILLARS_FR;
   const manifestoHref = isEn ? '/en/university/manifeste' : '/universite/manifeste';
   const programsHref = isEn ? '/en/programs' : '/programmes';
+  const movements = [
+    { id: 'contexte', label: isEn ? 'Context' : 'Contexte' },
+    { id: 'vision', label: 'Vision' },
+    { id: 'ambition', label: 'Ambition' },
+    { id: 'engagement', label: isEn ? 'Commitment' : 'Engagement' },
+  ];
 
   return (
     <>
@@ -114,22 +121,10 @@ export default function PresidentWordPage({ params }: { params: { locale: Locale
           {/* Left rail */}
           <aside className="lg:sticky lg:top-28 lg:self-start">
             <ScrollReveal>
-              <p className="font-heading text-[11px] font-semibold uppercase tracking-[0.16em] text-secondary/40">
-                {isEn ? 'In this letter' : 'Dans cette lettre'}
-              </p>
-              <ol className="mt-5 space-y-3 border-l border-warm-200/80 pl-4">
-                {(isEn
-                  ? ['Context', 'Vision', 'Ambition', 'Commitment']
-                  : ['Contexte', 'Vision', 'Ambition', 'Engagement']
-                ).map((label, i) => (
-                  <li key={label} className="flex items-baseline gap-2.5">
-                    <span className="font-heading text-[10px] font-semibold tabular-nums text-primary/70">
-                      0{i + 1}
-                    </span>
-                    <span className="text-sm text-secondary/70">{label}</span>
-                  </li>
-                ))}
-              </ol>
+              <LetterRail
+                eyebrow={isEn ? 'In this letter' : 'Dans cette lettre'}
+                items={movements}
+              />
             </ScrollReveal>
           </aside>
 
@@ -137,8 +132,9 @@ export default function PresidentWordPage({ params }: { params: { locale: Locale
           <article className="min-w-0">
             <ScrollReveal>
               <p
+                id="contexte"
                 className={cn(
-                  'text-[1.125rem] leading-[1.75] text-secondary sm:text-[1.2rem] sm:leading-[1.8]',
+                  'scroll-mt-28 text-[1.125rem] leading-[1.75] text-secondary sm:text-[1.2rem] sm:leading-[1.8]',
                   'first-letter:float-left first-letter:mr-3 first-letter:mt-1',
                   'first-letter:font-display first-letter:text-[3.5rem] first-letter:leading-[0.85]',
                   'first-letter:text-primary sm:first-letter:text-[4.25rem]',
@@ -151,7 +147,10 @@ export default function PresidentWordPage({ params }: { params: { locale: Locale
             </ScrollReveal>
 
             <ScrollReveal delay={60}>
-              <p className="mt-6 text-[1.125rem] font-medium leading-[1.75] text-secondary sm:text-[1.2rem]">
+              <p
+                id="vision"
+                className="mt-6 scroll-mt-28 text-[1.125rem] font-medium leading-[1.75] text-secondary sm:text-[1.2rem]"
+              >
                 {isEn
                   ? 'It is in this perspective that the Digital University of Morocco was born.'
                   : "C'est dans cette perspective qu'est née l'Université Numérique du Maroc."}
@@ -191,7 +190,7 @@ export default function PresidentWordPage({ params }: { params: { locale: Locale
             </ScrollReveal>
 
             <ScrollReveal delay={80}>
-              <div className="mt-14 space-y-6">
+              <div id="ambition" className="mt-14 scroll-mt-28 space-y-6">
                 <p className="font-heading text-[11px] font-semibold uppercase tracking-[0.16em] text-primary">
                   {isEn ? 'Our ambition' : 'Notre ambition'}
                 </p>
@@ -217,7 +216,7 @@ export default function PresidentWordPage({ params }: { params: { locale: Locale
       {/* ── Closing — light pull-quote (distinct from dark footer) ── */}
       <SectionWrapper tone="soft" className="!py-14 sm:!py-16 lg:!py-20">
         <ScrollReveal>
-          <figure className="mx-auto max-w-3xl">
+          <figure id="engagement" className="mx-auto max-w-3xl scroll-mt-28">
             <div className="relative rounded-2xl border border-warm-200/70 bg-white px-6 py-10 sm:px-10 sm:py-12 lg:px-12">
               <span
                 className="absolute left-0 top-8 bottom-8 w-1 rounded-full bg-primary sm:top-10 sm:bottom-10"

@@ -192,7 +192,10 @@ export function EBSPartnership({ partners = [] }: { partners?: Partner[] }) {
                     aria-hidden
                   />
                   <div className="alliance-sphere alliance-sphere--ebs">
-                    <div className="alliance-sphere-spin alliance-sphere-spin--reverse" aria-hidden>
+                    <div
+                      className="alliance-sphere-spin alliance-sphere-spin--reverse"
+                      aria-hidden
+                    >
                       <span className="alliance-sphere-band" />
                       <span className="alliance-sphere-shine" />
                     </div>

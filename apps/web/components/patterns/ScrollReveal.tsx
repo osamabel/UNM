@@ -36,23 +36,25 @@ const HIDDEN: Record<RevealFrom, string> = {
   fade: 'opacity-0',
 };
 
-export function ScrollReveal({
-  children,
-  className,
-  delay = 0,
-  from = 'up',
-  duration = 850,
-  blur = true,
-  as: Tag = 'div',
-}: ScrollRevealProps) {
-  const ref = useRef<HTMLElement | null>(null);
+/**
+ * Reveals once the element approaches the fold. Biased toward showing content:
+ * anything already level with the fold, and anything we cannot measure, is
+ * revealed immediately rather than left to the observer — a missed
+ * notification here means copy that never becomes visible at all.
+ */
+function useRevealOnApproach<T extends HTMLElement>(rootMargin: string) {
+  const ref = useRef<T | null>(null);
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduce) {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setVisible(true);
+      return;
+    }
+    const viewportH = window.innerHeight;
+    if (!viewportH || el.getBoundingClientRect().top < viewportH) {
       setVisible(true);
       return;
     }
@@ -63,11 +65,25 @@ export function ScrollReveal({
           io.disconnect();
         }
       },
-      { threshold: 0.14, rootMargin: '0px 0px -8% 0px' },
+      { threshold: 0, rootMargin },
     );
     io.observe(el);
     return () => io.disconnect();
-  }, []);
+  }, [rootMargin]);
+
+  return { ref, visible };
+}
+
+export function ScrollReveal({
+  children,
+  className,
+  delay = 0,
+  from = 'up',
+  duration = 850,
+  blur = true,
+  as: Tag = 'div',
+}: ScrollRevealProps) {
+  const { ref, visible } = useRevealOnApproach<HTMLElement>('0px 0px -10% 0px');
 
   return (
     <Tag
@@ -121,29 +137,7 @@ export function StaggerReveal({
   itemAs: ItemTag = 'div',
   itemClassName,
 }: StaggerRevealProps) {
-  const ref = useRef<HTMLElement | null>(null);
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduce) {
-      setVisible(true);
-      return;
-    }
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setVisible(true);
-          io.disconnect();
-        }
-      },
-      { threshold: 0.12, rootMargin: '0px 0px -6% 0px' },
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
+  const { ref, visible } = useRevealOnApproach<HTMLElement>('0px 0px -8% 0px');
 
   const items = Children.toArray(children);
 

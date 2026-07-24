@@ -192,7 +192,8 @@ export function Footer({ settings }: { settings: SiteSettings }) {
         aria-hidden
       />
 
-      <div className="container-page relative py-12 md:py-14 lg:py-16">
+      {/* pb clears the fixed mobile CTA bar (3.25rem + safe area), which is lg:hidden */}
+      <div className="container-page relative py-12 pb-[calc(3.25rem+env(safe-area-inset-bottom,0px)+3rem)] md:py-14 md:pb-[calc(3.25rem+env(safe-area-inset-bottom,0px)+3.5rem)] lg:py-16 lg:pb-16">
         <div className="grid gap-10 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1.85fr)] lg:gap-12 xl:gap-16">
           {/* Brand cluster */}
           <div className="flex max-w-md flex-col gap-5">

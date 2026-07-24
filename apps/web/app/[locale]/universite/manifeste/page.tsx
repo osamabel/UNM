@@ -7,7 +7,7 @@ import { ManifesteHero } from '@/components/university/ManifesteHero';
 import { CTABanner } from '@/components/home/CTABanner';
 import { Icon, type IconName } from '@/components/ui/Icon';
 import { ScrollReveal } from '@/components/patterns/ScrollReveal';
-import { PAGE_HERO_IMAGE } from '@/lib/page-heroes';
+import { AFRICAN_HERO, PAGE_HERO_IMAGE } from '@/lib/page-heroes';
 import type { Locale } from '@unm/types';
 
 // ════════════════════════════════════════════════════════════════
@@ -235,11 +235,11 @@ export default function ManifestoPage({ params }: { params: { locale: Locale } }
         eyebrow={isEn ? 'Manifesto' : 'Manifeste'}
         title={isEn ? 'UNM Manifesto' : "Manifeste de l'UNM"}
         subtitle={heroSubtitle}
-        imageSrc="/home1.png"
+        imageSrc={PAGE_HERO_IMAGE.manifesto}
         imageAlt={
           isEn
-            ? 'African graduates celebrating at Université Numérique du Maroc'
-            : 'Diplômés africains célébrant à l’Université Numérique du Maroc'
+            ? 'African executives in a working session around a boardroom table'
+            : 'Dirigeants africains en séance de travail autour d’une table de conseil'
         }
       />
 
@@ -305,8 +305,8 @@ export default function ManifestoPage({ params }: { params: { locale: Locale } }
                 src={PAGE_HERO_IMAGE.editorial}
                 alt={
                   isEn
-                    ? 'African executive leader in an UNM learning context'
-                    : 'Dirigeante africaine dans un contexte d’apprentissage UNM'
+                    ? 'Portrait of a senior executive holding a laptop'
+                    : 'Portrait d’un dirigeant expérimenté tenant un ordinateur portable'
                 }
                 width={900}
                 height={1100}
@@ -347,7 +347,7 @@ export default function ManifestoPage({ params }: { params: { locale: Locale } }
         <ScrollReveal from="up" delay={80} duration={900} className="mt-12">
           <div className="manifeste-vision-band">
             <Image
-              src="/programme.jpg"
+              src={AFRICAN_HERO.seminar}
               alt=""
               fill
               sizes="100vw"
