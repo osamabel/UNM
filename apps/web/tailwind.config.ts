@@ -35,8 +35,8 @@ const config: Config = {
         },
         elevated: '#FFFCF9',
         canvas: '#FDFAF7',
-        soft: '#FAF7F3',
-        blush: '#F3EBE3',
+        soft: '#F4EFE8',
+        blush: '#F0E6DC',
         warm: {
           50: '#FDFAF7',
           100: '#F6F0E9',

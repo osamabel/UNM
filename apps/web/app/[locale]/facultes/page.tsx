@@ -1,12 +1,13 @@
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
-import { PageHeader } from '@/components/patterns/PageHeader';
+import { PhotoHero } from '@/components/patterns/PhotoHero';
 import { SectionWrapper } from '@/components/ui/SectionWrapper';
 import { Icon } from '@/components/ui/Icon';
 import { FacultiesShowcase } from '@/components/faculty/FacultiesShowcase';
 import { CTABanner } from '@/components/home/CTABanner';
 import { getFaculties } from '@/lib/api';
+import { PAGE_HERO_IMAGE } from '@/lib/page-heroes';
 import type { Locale } from '@unm/types';
 
 export const revalidate = 300;
@@ -42,25 +43,29 @@ export default async function FacultiesIndex({ params }: { params: { locale: Loc
         ]}
       />
 
-      <SectionWrapper tone="soft" className="!pb-10 sm:!pb-12">
-        <PageHeader
-          icon="landmark"
-          eyebrow={t('eyebrow')}
-          title={t('title')}
-          description={t('subtitle', { active, upcoming })}
-          className="border-0 pb-0"
-        />
-        <ul className="mt-6 flex flex-wrap gap-2 sm:mt-8">
-          <li className="glass-pill flex items-center gap-1.5 text-xs font-medium text-secondary/75">
-            <Icon name="check-circle" size={14} className="text-primary/90" />
+      <PhotoHero
+        eyebrow={t('eyebrow')}
+        title={t('title')}
+        subtitle={t('subtitle', { active, upcoming })}
+        imageSrc={PAGE_HERO_IMAGE.faculties}
+        imageAlt={
+          isEn
+            ? 'African professionals — UNM faculties and schools'
+            : 'Professionnels africains — facultés et écoles UNM'
+        }
+        imagePosition="center 40%"
+      >
+        <ul className="photo-hero-trust">
+          <li>
+            <Icon name="check-circle" size={14} className="text-[rgba(255,196,170,0.95)]" />
             {t('trustActive', { count: active })}
           </li>
-          <li className="glass-pill flex items-center gap-1.5 text-xs font-medium text-secondary/75">
-            <Icon name="library" size={14} className="text-primary/90" />
+          <li>
+            <Icon name="library" size={14} className="text-[rgba(255,196,170,0.95)]" />
             {t('trustUpcoming', { count: upcoming })}
           </li>
         </ul>
-      </SectionWrapper>
+      </PhotoHero>
 
       <SectionWrapper tone="canvas" className="!pt-8 sm:!pt-10">
         <FacultiesShowcase faculties={faculties} />

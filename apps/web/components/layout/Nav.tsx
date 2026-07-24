@@ -43,8 +43,6 @@ const UNIVERSITY_SUB: LeafItem[] = [
   { kind: 'leaf', key: 'presidentWord', fr: '/universite/mot-du-president',  en: '/en/university/mot-du-president' },
   { kind: 'leaf', key: 'partners',      fr: '/partenaires',                  en: '/en/partners' },
   { kind: 'leaf', key: 'newsUnm',       fr: '/actualites',                   en: '/en/news' },
-  { kind: 'leaf', key: 'events',        fr: '/universite/evenements',        en: '/en/university/evenements' },
-  { kind: 'leaf', key: 'newsroom',      fr: '/universite/newsroom',          en: '/en/university/newsroom' },
 ];
 
 const FACULTIES_SUB: LeafItem[] = [
@@ -61,7 +59,7 @@ const PROGRAMS_SUB: LeafItem[] = [
 ];
 
 const ITEMS: NavItem[] = [
-  { kind: 'parent', key: 'university',    fr: '/universite',    en: '/en/university',    children: UNIVERSITY_SUB },
+  { kind: 'parent', key: 'university',    fr: '/universite/manifeste',    en: '/en/university/manifeste',    children: UNIVERSITY_SUB },
   { kind: 'parent', key: 'faculties',     fr: '/facultes',      en: '/en/faculties',     children: FACULTIES_SUB },
   { kind: 'parent', key: 'programs',      fr: '/programmes',    en: '/en/programs',     children: PROGRAMS_SUB },
   { kind: 'leaf',   key: 'admissions',    fr: '/admissions',    en: '/en/admissions' },
@@ -69,10 +67,10 @@ const ITEMS: NavItem[] = [
   { kind: 'leaf',   key: 'contact',       fr: '/contact',       en: '/en/contact' },
 ];
 
-// Shared classes for level-1 items: UPPERCASE, narrow tracking, no shadow.
+// Shared classes for level-1 items: UPPERCASE, narrow tracking.
 // Inspired by HBS / Wharton / INSEAD main nav.
 const L1_LINK =
-  'nav-link !px-2 !py-2 !text-[12px] !tracking-[0.06em] whitespace-nowrap 2xl:!px-2.5 2xl:!text-[13px]';
+  'nav-link !px-2.5 !py-2 !text-[12px] !tracking-[0.06em] whitespace-nowrap xl:!px-3 xl:!text-[12.5px]';
 
 export function Nav() {
   const locale = useLocale() as Locale;
@@ -180,7 +178,7 @@ function Dropdown({ label, parentHref, items, comingSoonLabel }: DropdownProps) 
       onBlur={scheduleClose}
     >
       <span className="nav-link inline-flex items-center rounded !px-0 !py-0 whitespace-nowrap">
-        <Link href={parentHref} className="rounded-l px-2 py-2 2xl:px-2.5">
+        <Link href={parentHref} className="rounded-l px-2.5 py-2 xl:px-3">
           {label}
         </Link>
         <button
@@ -202,7 +200,7 @@ function Dropdown({ label, parentHref, items, comingSoonLabel }: DropdownProps) 
               });
             }
           }}
-          className="rounded-r px-1.5 py-2 transition-transform duration-300"
+          className="rounded-r px-1.5 py-2 text-secondary/70 transition-colors duration-200 hover:text-primary"
         >
           <svg
             aria-hidden="true"
@@ -231,20 +229,18 @@ function Dropdown({ label, parentHref, items, comingSoonLabel }: DropdownProps) 
           role="menu"
           aria-label={label}
           aria-hidden={!open}
-          className="glass-dropdown min-w-[280px] animate-scale-in p-2"
+          className="glass-dropdown min-w-[17.5rem]"
         >
           {items.map((it) =>
             it.comingSoon ? (
-              // Non-clickable — communicates a planned but not-yet-open
-              // resource. Still announced to screen readers via aria-disabled.
               <li key={it.key} role="none">
                 <span
                   role="menuitem"
                   aria-disabled="true"
-                  className="flex items-center justify-between gap-3 rounded px-3 py-2 font-sans text-sm font-medium text-secondary-400 cursor-not-allowed"
+                  className="flex cursor-not-allowed items-center justify-between gap-3 rounded-xl px-3.5 py-2.5 font-sans text-sm font-medium text-secondary/40"
                 >
                   <span>{it.label}</span>
-                  <span className="rounded-full bg-warm-200 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-secondary">
+                  <span className="rounded-md bg-warm-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-secondary/70">
                     {comingSoonLabel}
                   </span>
                 </span>
@@ -257,7 +253,7 @@ function Dropdown({ label, parentHref, items, comingSoonLabel }: DropdownProps) 
                   href={it.href}
                   tabIndex={open ? 0 : -1}
                   onClick={() => setOpen(false)}
-                  className="block rounded-lg px-3 py-2.5 font-sans text-sm font-medium text-secondary transition-all duration-200 hover:bg-white/50 hover:text-primary hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.6)]"
+                  className="block rounded-xl px-3.5 py-2.5 font-sans text-sm font-medium text-secondary transition-colors duration-200 hover:bg-warm-50 hover:text-primary focus-visible:bg-warm-50 focus-visible:text-primary focus-visible:outline-none"
                 >
                   {it.label}
                 </Link>

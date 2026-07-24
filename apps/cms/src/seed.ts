@@ -1213,14 +1213,18 @@ async function run() {
       },
     },
   ];
-  const articleMeta: { category: 'campus' | 'recherche' | 'partenariats' | 'evenements'; daysAgo: number }[] = [
-    { category: 'partenariats', daysAgo: 2 },
-    { category: 'recherche', daysAgo: 14 },
-    { category: 'campus', daysAgo: 28 },
+  const articleMeta: {
+    channel: 'actualite' | 'evenement' | 'newsroom';
+    category: 'campus' | 'recherche' | 'partenariats' | 'evenements' | 'presse';
+    daysAgo: number;
+  }[] = [
+    { channel: 'actualite', category: 'partenariats', daysAgo: 2 },
+    { channel: 'actualite', category: 'recherche', daysAgo: 14 },
+    { channel: 'actualite', category: 'campus', daysAgo: 28 },
   ];
   for (let i = 0; i < articles.length; i++) {
     const a = articles[i];
-    const meta = articleMeta[i] ?? { category: 'campus' as const, daysAgo: 7 };
+    const meta = articleMeta[i] ?? { channel: 'actualite' as const, category: 'campus' as const, daysAgo: 7 };
     const publishedAt = new Date();
     publishedAt.setDate(publishedAt.getDate() - meta.daysAgo);
     await payload.create({
@@ -1232,6 +1236,7 @@ async function run() {
         body: a.body,
         coverImage: placeholderMedia.id,
         author: { name: 'Rédaction UNM' },
+        channel: meta.channel,
         category: meta.category,
         publishedAt,
         readingTime: 3,
@@ -1240,6 +1245,78 @@ async function run() {
       },
     });
   }
+
+  // Sample event + press items for the Actualités hub tabs
+  const eventDate = new Date();
+  eventDate.setDate(eventDate.getDate() + 21);
+  await payload.create({
+    collection: 'articles',
+    data: {
+      slug: 'journee-portes-ouvertes-marrakech',
+      title: {
+        fr: 'Journée Portes Ouvertes — Campus Marrakech',
+        en: 'Open day — Marrakech campus',
+      },
+      excerpt: {
+        fr: 'Rencontrez les équipes Admissions et découvrez les programmes Executive UNM × EBS.',
+        en: 'Meet the Admissions team and discover UNM × EBS Executive programmes.',
+      },
+      body: {
+        fr: '<p>Une journée pour échanger avec nos équipes, visiter le campus et poser toutes vos questions sur les parcours MBA, DBA et certificats.</p>',
+        en: '<p>A day to meet our teams, visit the campus and ask every question about MBA, DBA and certificate pathways.</p>',
+      },
+      coverImage: placeholderMedia.id,
+      author: { name: 'Rédaction UNM' },
+      channel: 'evenement',
+      category: 'evenements',
+      eventDate,
+      eventLocation: { fr: 'Campus Marrakech — Borj Menara I', en: 'Marrakech Campus — Borj Menara I' },
+      eventKind: 'openDay',
+      publishedAt: new Date(),
+      readingTime: 2,
+      metaTitle: {
+        fr: 'Journée Portes Ouvertes — Campus Marrakech',
+        en: 'Open day — Marrakech campus',
+      },
+      metaDescription: {
+        fr: 'Rencontrez les équipes Admissions et découvrez les programmes Executive UNM × EBS.',
+        en: 'Meet the Admissions team and discover UNM × EBS Executive programmes.',
+      },
+    },
+  });
+
+  await payload.create({
+    collection: 'articles',
+    data: {
+      slug: 'communique-rentree-executive',
+      title: {
+        fr: 'Communiqué — Rentrée Executive',
+        en: 'Press release — Executive intake',
+      },
+      excerpt: {
+        fr: 'L’UNM annonce l’ouverture des candidatures pour la prochaine rentrée Executive.',
+        en: 'UNM announces applications open for the next Executive intake.',
+      },
+      body: {
+        fr: '<p>Communiqué officiel à l’attention des médias et partenaires institutionnels concernant le calendrier de la prochaine rentrée Executive.</p>',
+        en: '<p>Official release for media and institutional partners regarding the next Executive intake calendar.</p>',
+      },
+      coverImage: placeholderMedia.id,
+      author: { name: 'Direction de la communication' },
+      channel: 'newsroom',
+      category: 'presse',
+      publishedAt: new Date(),
+      readingTime: 2,
+      metaTitle: {
+        fr: 'Communiqué — Rentrée Executive',
+        en: 'Press release — Executive intake',
+      },
+      metaDescription: {
+        fr: 'L’UNM annonce l’ouverture des candidatures pour la prochaine rentrée Executive.',
+        en: 'UNM announces applications open for the next Executive intake.',
+      },
+    },
+  });
 
   // SiteSettings global
   await payload.updateGlobal({

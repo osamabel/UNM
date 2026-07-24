@@ -3,13 +3,14 @@ import { Suspense } from 'react';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { SectionWrapper } from '@/components/ui/SectionWrapper';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
-import { PageHeader } from '@/components/patterns/PageHeader';
+import { PhotoHero } from '@/components/patterns/PhotoHero';
 import { ProgramCard } from '@/components/patterns/ProgramCard';
 import { Icon } from '@/components/ui/Icon';
 import { ProgramFilter } from '@/components/shared/ProgramFilter';
 import { ProgramActiveFilters } from '@/components/shared/ProgramActiveFilters';
 import { CTABanner } from '@/components/home/CTABanner';
 import { getFaculties, getPrograms } from '@/lib/api';
+import { PAGE_HERO_IMAGE } from '@/lib/page-heroes';
 import { localized } from '@/lib/utils';
 import type { Locale } from '@unm/types';
 
@@ -24,11 +25,11 @@ interface Search {
 
 export async function generateMetadata({ params }: { params: { locale: Locale } }): Promise<Metadata> {
   const t = await getTranslations({ locale: params.locale, namespace: 'programsIndex' });
-  return { title: t('metaTitle') };
+  return { title: t('metaTitle'), description: t('subtitle') };
 }
 
 function ActiveFiltersFallback() {
-  return <div className="mb-5 h-9" aria-hidden />;
+  return <div className="mb-4 h-9" aria-hidden />;
 }
 
 export default async function ProgramsIndex({
@@ -53,6 +54,9 @@ export default async function ProgramsIndex({
     slug: f.slug,
     name: localized(f.name, params.locale),
   }));
+  const hasFilters = Boolean(
+    searchParams.faculty || searchParams.type || searchParams.format || searchParams.language,
+  );
 
   return (
     <>
@@ -63,46 +67,46 @@ export default async function ProgramsIndex({
         ]}
       />
 
-      <SectionWrapper tone="soft" className="!pb-10 sm:!pb-12">
-        <PageHeader
-          icon="library"
-          eyebrow={t('eyebrow')}
-          title={t('title')}
-          description={t('subtitle')}
-          className="border-0 pb-0"
-        />
-      </SectionWrapper>
+      <PhotoHero
+        eyebrow={t('eyebrow')}
+        title={t('title')}
+        subtitle={t('subtitle')}
+        imageSrc={PAGE_HERO_IMAGE.programs}
+        imageAlt={
+          isEn
+            ? 'African executive in an UNM learning environment'
+            : 'Cadre africain dans un environnement d’apprentissage UNM'
+        }
+        imagePosition="center 30%"
+      />
 
-      <SectionWrapper tone="canvas" className="!pt-8 sm:!pt-10">
-        <div className="min-w-0 lg:grid lg:grid-cols-[minmax(0,16.5rem)_1fr] lg:gap-12 xl:grid-cols-[minmax(0,18rem)_1fr] xl:gap-14">
-          <aside className="min-w-0 lg:sticky lg:top-28 lg:self-start">
-            <div className="form-panel">
-              <div className="mb-5 hidden items-center gap-3 lg:flex">
+      <SectionWrapper tone="canvas" className="programs-index !pt-7 sm:!pt-9">
+        <div className="programs-layout">
+          <aside className="programs-filters">
+            <div className="programs-filters-panel">
+              <div className="programs-filters-head">
                 <span className="icon-box h-10 w-10 shrink-0">
-                  <Icon name="search" size={20} />
+                  <Icon name="search" size={18} />
                 </span>
                 <div className="min-w-0">
-                  <p className="font-heading text-[11px] font-semibold uppercase tracking-[0.14em] text-secondary/50">
-                    {t('filters')}
-                  </p>
-                  <p className="mt-0.5 text-xs leading-relaxed text-secondary/55">{t('filtersHint')}</p>
+                  <p className="programs-filters-title">{t('filters')}</p>
+                  <p className="programs-filters-hint">{t('filtersHint')}</p>
                 </div>
               </div>
               <ProgramFilter faculties={facultyOptions} />
             </div>
           </aside>
 
-          <div className="mt-8 min-w-0 lg:mt-0">
-            <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-              {programs.length > 0 ? (
-                <p className="flex items-center gap-2">
-                  <span className="glass-pill text-xs font-semibold tabular-nums text-secondary/85">
-                    {t('programCount', { count: programs.length })}
-                  </span>
-                </p>
-              ) : (
-                <span />
-              )}
+          <div className="programs-results">
+            <div className="programs-toolbar">
+              <p className="programs-count">
+                <span className="programs-count-pill">
+                  {t('programCount', { count: programs.length })}
+                </span>
+                {hasFilters ? (
+                  <span className="programs-count-note">{t('filteredLabel')}</span>
+                ) : null}
+              </p>
             </div>
 
             <Suspense fallback={<ActiveFiltersFallback />}>
@@ -110,7 +114,7 @@ export default async function ProgramsIndex({
             </Suspense>
 
             {programs.length > 0 ? (
-              <div className="grid min-w-0 grid-cols-1 gap-5 sm:grid-cols-2 xl:gap-6">
+              <div className="programs-grid">
                 {programs.map((p) => (
                   <ProgramCard
                     key={p.id}
@@ -123,7 +127,7 @@ export default async function ProgramsIndex({
                 ))}
               </div>
             ) : (
-              <div className="card-flat px-6 py-16 text-center sm:px-10 sm:py-20">
+              <div className="programs-empty card-flat">
                 <span className="icon-box mx-auto h-14 w-14">
                   <Icon name="search" size={28} />
                 </span>

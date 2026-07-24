@@ -6,7 +6,6 @@ import { ProgramsList } from '@/components/faculty/ProgramsList';
 import { StrengthsSection } from '@/components/faculty/StrengthsSection';
 import { FacultyComingSoon } from '@/components/faculty/FacultyComingSoon';
 import { DomainsSection } from '@/components/faculty/DomainsSection';
-import { Breadcrumb } from '@/components/ui/Breadcrumb';
 import { SectionWrapper } from '@/components/ui/SectionWrapper';
 import { CTABanner } from '@/components/home/CTABanner';
 import { JsonLd } from '@/components/shared/JsonLd';
@@ -51,24 +50,19 @@ export default async function FacultyPage({ params }: Params) {
   if (!faculty) notFound();
 
   const isEn = params.locale === 'en';
-  const breadcrumb = (
-    <Breadcrumb
-      items={[
-        { name: isEn ? 'Home' : 'Accueil', url: isEn ? '/en' : '/' },
-        {
-          name: isEn ? 'Faculties' : 'Facultés',
-          url: isEn ? '/en/faculties' : '/facultes',
-        },
-        { name: localized(faculty.name, params.locale), url: facultyPath(faculty.slug, params.locale) },
-      ]}
-    />
-  );
+  const crumbs = [
+    { name: isEn ? 'Home' : 'Accueil', url: isEn ? '/en' : '/' },
+    {
+      name: isEn ? 'Faculties' : 'Facultés',
+      url: isEn ? '/en/faculties' : '/facultes',
+    },
+    { name: localized(faculty.name, params.locale), url: facultyPath(faculty.slug, params.locale) },
+  ];
 
   if (faculty.comingSoon) {
     return (
       <>
-        {breadcrumb}
-        <FacultyComingSoon faculty={faculty} />
+        <FacultyComingSoon faculty={faculty} breadcrumbItems={crumbs} />
         <CTABanner />
       </>
     );
@@ -79,8 +73,7 @@ export default async function FacultyPage({ params }: Params) {
   return (
     <>
       <JsonLd data={facultySchema(faculty, params.locale)} />
-      {breadcrumb}
-      <FacultyHero faculty={faculty} />
+      <FacultyHero faculty={faculty} breadcrumbItems={crumbs} />
       {programs.length > 0 && (
         <SectionWrapper tone="canvas" className="!pt-8 sm:!pt-10">
           <ProgramsList programs={programs} />

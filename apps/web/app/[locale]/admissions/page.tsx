@@ -1,13 +1,16 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
+import Link from 'next/link';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { SectionWrapper } from '@/components/ui/SectionWrapper';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
+import { PhotoHero } from '@/components/patterns/PhotoHero';
 import { ScrollReveal } from '@/components/patterns/ScrollReveal';
 import { Icon } from '@/components/ui/Icon';
 import { ApplicationForm } from '@/components/forms/ApplicationForm';
 import { CTABanner } from '@/components/home/CTABanner';
 import { getPrograms, getSiteSettings } from '@/lib/api';
+import { PAGE_HERO_IMAGE } from '@/lib/page-heroes';
 import { mergeSiteSettings, digitsOnly } from '@/lib/site-settings';
 import type { Locale } from '@unm/types';
 
@@ -50,7 +53,12 @@ export default async function AdmissionsPage({ params }: { params: { locale: Loc
   const isEn = params.locale === 'en';
   const homeUrl = isEn ? '/en' : '/';
   const admissionsUrl = isEn ? '/en/admissions' : '/admissions';
+  const programsUrl = isEn ? '/en/programs' : '/programmes';
   const phoneDigits = digitsOnly(settings.contact.phone);
+  const waDigits = digitsOnly(settings.contact.whatsapp);
+  const waText = encodeURIComponent(
+    isEn ? 'Hello UNM — I have a question about admissions' : 'Bonjour UNM — question admissions',
+  );
 
   const steps = [
     { num: '01', title: t('step1Title'), body: t('step1Body'), icon: 'document' as const },
@@ -73,38 +81,27 @@ export default async function AdmissionsPage({ params }: { params: { locale: Loc
         ]}
       />
 
-      {/* Hero */}
-      <section className="relative overflow-hidden border-b border-warm-150/40 bg-soft/80">
-        <div
-          className="pointer-events-none absolute inset-0 opacity-[0.55]"
-          style={{
-            background:
-              'radial-gradient(ellipse 65% 50% at 8% 15%, rgba(181,52,26,0.10), transparent 55%), radial-gradient(ellipse 45% 40% at 92% 80%, rgba(61,26,11,0.05), transparent 50%)',
-          }}
-          aria-hidden
-        />
-        <div className="container-page relative py-12 sm:py-14 lg:py-16">
-          <ScrollReveal>
-            <div className="max-w-3xl">
-              <p className="eyebrow text-primary">{t('formEyebrow')}</p>
-              <h1 className="mt-4 font-display text-[2.15rem] leading-[1.12] text-secondary sm:text-5xl lg:text-[3.1rem]">
-                {t('heroTitle')}
-              </h1>
-              <p className="mt-5 max-w-2xl text-base leading-relaxed text-secondary/70 sm:text-lg">
-                {t('intro')}
-              </p>
-              <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-3">
-                {trusts.map((item) => (
-                  <li key={item.label} className="inline-flex items-center gap-2 text-sm text-secondary/70">
-                    <Icon name={item.icon} size={16} className="text-primary/80" />
-                    {item.label}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </ScrollReveal>
-        </div>
-      </section>
+      <PhotoHero
+        eyebrow={t('formEyebrow')}
+        title={t('heroTitle')}
+        subtitle={t('intro')}
+        imageSrc={PAGE_HERO_IMAGE.admissions}
+        imageAlt={
+          isEn
+            ? 'African executive applying to an UNM programme'
+            : 'Cadre africain candidant à un programme UNM'
+        }
+        imagePosition="center 30%"
+      >
+        <ul className="photo-hero-trust">
+          {trusts.map((item) => (
+            <li key={item.label}>
+              <Icon name={item.icon} size={15} className="text-[rgba(255,196,170,0.95)]" />
+              {item.label}
+            </li>
+          ))}
+        </ul>
+      </PhotoHero>
 
       {/* Process */}
       <SectionWrapper tone="canvas" className="!py-10 sm:!py-12">
@@ -142,23 +139,23 @@ export default async function AdmissionsPage({ params }: { params: { locale: Loc
 
       {/* Form + help */}
       <SectionWrapper tone="soft" className="!py-12 sm:!py-14 lg:!py-16" id="formulaire">
-        <div className="grid min-w-0 gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(16rem,20rem)] lg:items-start lg:gap-10 xl:gap-12">
+        <div className="admissions-form-layout">
           <ScrollReveal>
-            <div className="mb-6">
+            <div className="mb-6 max-w-2xl">
               <p className="font-heading text-[11px] font-semibold uppercase tracking-[0.16em] text-primary">
                 {t('formEyebrow')}
               </p>
               <h2 className="mt-2 font-display text-2xl text-secondary sm:text-3xl">{t('formTitle')}</h2>
-              <p className="mt-2 text-sm text-secondary/60">{t('formHint')}</p>
+              <p className="mt-2 text-sm leading-relaxed text-secondary/60">{t('formHint')}</p>
             </div>
             <Suspense fallback={<FormSkeleton />}>
               <ApplicationForm programs={programs} />
             </Suspense>
           </ScrollReveal>
 
-          <aside className="space-y-5 lg:sticky lg:top-28">
+          <aside className="admissions-aside">
             <ScrollReveal delay={80}>
-              <div className="rounded-2xl border border-warm-200/70 bg-white p-5 sm:p-6">
+              <div className="admissions-help">
                 <p className="font-heading text-[11px] font-semibold uppercase tracking-[0.14em] text-primary">
                   {t('helpTitle')}
                 </p>
@@ -178,7 +175,7 @@ export default async function AdmissionsPage({ params }: { params: { locale: Loc
                         {settings.contact.email}
                       </a>
                     </li>
-                    {phoneDigits && (
+                    {phoneDigits ? (
                       <li>
                         <a
                           href={`tel:${phoneDigits}`}
@@ -188,17 +185,41 @@ export default async function AdmissionsPage({ params }: { params: { locale: Loc
                           {settings.contact.phone}
                         </a>
                       </li>
-                    )}
+                    ) : null}
+                    {waDigits ? (
+                      <li>
+                        <a
+                          href={`https://wa.me/${waDigits}?text=${waText}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="admissions-wa"
+                        >
+                          <Icon name="send" size={15} />
+                          {t('whatsappCta')}
+                        </a>
+                      </li>
+                    ) : null}
                   </ul>
                 </div>
               </div>
             </ScrollReveal>
 
-            <ScrollReveal delay={120}>
-              <ul className="space-y-3 rounded-2xl border border-warm-200/60 bg-white/70 p-5">
+            <ScrollReveal delay={110}>
+              <div className="admissions-unsure">
+                <p className="font-heading text-sm font-semibold text-secondary">{t('unsureTitle')}</p>
+                <p className="mt-1.5 text-sm leading-relaxed text-secondary/60">{t('unsureBody')}</p>
+                <Link href={programsUrl} className="admissions-unsure-link">
+                  {t('unsureLink')}
+                  <Icon name="arrow-right" size={14} />
+                </Link>
+              </div>
+            </ScrollReveal>
+
+            <ScrollReveal delay={140}>
+              <ul className="admissions-trust-list">
                 {trusts.map((item) => (
-                  <li key={item.label} className="flex items-start gap-3 text-sm text-secondary/70">
-                    <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-primary/8 text-primary">
+                  <li key={item.label}>
+                    <span className="admissions-trust-icon">
                       <Icon name={item.icon} size={14} />
                     </span>
                     {item.label}

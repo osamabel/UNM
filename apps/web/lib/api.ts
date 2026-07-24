@@ -1,5 +1,6 @@
 import type {
   Article,
+  ArticleChannel,
   Faculty,
   Locale,
   Partner,
@@ -187,21 +188,59 @@ export async function getRelatedPrograms(
 
 // ─── Articles ───────────────────────────────────────────
 
-export async function getArticles(page = 1, perPage = 12): Promise<{ docs: Article[]; totalPages: number }> {
-  const data = await cmsFetch<{ docs: Article[]; totalPages: number }>(
-    `/articles?limit=${perPage}&page=${page}&sort=-publishedAt`,
+export type ArticleListQuery = {
+  page?: number;
+  perPage?: number;
+  /** Hub tab filter — omit for all channels */
+  channel?: ArticleChannel | 'all';
+};
+
+function normalizeArticle(raw: Article): Article {
+  return {
+    ...raw,
+    channel: raw.channel ?? 'actualite',
+    coverImage: rewriteMedia(raw.coverImage) as Article['coverImage'],
+    author: raw.author
+      ? { ...raw.author, avatar: rewriteMedia(raw.author.avatar) }
+      : raw.author,
+  };
+}
+
+export async function getArticles(
+  pageOrQuery: number | ArticleListQuery = 1,
+  perPageArg = 12,
+): Promise<{ docs: Article[]; totalPages: number; totalDocs: number }> {
+  const query: ArticleListQuery =
+    typeof pageOrQuery === 'number'
+      ? { page: pageOrQuery, perPage: perPageArg }
+      : pageOrQuery;
+
+  const page = Math.max(1, query.page ?? 1);
+  const perPage = query.perPage ?? 12;
+  const channel = query.channel && query.channel !== 'all' ? query.channel : undefined;
+
+  const params = new URLSearchParams({
+    limit: String(perPage),
+    page: String(page),
+    sort: '-publishedAt',
+  });
+  if (channel === 'actualite') {
+    // Include legacy CMS docs that predate the `channel` field
+    params.set('where[or][0][channel][equals]', 'actualite');
+    params.set('where[or][1][channel][exists]', 'false');
+  } else if (channel) {
+    params.set('where[channel][equals]', channel);
+  }
+
+  const data = await cmsFetch<{ docs: Article[]; totalPages: number; totalDocs: number }>(
+    `/articles?${params.toString()}`,
     { tag: 'articles' },
   );
-  if (!data) return { docs: [], totalPages: 0 };
+  if (!data) return { docs: [], totalPages: 0, totalDocs: 0 };
   return {
-    ...data,
-    docs: data.docs.map((a) => ({
-      ...a,
-      coverImage: rewriteMedia(a.coverImage) as Article['coverImage'],
-      author: a.author
-        ? { ...a.author, avatar: rewriteMedia(a.author.avatar) }
-        : a.author,
-    })),
+    docs: data.docs.map(normalizeArticle),
+    totalPages: data.totalPages ?? 0,
+    totalDocs: data.totalDocs ?? data.docs.length,
   };
 }
 
@@ -212,13 +251,7 @@ export async function getArticle(slug: string): Promise<Article | null> {
   );
   const raw = data?.docs?.[0];
   if (!raw) return null;
-  return {
-    ...raw,
-    coverImage: rewriteMedia(raw.coverImage) as Article['coverImage'],
-    author: raw.author
-      ? { ...raw.author, avatar: rewriteMedia(raw.author.avatar) }
-      : raw.author,
-  };
+  return normalizeArticle(raw);
 }
 
 // ─── Testimonials, Partners, Settings ───────────────────

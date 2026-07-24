@@ -1,1 +1,1 @@
-export { default, generateMetadata } from '../../universite/newsroom/page';
+export { default } from '../../universite/newsroom/page';

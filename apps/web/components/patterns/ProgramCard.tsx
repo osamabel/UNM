@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { Badge } from '@/components/ui/Badge';
 import { Icon } from '@/components/ui/Icon';
 import type { Locale, Program } from '@unm/types';
-import { iconForProgramFormat, iconForProgramType } from '@/lib/program-meta-icons';
+import { iconForProgramFormat } from '@/lib/program-meta-icons';
 import { getProgramCoverSrc } from '@/lib/program-images';
 import { cn, displayProgramTitle, localized, programPath } from '@/lib/utils';
 import type { IconName } from '@/components/ui/Icon';
@@ -31,78 +31,47 @@ export function ProgramCard({
   const facultyName = program.faculty
     ? localized(program.faculty.name, locale).replace(/^UNM\s+/i, '')
     : '';
-  const accent = program.faculty?.color || '#B5341A';
-  const typeIcon = iconForProgramType(program.type);
   const formatIcon = iconForProgramFormat(program.format);
-  const cover = getProgramCoverSrc(program.slug);
+  const cover = getProgramCoverSrc(program.slug, program.type);
 
   return (
     <Link
       href={programPath(program.slug, locale)}
       className={cn(
         'card-interactive group relative flex h-full flex-col overflow-hidden',
-        compact ? 'min-h-[240px]' : 'min-h-[280px] sm:min-h-[300px]',
+        compact ? 'min-h-[240px]' : 'min-h-[300px] sm:min-h-[320px]',
       )}
     >
-      {cover ? (
-        <div className={cn('relative overflow-hidden', compact ? 'h-28' : 'h-36 sm:h-40')}>
-          <Image
-            src={cover}
-            alt=""
-            fill
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-          />
-          <div
-            className="absolute inset-0 bg-gradient-to-t from-secondary/55 via-secondary/15 to-transparent"
-            aria-hidden
-          />
-          <div className="absolute left-4 top-4 flex items-center gap-2">
-            <Badge variant="program-type" type={program.type}>
-              {program.type}
-            </Badge>
-          </div>
-        </div>
-      ) : (
+      <div className={cn('relative overflow-hidden', compact ? 'h-32' : 'h-40 sm:h-44')}>
+        <Image
+          src={cover}
+          alt=""
+          fill
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+        />
         <div
-          className="pointer-events-none absolute -right-8 -top-8 h-32 w-32 rounded-full opacity-[0.12] blur-2xl transition-opacity duration-500 group-hover:opacity-[0.2]"
-          style={{ backgroundColor: accent }}
+          className="absolute inset-0 bg-gradient-to-t from-secondary/50 via-secondary/10 to-transparent"
           aria-hidden
         />
-      )}
+        <div className="absolute left-4 top-4 flex items-center gap-2">
+          <Badge variant="program-type" type={program.type}>
+            {program.type}
+          </Badge>
+        </div>
+      </div>
 
       <div className={cn('relative flex flex-1 flex-col', compact ? 'p-5' : 'p-6 sm:p-7')}>
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex min-w-0 items-center gap-2.5">
-            {!cover && (
-              <span
-                className={cn(
-                  'flex shrink-0 items-center justify-center rounded-lg transition-transform duration-300 group-hover:scale-105',
-                  compact ? 'h-8 w-8' : 'h-9 w-9 sm:h-10 sm:w-10 sm:rounded-xl',
-                )}
-                style={{ backgroundColor: `${accent}18`, color: accent }}
-              >
-                <Icon name={typeIcon} size={compact ? 16 : 18} weight="medium" />
-              </span>
-            )}
-            {!cover && (
-              <Badge variant="program-type" type={program.type}>
-                {program.type}
-              </Badge>
-            )}
-          </div>
-          {facultyName && (
-            <span className="max-w-[46%] line-clamp-2 text-right font-heading text-[10px] font-semibold uppercase tracking-[0.1em] text-secondary/38">
-              {facultyName}
-            </span>
-          )}
-        </div>
+        {facultyName && (
+          <span className="mb-2 font-heading text-[10px] font-semibold uppercase tracking-[0.1em] text-secondary/38">
+            {facultyName}
+          </span>
+        )}
 
         <h2
           className={cn(
             'relative font-display leading-snug text-secondary line-clamp-2',
-            compact ? 'mt-3 text-lg' : 'mt-4 text-xl sm:mt-5 sm:text-[1.3rem]',
-            cover && 'mt-1',
+            compact ? 'text-lg' : 'text-xl sm:text-[1.3rem]',
           )}
         >
           {title}

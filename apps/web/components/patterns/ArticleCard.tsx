@@ -4,6 +4,7 @@ import { Icon } from '@/components/ui/Icon';
 import {
   accentForArticleCategory,
   articleCategoryLabel,
+  eventKindLabel,
   iconForArticleCategory,
   isPlaceholderCover,
 } from '@/lib/article-category';
@@ -17,11 +18,16 @@ interface Props {
 
 export function ArticleCard({ article, locale }: Props) {
   const title = localized(article.title, locale);
-  const categoryLabel = articleCategoryLabel(article.category, locale);
-  const catIcon = iconForArticleCategory(article.category);
+  const isEvent = article.channel === 'evenement';
+  const categoryLabel = isEvent
+    ? eventKindLabel(article.eventKind, locale)
+    : articleCategoryLabel(article.category, locale);
+  const catIcon = isEvent ? ('calendar' as const) : iconForArticleCategory(article.category);
   const accent = accentForArticleCategory(article.category);
   const showCover =
     article.coverImage?.url && !isPlaceholderCover(article.coverImage.url, article.coverImage.alt);
+  const dateIso = isEvent && article.eventDate ? article.eventDate : article.publishedAt;
+  const location = article.eventLocation ? localized(article.eventLocation, locale) : '';
 
   return (
     <Link href={articlePath(article.slug, locale)} className="group block h-full min-w-0">
@@ -72,15 +78,23 @@ export function ArticleCard({ article, locale }: Props) {
           <h2 className="mt-3 font-display text-lg leading-snug text-secondary line-clamp-2 transition-colors duration-300 group-hover:text-primary sm:text-xl">
             {title}
           </h2>
+          {location ? (
+            <p className="mt-2 inline-flex items-start gap-1.5 text-xs text-secondary/55 sm:text-sm">
+              <Icon name="map-pin" size={14} className="mt-0.5 shrink-0 text-primary/75" />
+              <span className="line-clamp-2">{location}</span>
+            </p>
+          ) : null}
           <p className="mt-auto flex flex-wrap items-center gap-x-3 gap-y-1 pt-4 text-xs text-secondary/55 sm:text-sm">
             <span className="inline-flex items-center gap-1.5">
               <Icon name="calendar" size={14} className="text-primary/75" />
-              {formatDate(article.publishedAt, locale)}
+              {formatDate(dateIso, locale)}
             </span>
-            <span className="inline-flex items-center gap-1.5">
-              <Icon name="clock" size={14} className="text-primary/75" />
-              {article.readingTime} min
-            </span>
+            {!isEvent ? (
+              <span className="inline-flex items-center gap-1.5">
+                <Icon name="clock" size={14} className="text-primary/75" />
+                {article.readingTime} min
+              </span>
+            ) : null}
             <Icon
               name="arrow-right"
               size={15}

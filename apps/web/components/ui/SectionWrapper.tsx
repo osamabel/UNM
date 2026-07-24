@@ -1,6 +1,10 @@
 import type { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 
+/**
+ * Section surface system — tones must read as distinct bands
+ * so users feel clear progression between blocks.
+ */
 export type SectionTone = 'default' | 'soft' | 'alt' | 'blush' | 'dark';
 
 interface SectionWrapperProps {
@@ -11,12 +15,12 @@ interface SectionWrapperProps {
 }
 
 const TONES: Record<SectionTone | 'canvas', string> = {
-  default: 'text-ink',
-  canvas: 'text-ink',
-  soft: 'bg-soft/70 text-ink',
-  alt: 'bg-warm-100/40 text-ink',
-  blush: 'bg-blush/50 text-ink',
-  dark: 'glass-dark text-warm-50 !border-0',
+  default: 'section-surface section-surface--canvas text-ink',
+  canvas: 'section-surface section-surface--canvas text-ink',
+  soft: 'section-surface section-surface--soft text-ink',
+  alt: 'section-surface section-surface--alt text-ink',
+  blush: 'section-surface section-surface--blush text-ink',
+  dark: 'section-surface section-surface--dark text-warm-50',
 };
 
 export function SectionWrapper({ children, className, tone = 'default', id }: SectionWrapperProps) {
@@ -27,8 +31,8 @@ export function SectionWrapper({ children, className, tone = 'default', id }: Se
     <section
       id={id}
       className={cn(
-        'relative scroll-mt-24 py-14 sm:py-16 lg:py-20',
-        !isDark && 'border-b border-warm-150/40',
+        'relative scroll-mt-24 py-12 sm:py-14 lg:py-16',
+        !isDark && 'border-b border-warm-200/40',
         TONES[resolved],
         className,
       )}

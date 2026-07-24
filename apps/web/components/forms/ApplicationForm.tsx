@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -37,6 +37,33 @@ export type ApplicationData = z.infer<typeof applicationSchema>;
 
 interface Props {
   programs: Program[];
+}
+
+function FormSection({
+  step,
+  title,
+  hint,
+  children,
+}: {
+  step: string;
+  title: string;
+  hint?: string;
+  children: ReactNode;
+}) {
+  return (
+    <section className="app-form-section">
+      <header className="app-form-section-head">
+        <span className="app-form-section-step" aria-hidden>
+          {step}
+        </span>
+        <div className="min-w-0">
+          <h3 className="app-form-section-title">{title}</h3>
+          {hint ? <p className="app-form-section-hint">{hint}</p> : null}
+        </div>
+      </header>
+      <div className="app-form-section-fields">{children}</div>
+    </section>
+  );
 }
 
 export function ApplicationForm({ programs }: Props) {
@@ -97,124 +124,152 @@ export function ApplicationForm({ programs }: Props) {
 
   if (submitted) {
     return (
-      <div className="form-panel px-6 py-12 text-center sm:px-10 sm:py-16">
+      <div className="form-panel app-form-success">
         <span className="icon-box mx-auto h-16 w-16">
           <Icon name="check-circle" size={32} className="text-primary" />
         </span>
         <h2 className="mt-6 font-display text-display-md text-secondary">{t('thankYou')}</h2>
-        {referenceId && (
+        {referenceId ? (
           <p className="mt-3 font-mono text-sm text-secondary/55">
             {ta('referencePrefix')}:{' '}
             <span className="font-semibold text-secondary">{referenceId}</span>
           </p>
-        )}
+        ) : null}
+        <p className="mx-auto mt-4 max-w-sm text-sm leading-relaxed text-secondary/60">
+          {ta('successHint')}
+        </p>
       </div>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate className="form-panel space-y-5 sm:space-y-6">
-      <div className="grid gap-4 sm:grid-cols-2">
-        <Input
-          label={t('lastName')}
-          required
-          autoComplete="family-name"
-          {...register('lastName')}
-          error={errors.lastName && t('errorRequired')}
-        />
-        <Input
-          label={t('firstName')}
-          required
-          autoComplete="given-name"
-          {...register('firstName')}
-          error={errors.firstName && t('errorRequired')}
-        />
-        <Input
-          label={t('email')}
-          type="email"
-          required
-          autoComplete="email"
-          {...register('email')}
-          error={errors.email && t('errorEmail')}
-        />
-        <Controller
-          name="phone"
-          control={control}
-          render={({ field }) => (
-            <PhoneInput
-              label={t('phone')}
-              locale={locale}
+    <form onSubmit={handleSubmit(onSubmit)} noValidate className="form-panel app-form">
+      <FormSection step="01" title={ta('sectionIdentity')} hint={ta('sectionIdentityHint')}>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Input
+            label={t('lastName')}
+            required
+            autoComplete="family-name"
+            placeholder={ta('placeholderLastName')}
+            {...register('lastName')}
+            error={errors.lastName && t('errorRequired')}
+          />
+          <Input
+            label={t('firstName')}
+            required
+            autoComplete="given-name"
+            placeholder={ta('placeholderFirstName')}
+            {...register('firstName')}
+            error={errors.firstName && t('errorRequired')}
+          />
+          <Input
+            label={t('email')}
+            type="email"
+            required
+            autoComplete="email"
+            placeholder={ta('placeholderEmail')}
+            {...register('email')}
+            error={errors.email && t('errorEmail')}
+          />
+          <Controller
+            name="phone"
+            control={control}
+            render={({ field }) => (
+              <PhoneInput
+                label={t('phone')}
+                locale={locale}
+                required
+                autoComplete="tel"
+                value={field.value}
+                onChange={field.onChange}
+                onBlur={field.onBlur}
+                name={field.name}
+                error={
+                  errors.phone?.type === 'too_small'
+                    ? t('errorRequired')
+                    : errors.phone
+                      ? t('errorPhone')
+                      : undefined
+                }
+              />
+            )}
+          />
+        </div>
+      </FormSection>
+
+      <FormSection step="02" title={ta('sectionProfile')} hint={ta('sectionProfileHint')}>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Input
+            label={t('country')}
+            required
+            autoComplete="country-name"
+            placeholder={ta('placeholderCountry')}
+            {...register('country')}
+            error={errors.country && t('errorRequired')}
+          />
+          <Input
+            label={t('highestDegree')}
+            required
+            placeholder={ta('placeholderDegree')}
+            {...register('highestDegree')}
+            error={errors.highestDegree && t('errorRequired')}
+          />
+          <div className="sm:col-span-2">
+            <Select
+              label={ta('experienceLevel')}
               required
-              autoComplete="tel"
-              value={field.value}
-              onChange={field.onChange}
-              onBlur={field.onBlur}
-              name={field.name}
-              error={
-                errors.phone?.type === 'too_small'
-                  ? t('errorRequired')
-                  : errors.phone
-                    ? t('errorPhone')
-                    : undefined
-              }
+              {...register('experienceLevel')}
+              placeholder={ta('placeholderSelect')}
+              options={experienceOptions}
+              error={errors.experienceLevel && t('errorRequired')}
             />
-          )}
-        />
-        <Input
-          label={t('country')}
-          required
-          autoComplete="country-name"
-          {...register('country')}
-          error={errors.country && t('errorRequired')}
-        />
-        <Input
-          label={t('highestDegree')}
-          required
-          {...register('highestDegree')}
-          error={errors.highestDegree && t('errorRequired')}
-        />
-        <Select
-          label={ta('experienceLevel')}
-          required
-          {...register('experienceLevel')}
-          placeholder="—"
-          options={experienceOptions}
-          error={errors.experienceLevel && t('errorRequired')}
-        />
+          </div>
+        </div>
+      </FormSection>
+
+      <FormSection step="03" title={ta('sectionProgram')} hint={ta('sectionProgramHint')}>
         <Select
           label={ta('program')}
           required
           {...register('programSlug')}
-          placeholder="—"
+          placeholder={ta('placeholderProgram')}
           options={programOptions}
           error={errors.programSlug && t('errorRequired')}
         />
-      </div>
+      </FormSection>
 
-      <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-warm-200/70 bg-white/60 p-4 transition-colors hover:border-primary/25">
+      <label className="app-form-consent">
         <input
           type="checkbox"
           required
           {...register('consentGiven')}
-          className="mt-0.5 h-5 w-5 accent-primary"
+          className="mt-0.5 h-5 w-5 shrink-0 accent-primary"
         />
         <span className="text-sm leading-relaxed text-secondary">
           {t('consent').split(/politique de confidentialité|privacy policy/i)[0]}
-          <Link href={privacyHref} className="text-primary underline underline-offset-2">
+          <Link href={privacyHref} className="font-medium text-primary underline underline-offset-2">
             {locale === 'en' ? 'privacy policy' : 'politique de confidentialité'}
           </Link>
           {t('consent').split(/politique de confidentialité|privacy policy/i)[1]}
         </span>
       </label>
+      {errors.consentGiven ? (
+        <p role="alert" className="text-xs font-medium text-primary-700">
+          {t('errorRequired')}
+        </p>
+      ) : null}
 
-      {submitError && (
-        <p role="alert" className="flex gap-2 rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 text-sm text-primary">
+      {submitError ? (
+        <p
+          role="alert"
+          className="flex gap-2 rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 text-sm text-primary"
+        >
           <Icon name="alert" size={18} className="mt-0.5 shrink-0" />
           <span>{submitError}</span>
         </p>
-      )}
+      ) : null}
 
-      <div className="border-t border-warm-150/70 pt-5">
+      <div className="app-form-submit">
         <Button
           type="submit"
           loading={isSubmitting}
@@ -224,6 +279,7 @@ export function ApplicationForm({ programs }: Props) {
         >
           {tc('submit')}
         </Button>
+        <p className="app-form-submit-hint">{ta('submitHint')}</p>
       </div>
     </form>
   );

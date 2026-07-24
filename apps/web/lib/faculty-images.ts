@@ -4,9 +4,9 @@ import type { Faculty } from '@unm/types';
 /** Dedicated local covers — Business School uses EBS programme photography. */
 const FACULTY_COVERS: Record<string, string> = {
   'business-school': EBS_PHOTOS.businessSchool,
-  'school-of-governance': EBS_PHOTOS.event,
-  'school-of-technology': EBS_PHOTOS.program,
-  'school-of-sport-business': EBS_PHOTOS.students,
+  'school-of-governance': '/programs/mba-gouvernance-management-public.jpg',
+  'school-of-technology': EBS_PHOTOS.featuredCertificate,
+  'school-of-sport-business': EBS_PHOTOS.campusLife,
 };
 
 /**

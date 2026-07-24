@@ -2,11 +2,13 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
 import { ButtonLink } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
 import { LanguageSwitcher } from './LanguageSwitcher';
+import { LOGO_SRC } from '@/lib/logo';
 import type { Locale } from '@unm/types';
 import { cn } from '@/lib/utils';
 
@@ -25,8 +27,6 @@ const UNIVERSITY_SUB: LeafItem[] = [
   { kind: 'leaf', key: 'presidentWord', fr: '/universite/mot-du-president', en: '/en/university/mot-du-president' },
   { kind: 'leaf', key: 'partners', fr: '/partenaires', en: '/en/partners' },
   { kind: 'leaf', key: 'newsUnm', fr: '/actualites', en: '/en/news' },
-  { kind: 'leaf', key: 'events', fr: '/universite/evenements', en: '/en/university/evenements' },
-  { kind: 'leaf', key: 'newsroom', fr: '/universite/newsroom', en: '/en/university/newsroom' },
 ];
 
 const FACULTIES_SUB: LeafItem[] = [
@@ -43,7 +43,7 @@ const PROGRAMS_SUB: LeafItem[] = [
 ];
 
 const ITEMS: Item[] = [
-  { kind: 'parent', key: 'university', fr: '/universite', en: '/en/university', children: UNIVERSITY_SUB },
+  { kind: 'parent', key: 'university', fr: '/universite/manifeste', en: '/en/university/manifeste', children: UNIVERSITY_SUB },
   { kind: 'parent', key: 'faculties', fr: '/facultes', en: '/en/faculties', children: FACULTIES_SUB },
   { kind: 'parent', key: 'programs', fr: '/programmes', en: '/en/programs', children: PROGRAMS_SUB },
   { kind: 'leaf', key: 'admissions', fr: '/admissions', en: '/en/admissions' },
@@ -81,6 +81,7 @@ export function MobileNav() {
   const locale = useLocale() as Locale;
   const tNav = useTranslations('nav');
   const tCommon = useTranslations('common');
+  const isEn = locale === 'en';
 
   useBodyScrollLock(open);
 
@@ -105,96 +106,96 @@ export function MobileNav() {
   const overlay =
     mounted && open
       ? createPortal(
-          <>
-            <div
-              className="fixed inset-0 z-[200] bg-secondary/50 backdrop-blur-sm 2xl:hidden"
-              aria-hidden
-              onClick={close}
-            />
-            <div
-              className="glass-strong fixed inset-0 z-[201] flex flex-col 2xl:hidden"
-              role="dialog"
-              aria-modal="true"
-              aria-label="Navigation"
-              translate="no"
-            >
-              <div className="flex shrink-0 items-center justify-between border-b border-warm-150/80 px-4 py-3 pt-[max(0.75rem,env(safe-area-inset-top))]">
-                <span className="eyebrow">Menu</span>
+          <div className="mobile-nav-root xl:hidden" role="dialog" aria-modal="true" aria-label={tNav('menu')}>
+            <button type="button" className="mobile-nav-backdrop" aria-label={tCommon('close')} onClick={close} />
+
+            <div className="mobile-nav-sheet" translate="no">
+              <header className="mobile-nav-header">
+                <Link href={isEn ? '/en' : '/'} onClick={close} className="mobile-nav-brand">
+                  <Image src={LOGO_SRC} alt="UNM" width={120} height={40} className="h-8 w-auto object-contain" priority />
+                </Link>
                 <button
                   type="button"
                   onClick={close}
-                  aria-label="Close"
-                  className="touch-target inline-flex items-center justify-center rounded-xl p-2 hover:bg-warm-150/60"
+                  aria-label={tCommon('close')}
+                  className="mobile-nav-close"
                 >
-                  <Icon name="close" size={22} />
+                  <Icon name="close" size={20} />
                 </button>
-              </div>
+              </header>
 
-              <nav className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-4">
-                <ul className="space-y-2">
+              <nav className="mobile-nav-body">
+                <p className="mobile-nav-kicker">{tNav('menu')}</p>
+                <ul className="mobile-nav-list">
                   {ITEMS.map((it) =>
                     it.kind === 'leaf' ? (
                       <li key={it.key}>
                         <Link
-                          href={locale === 'en' ? it.en : it.fr}
+                          href={isEn ? it.en : it.fr}
                           onClick={close}
-                          className="flex min-h-12 items-center rounded-xl border border-warm-150/60 bg-white/50 px-4 font-heading text-sm font-semibold uppercase tracking-[0.06em] text-secondary transition-colors hover:border-primary/25 hover:text-primary"
+                          className="mobile-nav-link"
                         >
-                          {tNav(it.key)}
+                          <span>{tNav(it.key)}</span>
+                          <Icon name="arrow-right" size={16} className="mobile-nav-link-arrow" />
                         </Link>
                       </li>
                     ) : (
-                      <li key={it.key} className="overflow-hidden rounded-xl border border-warm-150/60 bg-white/50">
-                        <button
-                          type="button"
-                          aria-expanded={expanded === it.key}
-                          aria-controls={`mobilesub-${it.key}`}
-                          onClick={() => setExpanded((cur) => (cur === it.key ? null : it.key))}
-                          className="flex min-h-12 w-full items-center justify-between px-4 py-3 font-heading text-sm font-semibold uppercase tracking-[0.06em] text-secondary"
-                        >
-                          <span>{tNav(it.key)}</span>
-                          <Icon
-                            name="chevron-down"
-                            size={18}
-                            className={cn(
-                              'text-warm-400 transition-transform duration-300',
-                              expanded === it.key && 'rotate-180',
-                            )}
-                          />
-                        </button>
+                      <li key={it.key} className={cn('mobile-nav-group', expanded === it.key && 'is-open')}>
+                        <div className="mobile-nav-group-row">
+                          <Link
+                            href={isEn ? it.en : it.fr}
+                            onClick={close}
+                            className="mobile-nav-group-main"
+                          >
+                            {tNav(it.key)}
+                          </Link>
+                          <button
+                            type="button"
+                            aria-expanded={expanded === it.key}
+                            aria-controls={`mobilesub-${it.key}`}
+                            aria-label={tNav('toggleSection')}
+                            onClick={() => setExpanded((cur) => (cur === it.key ? null : it.key))}
+                            className="mobile-nav-group-toggle"
+                          >
+                            <Icon
+                              name="chevron-down"
+                              size={18}
+                              className={cn(expanded === it.key && 'rotate-180')}
+                            />
+                          </button>
+                        </div>
                         <div
                           id={`mobilesub-${it.key}`}
                           className={cn(
-                            'grid transition-[grid-template-rows] duration-300 ease-smooth',
+                            'mobile-nav-subgrid',
                             expanded === it.key ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]',
                           )}
                         >
-                          <ul className="overflow-hidden border-t border-warm-150/60">
+                          <ul className="mobile-nav-sublist">
                             <li>
                               <Link
-                                href={locale === 'en' ? it.en : it.fr}
+                                href={isEn ? it.en : it.fr}
                                 onClick={close}
-                                className="flex min-h-11 items-center px-4 text-sm font-semibold text-primary"
+                                className="mobile-nav-sublink mobile-nav-sublink--all"
                               >
-                                {tNav(it.key)} →
+                                {tNav('seeAll')}
+                                <Icon name="arrow-right" size={14} />
                               </Link>
                             </li>
                             {it.children.map((c) =>
                               c.comingSoon ? (
                                 <li key={c.key}>
-                                  <span className="flex min-h-11 items-center justify-between gap-2 px-4 text-sm text-secondary/50">
-                                    {tNav(c.key)}
-                                    <span className="rounded-full bg-warm-200 px-2 py-0.5 text-[10px] font-semibold uppercase">
-                                      {tNav('comingSoon')}
-                                    </span>
+                                  <span className="mobile-nav-sublink is-soon">
+                                    <span>{tNav(c.key)}</span>
+                                    <span className="mobile-nav-soon">{tNav('comingSoon')}</span>
                                   </span>
                                 </li>
                               ) : (
                                 <li key={c.key}>
                                   <Link
-                                    href={locale === 'en' ? c.en : c.fr}
+                                    href={isEn ? c.en : c.fr}
                                     onClick={close}
-                                    className="flex min-h-11 items-center px-4 text-sm font-medium text-secondary hover:bg-warm-150/40 hover:text-primary"
+                                    className="mobile-nav-sublink"
                                   >
                                     {tNav(c.key)}
                                   </Link>
@@ -207,11 +208,22 @@ export function MobileNav() {
                     ),
                   )}
                 </ul>
+
+                <div className="mobile-nav-quick">
+                  <Link href={isEn ? '/en/contact' : '/contact'} onClick={close} className="mobile-nav-quick-chip">
+                    <Icon name="mail" size={15} />
+                    {tNav('contact')}
+                  </Link>
+                  <Link href={isEn ? '/en/programs' : '/programmes'} onClick={close} className="mobile-nav-quick-chip">
+                    <Icon name="library" size={15} />
+                    {tNav('programs')}
+                  </Link>
+                </div>
               </nav>
 
-              <div className="shrink-0 space-y-3 border-t border-warm-150/80 p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+              <footer className="mobile-nav-footer">
                 <ButtonLink
-                  href={locale === 'en' ? '/en/admissions' : '/admissions'}
+                  href={isEn ? '/en/admissions' : '/admissions'}
                   onClick={close}
                   size="lg"
                   fullWidth
@@ -219,12 +231,13 @@ export function MobileNav() {
                 >
                   {tCommon('apply')}
                 </ButtonLink>
-                <div className="flex justify-center py-1">
+                <div className="mobile-nav-lang">
+                  <span className="mobile-nav-lang-label">{tNav('language')}</span>
                   <LanguageSwitcher />
                 </div>
-              </div>
+              </footer>
             </div>
-          </>,
+          </div>,
           document.body,
         )
       : null;
@@ -233,10 +246,10 @@ export function MobileNav() {
     <>
       <button
         type="button"
-        aria-label={open ? 'Close menu' : 'Open menu'}
+        aria-label={open ? tCommon('close') : tNav('menu')}
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
-        className="touch-target inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-warm-150/70 bg-white/60 text-secondary backdrop-blur-md transition-all duration-300 hover:border-primary/30 2xl:hidden"
+        className="mobile-nav-trigger xl:hidden"
       >
         <Icon name={open ? 'close' : 'menu'} size={22} weight="medium" />
       </button>

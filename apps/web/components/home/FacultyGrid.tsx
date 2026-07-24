@@ -1,12 +1,14 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
 import { SectionWrapper } from '@/components/ui/SectionWrapper';
 import { SectionHeader } from '@/components/patterns/SectionHeader';
-import { ScrollReveal } from '@/components/patterns/ScrollReveal';
+import { ScrollReveal, StaggerReveal } from '@/components/patterns/ScrollReveal';
 import { Icon } from '@/components/ui/Icon';
 import { iconForFacultySlug } from '@/lib/faculty-icons';
+import { getFacultyCoverSrc } from '@/lib/faculty-images';
 import { facultyPath, localized } from '@/lib/utils';
 import type { Faculty, Locale } from '@unm/types';
 import { cn } from '@/lib/utils';
@@ -51,43 +53,71 @@ export function FacultyGrid({ faculties }: Props) {
   const flagship = active[0];
 
   return (
-    <SectionWrapper id="facultes" tone="alt">
-      <ScrollReveal>
+    <SectionWrapper id="facultes" tone="canvas">
+      <ScrollReveal from="up" duration={850}>
         <SectionHeader
-          icon="landmark"
+          index="02"
           eyebrow={t('facultiesEyebrow')}
           title={t('facultiesTitle')}
           description={t('facultiesSubtitle')}
-          className="!mb-8 sm:!mb-10"
+          className="!mb-8 sm:!mb-9"
         />
       </ScrollReveal>
 
-      <ScrollReveal delay={60}>
-        <div className="grid min-w-0 gap-6 lg:grid-cols-[minmax(0,1.12fr)_minmax(0,0.88fr)] lg:gap-8">
-          {flagship && (
-            <ActiveFacultyCard faculty={flagship} locale={locale} tg={tg} />
-          )}
+      <div className="grid min-w-0 gap-5 lg:grid-cols-12 lg:gap-6">
+        {flagship && (
+          <ScrollReveal
+            delay={80}
+            from="up"
+            duration={900}
+            className="min-w-0 lg:col-span-7 xl:col-span-8"
+          >
+            <FlagshipFacultyCard faculty={flagship} locale={locale} tg={tg} />
+          </ScrollReveal>
+        )}
 
-          {upcoming.length > 0 && (
-            <aside className="flex flex-col">
-              <p className="mb-4 font-heading text-[11px] font-semibold uppercase tracking-[0.18em] text-secondary/45">
-                {tg('upcomingHeading')}
-              </p>
-              <ul className="flex flex-1 flex-col gap-3">
+        {upcoming.length > 0 && (
+          <ScrollReveal
+            delay={140}
+            from="up"
+            duration={900}
+            className="min-w-0 lg:col-span-5 xl:col-span-4"
+          >
+            <aside className="flex h-full flex-col">
+              <div className="mb-3.5 flex items-baseline justify-between gap-3">
+                <p className="font-heading text-[11px] font-semibold uppercase tracking-[0.16em] text-secondary/45">
+                  {tg('upcomingHeading')}
+                </p>
+                <span className="text-[11px] text-secondary/35">{upcoming.length}</span>
+              </div>
+
+              <StaggerReveal
+                as="ul"
+                itemAs="li"
+                delay={180}
+                stagger={90}
+                from="up"
+                duration={780}
+                className="flex flex-1 flex-col gap-3"
+                itemClassName="min-w-0 h-full"
+              >
                 {upcoming.map((f) => (
                   <UpcomingFacultyCard key={f.id} faculty={f} locale={locale} tg={tg} />
                 ))}
-              </ul>
-              <p className="mt-4 text-xs leading-relaxed text-secondary/45">{tg('upcomingNote')}</p>
+              </StaggerReveal>
+
+              <p className="mt-4 text-xs leading-relaxed text-secondary/45">
+                {tg('upcomingNote')}
+              </p>
             </aside>
-          )}
-        </div>
-      </ScrollReveal>
+          </ScrollReveal>
+        )}
+      </div>
     </SectionWrapper>
   );
 }
 
-function ActiveFacultyCard({
+function FlagshipFacultyCard({
   faculty: f,
   locale,
   tg,
@@ -100,57 +130,66 @@ function ActiveFacultyCard({
   const pitch = facultyPitch(tg, f.slug);
   const domains = (f.domains ?? []).slice(0, 3);
   const icon = iconForFacultySlug(f.slug);
-  const color = f.color || '#B5341A';
   const name = shortFacultyName(localized(f.name, locale));
+  const cover = getFacultyCoverSrc(f);
+  const href = facultyPath(f.slug, locale);
 
   return (
     <Link
-      href={facultyPath(f.slug, locale)}
-      className="group card-interactive min-w-0 overflow-hidden p-0 lg:min-h-[300px]"
+      href={href}
+      className="faculty-flagship group relative flex min-h-[22rem] flex-col overflow-hidden sm:min-h-[26rem] lg:h-full lg:min-h-[28rem]"
+      aria-label={`${name} — ${tg('explore')}`}
     >
-      <div className="grid h-full grid-cols-1 min-[420px]:grid-cols-[9.5rem_1fr] sm:grid-cols-[10.5rem_1fr] lg:grid-cols-[12rem_1fr]">
-        <div
-          className="relative flex flex-col justify-between px-6 py-8 text-warm-50 sm:px-7 sm:py-9"
-          style={{ backgroundColor: color }}
-        >
-          <div>
-            <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-white/15">
-              <Icon name={icon} size={22} className="text-warm-50" />
+      <Image
+        src={cover}
+        alt=""
+        fill
+        sizes="(max-width: 1024px) 100vw, 66vw"
+        className="faculty-flagship-img object-cover"
+        priority
+      />
+      <div className="faculty-flagship-veil" aria-hidden />
+
+      <div className="relative z-10 flex flex-1 flex-col justify-between p-5 sm:p-7 lg:p-8">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="faculty-live-badge">
+            <Icon name={icon} size={13} aria-hidden />
+            {locale === 'en' ? 'Open now' : 'En activité'}
+          </span>
+          {count > 0 && (
+            <span className="faculty-count-pill">
+              <span className="font-display text-sm font-semibold tabular-nums">{count}</span>
+              <span className="text-[10px] font-semibold uppercase tracking-wider opacity-80">
+                {count === 1 ? tg('programOne') : tg('programMany')}
+              </span>
             </span>
-            <p className="mt-6 font-heading text-[10px] font-semibold uppercase tracking-[0.2em] text-warm-100/90">
-              UNM
-            </p>
-            <h3 className="mt-2 font-display text-xl leading-tight text-warm-50 sm:text-2xl">
-              {name}
-            </h3>
-          </div>
-          <div className="mt-8">
-            <p className="font-display text-4xl font-semibold leading-none text-warm-50">{count}</p>
-            <p className="mt-1 font-heading text-[10px] font-semibold uppercase tracking-wider text-warm-100/80">
-              {count === 1 ? tg('programOne') : tg('programMany')}
-            </p>
-          </div>
+          )}
         </div>
 
-        <div className="flex flex-col justify-between gap-6 px-6 py-8 sm:px-8 sm:py-9">
-          <div>
-            <p className="text-sm leading-relaxed text-secondary/75 sm:text-[15px]">{pitch}</p>
-            {domains.length > 0 && (
-              <ul className="mt-5 flex flex-wrap gap-2">
-                {domains.map((d, i) => (
-                  <li
-                    key={i}
-                    className="rounded-full border border-warm-200/80 bg-warm-50/60 px-3 py-1 text-[11px] font-medium text-secondary/70"
-                  >
-                    {localized(d, locale)}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-          <span className="link-arrow w-fit text-sm">
+        <div className="mt-auto max-w-xl">
+          <p className="font-heading text-[10px] font-bold uppercase tracking-[0.2em] text-primary-200">
+            UNM
+          </p>
+          <h3 className="mt-2 font-display text-2xl leading-tight tracking-tight text-warm-50 sm:text-3xl lg:text-[2.15rem]">
+            {name}
+          </h3>
+          {pitch ? (
+            <p className="mt-3 max-w-md text-sm leading-relaxed text-warm-100/90 sm:text-[15px]">
+              {pitch}
+            </p>
+          ) : null}
+          {domains.length > 0 && (
+            <ul className="mt-4 flex flex-wrap gap-1.5">
+              {domains.map((d, i) => (
+                <li key={i} className="faculty-domain-chip">
+                  {localized(d, locale)}
+                </li>
+              ))}
+            </ul>
+          )}
+          <span className="faculty-flagship-cta mt-5 inline-flex items-center gap-2">
             {tg('explore')}
-            <Icon name="arrow-right" size={16} className="btn-arrow" />
+            <Icon name="arrow-right" size={16} className="btn-arrow" aria-hidden />
           </span>
         </div>
       </div>
@@ -169,29 +208,40 @@ function UpcomingFacultyCard({
 }) {
   const pitch = facultyPitch(tg, f.slug);
   const icon = iconForFacultySlug(f.slug);
-  const color = f.color || '#3D1A0B';
   const name = shortFacultyName(localized(f.name, locale));
+  const cover = getFacultyCoverSrc(f);
+  const comingSoonLabel = locale === 'en' ? 'Soon' : 'Bientôt';
 
   return (
-    <li>
-      <article
-        className={cn(
-          'flex gap-4 rounded-xl border border-warm-200/70 bg-warm-100/35 px-4 py-4',
-          'transition-colors duration-300 hover:border-warm-300 hover:bg-warm-100/55',
-        )}
-      >
-        <span
-          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl"
-          style={{ backgroundColor: `${color}18`, color }}
-          aria-hidden
-        >
-          <Icon name={icon} size={20} />
+    <article className={cn('faculty-upcoming group')}>
+      <div className="faculty-upcoming-media" aria-hidden>
+        <Image
+          src={cover}
+          alt=""
+          fill
+          sizes="120px"
+          className="object-cover transition-transform duration-700 ease-smooth group-hover:scale-105"
+        />
+        <span className="faculty-upcoming-media-veil" />
+        <span className="faculty-upcoming-icon">
+          <Icon name={icon} size={16} />
         </span>
-        <div className="min-w-0 flex-1">
-          <h4 className="font-display text-base leading-snug text-secondary/70">{name}</h4>
-          <p className="mt-1.5 line-clamp-2 text-xs leading-relaxed text-secondary/50">{pitch}</p>
+      </div>
+
+      <div className="min-w-0 flex-1 py-0.5">
+        <div className="flex items-start justify-between gap-2">
+          <h4 className="font-display text-[0.95rem] leading-snug text-secondary sm:text-base">
+            {name}
+          </h4>
+          <span className="faculty-soon-badge shrink-0">{comingSoonLabel}</span>
         </div>
-      </article>
-    </li>
+        {pitch ? (
+          <p className="mt-1.5 line-clamp-2 text-xs leading-relaxed text-secondary/55">
+            {pitch}
+          </p>
+        ) : null}
+        <p className="sr-only">{tg('upcomingNote')}</p>
+      </div>
+    </article>
   );
 }

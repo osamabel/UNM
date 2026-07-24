@@ -2,11 +2,12 @@ import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { SectionWrapper } from '@/components/ui/SectionWrapper';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
-import { PageHeader } from '@/components/patterns/PageHeader';
+import { PhotoHero } from '@/components/patterns/PhotoHero';
 import { PartnersShowcase } from '@/components/partners/PartnersShowcase';
 import { PartnersEbsFeature } from '@/components/partners/PartnersEbsFeature';
 import { CTABanner } from '@/components/home/CTABanner';
 import { getPartners } from '@/lib/api';
+import { PAGE_HERO_IMAGE } from '@/lib/page-heroes';
 import type { Locale } from '@unm/types';
 
 export const revalidate = 300;
@@ -36,17 +37,20 @@ export default async function PartnersPage({ params }: { params: { locale: Local
         ]}
       />
 
-      <SectionWrapper tone="soft" className="!pb-10 sm:!pb-12">
-        <PageHeader
-          icon="handshake"
-          eyebrow={t('eyebrow')}
-          title={t('title')}
-          description={t('subtitle')}
-          className="border-0 pb-0"
-        />
-      </SectionWrapper>
+      <PhotoHero
+        eyebrow={t('eyebrow')}
+        title={t('title')}
+        subtitle={t('subtitle')}
+        imageSrc={PAGE_HERO_IMAGE.partners}
+        imageAlt={
+          isEn
+            ? 'African executive leader — UNM ecosystem and partnerships'
+            : 'Dirigeante africaine — écosystème et partenariats UNM'
+        }
+        imagePosition="center 30%"
+      />
 
-      <SectionWrapper tone="canvas" className="!pb-6 !pt-0 sm:!pb-8">
+      <SectionWrapper tone="canvas" className="!pb-6 !pt-10 sm:!pb-8 sm:!pt-12">
         <PartnersEbsFeature locale={params.locale} />
       </SectionWrapper>
 

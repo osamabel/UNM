@@ -18,13 +18,13 @@ function buildColumns(isEn: boolean): { titleKey: 'university' | 'academic' | 'r
       titleKey: 'university',
       links: isEn
         ? [
-            { label: 'About', fr: '/universite', en: '/en/university' },
+            { label: 'About', fr: '/universite/manifeste', en: '/en/university/manifeste' },
             { label: 'Faculties', fr: '/facultes', en: '/en/faculties' },
             { label: 'Partners', fr: '/partenaires', en: '/en/partners' },
             { label: 'News', fr: '/actualites', en: '/en/news' },
           ]
         : [
-            { label: 'Présentation', fr: '/universite', en: '/en/university' },
+            { label: 'Manifeste', fr: '/universite/manifeste', en: '/en/university/manifeste' },
             { label: 'Facultés', fr: '/facultes', en: '/en/faculties' },
             { label: 'Partenaires', fr: '/partenaires', en: '/en/partners' },
             { label: 'Actualités', fr: '/actualites', en: '/en/news' },
@@ -182,8 +182,15 @@ export function Footer({ settings }: { settings: SiteSettings }) {
   ].filter((s): s is { href: string; label: string; name: SocialKey } => Boolean(s));
 
   return (
-    <footer className="glass-footer relative mt-auto overflow-hidden text-warm-100">
-      <div className="hero-panel-pattern pointer-events-none absolute inset-0 opacity-60" aria-hidden />
+    <footer className="relative mt-auto overflow-hidden bg-secondary text-warm-100">
+      <div
+        className="pointer-events-none absolute inset-0 opacity-30"
+        style={{
+          background:
+            'radial-gradient(ellipse 50% 60% at 0% 100%, rgba(181,52,26,0.28), transparent 55%)',
+        }}
+        aria-hidden
+      />
 
       <div className="container-page relative py-12 md:py-14 lg:py-16">
         <div className="grid gap-10 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1.85fr)] lg:gap-12 xl:gap-16">

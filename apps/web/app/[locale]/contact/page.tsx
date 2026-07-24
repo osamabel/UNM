@@ -1,93 +1,25 @@
 import type { Metadata } from 'next';
-import type { ReactNode } from 'react';
+import Link from 'next/link';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { SectionWrapper } from '@/components/ui/SectionWrapper';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
-import { PageHeader } from '@/components/patterns/PageHeader';
+import { PhotoHero } from '@/components/patterns/PhotoHero';
+import { ScrollReveal } from '@/components/patterns/ScrollReveal';
 import { Icon } from '@/components/ui/Icon';
-import { ContactForm } from '@/components/forms/ContactForm';
-import { CallbackForm } from '@/components/forms/CallbackForm';
+import { ButtonLink } from '@/components/ui/Button';
+import { ContactFormsPanel } from '@/components/forms/ContactFormsPanel';
 import { CTABanner } from '@/components/home/CTABanner';
+import { JsonLd } from '@/components/shared/JsonLd';
 import { getSiteSettings } from '@/lib/api';
+import { PAGE_HERO_IMAGE } from '@/lib/page-heroes';
 import { digitsOnly, mergeSiteSettings } from '@/lib/site-settings';
+import { faqSchema } from '@/lib/schema';
 import { localized } from '@/lib/utils';
 import type { Locale } from '@unm/types';
-
-const FAQS = [
-  {
-    fr: { q: 'Quels sont les délais de candidature ?', a: "Deux sessions par an. Les candidatures sont ouvertes en continu — les places sont attribuées sur dossier et entretien." },
-    en: { q: 'When are the application deadlines?', a: 'Two intakes per year. Applications are reviewed on a rolling basis, with admission decisions based on file review and interview.' },
-  },
-  {
-    fr: { q: 'Quel diplôme est délivré ?', a: "Le diplôme est délivré par European Business School (EBS Paris) en partenariat avec l'Université Numérique du Maroc." },
-    en: { q: 'What diploma is awarded?', a: 'The diploma is awarded by European Business School (EBS Paris) in partnership with the Digital University of Morocco.' },
-  },
-  {
-    fr: { q: 'Quels sont les pré-requis ?', a: "Bac+3 minimum pour les MBA et certificats Executive · Bac+5 pour le DBA. Une expérience professionnelle est recommandée." },
-    en: { q: 'What are the prerequisites?', a: "Bachelor's degree for MBAs and Executive certificates · Master's for the DBA. Professional experience is recommended." },
-  },
-  {
-    fr: { q: 'Le programme est-il accessible en activité professionnelle ?', a: 'Oui, les formats sont conçus pour des cadres en activité (en ligne, hybride, weekends et soirs).' },
-    en: { q: 'Can I follow the programme while working?', a: 'Yes, formats are designed for working executives (online, hybrid, weekends and evenings).' },
-  },
-  {
-    fr: { q: 'Existe-t-il un programme de bourses ?', a: 'Des bourses au mérite et au besoin sont disponibles selon les promotions. Contactez les admissions pour en savoir plus.' },
-    en: { q: 'Is there a scholarship programme?', a: 'Merit and need-based scholarships are available depending on the cohort. Contact admissions to learn more.' },
-  },
-];
 
 export async function generateMetadata({ params }: { params: { locale: Locale } }): Promise<Metadata> {
   const t = await getTranslations({ locale: params.locale, namespace: 'contact' });
   return { title: t('metaTitle'), description: t('intro') };
-}
-
-function ContactCard({
-  icon,
-  title,
-  children,
-}: {
-  icon: 'phone' | 'mail' | 'map-pin' | 'building';
-  title: string;
-  children: ReactNode;
-}) {
-  return (
-    <div className="card-interactive p-5 sm:p-6">
-      <div className="flex items-center gap-3">
-        <span className="icon-box h-10 w-10 shrink-0">
-          <Icon name={icon} size={20} />
-        </span>
-        <h3 className="font-heading text-sm font-semibold text-secondary">{title}</h3>
-      </div>
-      <div className="mt-4 text-sm leading-relaxed text-secondary/70">{children}</div>
-    </div>
-  );
-}
-
-function FormBlock({
-  icon,
-  title,
-  hint,
-  children,
-}: {
-  icon: 'send' | 'phone';
-  title: string;
-  hint: string;
-  children: ReactNode;
-}) {
-  return (
-    <section>
-      <div className="flex gap-4">
-        <span className="icon-box h-11 w-11 shrink-0">
-          <Icon name={icon} size={22} />
-        </span>
-        <div className="min-w-0">
-          <h2 className="font-display text-xl text-secondary sm:text-2xl">{title}</h2>
-          <p className="mt-1 text-sm leading-relaxed text-secondary/55">{hint}</p>
-        </div>
-      </div>
-      <div className="form-panel mt-5 sm:mt-6">{children}</div>
-    </section>
-  );
 }
 
 export default async function ContactPage({ params }: { params: { locale: Locale } }) {
@@ -102,15 +34,40 @@ export default async function ContactPage({ params }: { params: { locale: Locale
   const isEn = params.locale === 'en';
   const homeUrl = isEn ? '/en' : '/';
   const contactUrl = isEn ? '/en/contact' : '/contact';
-  const waText = encodeURIComponent(isEn ? 'Hello UNM' : 'Bonjour UNM');
+  const admissionsUrl = isEn ? '/en/admissions' : '/admissions';
+  const programsUrl = isEn ? '/en/programs' : '/programmes';
+  const waText = encodeURIComponent(
+    isEn ? 'Hello UNM — I would like some information' : 'Bonjour UNM — je souhaite des informations',
+  );
   const phone = settings.contact.phone;
   const phoneTel = digitsOnly(phone);
   const waDigits = digitsOnly(settings.contact.whatsapp);
   const email = settings.contact.email;
   const address = localized(settings.contact.address, params.locale);
 
+  const channels = [
+    { icon: 'send' as const, title: t('channelMessageTitle'), body: t('channelMessageBody') },
+    { icon: 'phone' as const, title: t('channelCallTitle'), body: t('channelCallBody') },
+    { icon: 'mail' as const, title: t('channelWhatsappTitle'), body: t('channelWhatsappBody') },
+  ];
+
+  const faqDisplay = [
+    { q: t('faq1Q'), a: t('faq1A') },
+    { q: t('faq2Q'), a: t('faq2A') },
+    { q: t('faq3Q'), a: t('faq3A') },
+    { q: t('faq4Q'), a: t('faq4A') },
+    { q: t('faq5Q'), a: t('faq5A') },
+    { q: t('faq6Q'), a: t('faq6A') },
+  ];
+  const faqs = faqDisplay.map((item) => ({
+    question: { fr: item.q, en: item.q },
+    answer: { fr: item.a, en: item.a },
+  }));
+
   return (
     <>
+      <JsonLd data={faqSchema(faqs, params.locale)} />
+
       <Breadcrumb
         items={[
           { name: tb('home'), url: homeUrl },
@@ -118,108 +75,177 @@ export default async function ContactPage({ params }: { params: { locale: Locale
         ]}
       />
 
-      <SectionWrapper tone="soft" className="!pb-10 sm:!pb-12">
-        <PageHeader
-          icon="mail"
-          eyebrow={t('eyebrow')}
-          title={t('title')}
-          description={t('intro')}
-          className="border-0 pb-0"
-        />
-        <ul className="mt-6 flex flex-wrap gap-2 sm:mt-8">
-          <li className="glass-pill flex items-center gap-1.5 text-xs font-medium text-secondary/75">
-            <Icon name="mail" size={14} className="text-primary/90" />
+      <PhotoHero
+        eyebrow={t('eyebrow')}
+        title={t('title')}
+        subtitle={t('intro')}
+        imageSrc={PAGE_HERO_IMAGE.contact}
+        imageAlt={
+          isEn
+            ? 'African professionals — contact UNM admissions'
+            : 'Professionnels africains — contact admissions UNM'
+        }
+        imagePosition="center 40%"
+      >
+        <div className="contact-hero-actions">
+          <ButtonLink href="#ecrire" size="lg" trailingIcon={<Icon name="arrow-right" size={18} />}>
+            {t('ctaMessage')}
+          </ButtonLink>
+          {waDigits ? (
+            <ButtonLink
+              href={`https://wa.me/${waDigits}?text=${waText}`}
+              size="lg"
+              variant="ghost"
+              className="contact-hero-ghost"
+              target="_blank"
+              rel="noopener noreferrer"
+              trailingIcon={<Icon name="send" size={16} />}
+            >
+              {tc('whatsapp')}
+            </ButtonLink>
+          ) : null}
+        </div>
+        <ul className="photo-hero-trust mt-5">
+          <li>
+            <Icon name="mail" size={14} className="text-[rgba(255,196,170,0.95)]" />
             {t('trustResponse')}
           </li>
-          <li className="glass-pill flex items-center gap-1.5 text-xs font-medium text-secondary/75">
-            <Icon name="phone" size={14} className="text-primary/90" />
+          <li>
+            <Icon name="phone" size={14} className="text-[rgba(255,196,170,0.95)]" />
             {t('trustPhone')}
           </li>
-          <li className="glass-pill flex items-center gap-1.5 text-xs font-medium text-secondary/75">
-            <Icon name="map-pin" size={14} className="text-primary/90" />
+          <li>
+            <Icon name="map-pin" size={14} className="text-[rgba(255,196,170,0.95)]" />
             {t('trustCampus')}
           </li>
         </ul>
+      </PhotoHero>
+
+      <SectionWrapper tone="canvas" className="contact-channels !py-9 sm:!py-11">
+        <ScrollReveal>
+          <p className="contact-kicker">{t('channelsEyebrow')}</p>
+          <h2 className="mt-2 font-display text-2xl text-secondary sm:text-3xl">{t('channelsTitle')}</h2>
+        </ScrollReveal>
+        <ul className="contact-channel-grid mt-7">
+          {channels.map((ch, i) => (
+            <ScrollReveal key={ch.title} delay={i * 60} as="li" className="contact-channel">
+              <span className="contact-channel-icon">
+                <Icon name={ch.icon} size={18} />
+              </span>
+              <div className="min-w-0">
+                <h3 className="contact-channel-title">{ch.title}</h3>
+                <p className="contact-channel-body">{ch.body}</p>
+              </div>
+            </ScrollReveal>
+          ))}
+        </ul>
       </SectionWrapper>
 
-      <SectionWrapper tone="canvas" className="!pt-8 sm:!pt-10">
-        <div className="min-w-0 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,19rem)] lg:items-start lg:gap-12 xl:gap-14">
-          <div className="min-w-0 space-y-10 sm:space-y-12">
-            <FormBlock icon="send" title={t('sendMessage')} hint={t('sendMessageHint')}>
-              <ContactForm />
-            </FormBlock>
-            <FormBlock icon="phone" title={t('requestCallback')} hint={t('callbackHint')}>
-              <CallbackForm />
-            </FormBlock>
-          </div>
+      <SectionWrapper tone="soft" className="!py-11 sm:!py-14" id="ecrire">
+        <div className="contact-layout">
+          <ScrollReveal>
+            <div className="mb-6 max-w-2xl">
+              <p className="contact-kicker">{t('formsEyebrow')}</p>
+              <h2 className="mt-2 font-display text-2xl text-secondary sm:text-3xl">{t('formsTitle')}</h2>
+              <p className="mt-2 text-sm leading-relaxed text-secondary/60">{t('formsHint')}</p>
+            </div>
+            <ContactFormsPanel />
+          </ScrollReveal>
 
-          <aside className="mt-10 min-w-0 space-y-4 lg:sticky lg:top-28 lg:mt-0">
-            <ContactCard icon="phone" title={t('directLines')}>
-              <ul className="space-y-3">
-                <li>
-                  <a
-                    href={`tel:${phoneTel}`}
-                    className="inline-flex items-center gap-2 font-medium text-primary transition-colors hover:text-primary-700"
-                  >
-                    <Icon name="phone" size={16} />
-                    {phone}
-                  </a>
-                </li>
-                {waDigits && (
+          <aside className="contact-aside">
+            <ScrollReveal delay={70}>
+              <div className="contact-aside-card">
+                <p className="contact-kicker">{t('directLines')}</p>
+                <ul className="contact-aside-links mt-4">
+                  {phoneTel ? (
+                    <li>
+                      <a href={`tel:${phoneTel}`} className="contact-aside-link">
+                        <Icon name="phone" size={16} />
+                        <span>{phone}</span>
+                      </a>
+                    </li>
+                  ) : null}
                   <li>
-                    <a
-                      href={`https://wa.me/${waDigits}?text=${waText}`}
-                      className="glass-pill !h-9 w-full justify-center text-xs font-semibold text-secondary/80 hover:!bg-white/90"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {tc('whatsapp')}
+                    <a href={`mailto:${email}`} className="contact-aside-link">
+                      <Icon name="mail" size={16} />
+                      <span>{email}</span>
                     </a>
                   </li>
-                )}
-                <li>
-                  <a
-                    href={`mailto:${email}`}
-                    className="inline-flex items-center gap-2 font-medium text-primary transition-colors hover:text-primary-700"
-                  >
-                    <Icon name="mail" size={16} />
-                    {email}
-                  </a>
-                </li>
-              </ul>
-            </ContactCard>
-            <ContactCard icon="map-pin" title={t('campusMarrakech')}>
-              <p className="whitespace-pre-line">{address}</p>
-            </ContactCard>
-            <div className="card-flat overflow-hidden p-0">
-              <p className="sr-only">{t('mapTitle')}</p>
-              <iframe
-                title={t('mapTitle')}
-                loading="lazy"
-                src="https://www.openstreetmap.org/export/embed.html?bbox=-8.0606%2C31.5912%2C-7.9606%2C31.6712&amp;layer=mapnik"
-                className="h-52 w-full sm:h-56"
-              />
-            </div>
+                  {waDigits ? (
+                    <li>
+                      <a
+                        href={`https://wa.me/${waDigits}?text=${waText}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="contact-wa"
+                      >
+                        <Icon name="send" size={15} />
+                        {t('whatsappCta')}
+                      </a>
+                    </li>
+                  ) : null}
+                </ul>
+              </div>
+            </ScrollReveal>
+
+            <ScrollReveal delay={100}>
+              <div className="contact-aside-card">
+                <div className="flex items-center gap-3">
+                  <span className="icon-box h-10 w-10 shrink-0">
+                    <Icon name="map-pin" size={18} />
+                  </span>
+                  <h3 className="font-heading text-sm font-semibold text-secondary">
+                    {t('campusMarrakech')}
+                  </h3>
+                </div>
+                <p className="mt-3 text-sm leading-relaxed text-secondary/70 whitespace-pre-line">
+                  {address}
+                </p>
+                <div className="contact-map mt-4 overflow-hidden rounded-xl">
+                  <p className="sr-only">{t('mapTitle')}</p>
+                  <iframe
+                    title={t('mapTitle')}
+                    loading="lazy"
+                    src="https://www.openstreetmap.org/export/embed.html?bbox=-8.0606%2C31.5912%2C-7.9606%2C31.6712&amp;layer=mapnik"
+                    className="h-44 w-full"
+                  />
+                </div>
+              </div>
+            </ScrollReveal>
+
+            <ScrollReveal delay={130}>
+              <div className="contact-aside-card contact-aside-apply">
+                <p className="font-heading text-sm font-semibold text-secondary">{t('applyTitle')}</p>
+                <p className="mt-1.5 text-sm leading-relaxed text-secondary/60">{t('applyBody')}</p>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <ButtonLink href={admissionsUrl} size="sm" trailingIcon={<Icon name="arrow-right" size={14} />}>
+                    {t('applyLink')}
+                  </ButtonLink>
+                  <Link href={programsUrl} className="contact-aside-secondary">
+                    {t('programsLink')}
+                  </Link>
+                </div>
+              </div>
+            </ScrollReveal>
           </aside>
         </div>
       </SectionWrapper>
 
-      <SectionWrapper tone="soft">
-        <p className="eyebrow">{t('faqEyebrow')}</p>
-        <h2 className="mt-3 font-display text-display-md text-secondary">{t('faqTitle')}</h2>
-        <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:gap-5">
-          {FAQS.map((f, i) => {
-            const item = isEn ? f.en : f.fr;
-            return (
-              <li key={i} className="card-interactive p-5 sm:p-6">
-                <p className="flex items-start gap-2.5 font-heading text-sm font-semibold leading-snug text-secondary">
-                  <Icon name="book" size={18} className="mt-0.5 shrink-0 text-primary/85" />
-                  {item.q}
-                </p>
-                <p className="mt-3 pl-7 text-sm leading-relaxed text-secondary/60">{item.a}</p>
-              </li>
-            );
-          })}
+      <SectionWrapper tone="canvas" className="!py-11 sm:!py-14">
+        <ScrollReveal>
+          <p className="contact-kicker">{t('faqEyebrow')}</p>
+          <h2 className="mt-2 font-display text-2xl text-secondary sm:text-3xl">{t('faqTitle')}</h2>
+        </ScrollReveal>
+        <ul className="contact-faq mt-8">
+          {faqDisplay.map((item, i) => (
+            <ScrollReveal key={item.q} delay={i * 40} as="li" className="contact-faq-item">
+              <p className="contact-faq-q">
+                <Icon name="book" size={18} className="mt-0.5 shrink-0 text-primary/85" />
+                {item.q}
+              </p>
+              <p className="contact-faq-a">{item.a}</p>
+            </ScrollReveal>
+          ))}
         </ul>
       </SectionWrapper>
 

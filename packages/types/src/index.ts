@@ -108,11 +108,16 @@ export interface Program {
   updatedAt: string;
 }
 
+export type ArticleChannel = 'actualite' | 'evenement' | 'newsroom';
+
 export type ArticleCategory =
   | 'campus'
   | 'recherche'
   | 'partenariats'
-  | 'evenements';
+  | 'evenements'
+  | 'presse';
+
+export type ArticleEventKind = 'openDay' | 'webinar' | 'masterclass' | 'other';
 
 export interface Article {
   id: string;
@@ -122,7 +127,13 @@ export interface Article {
   body: LocalizedField;
   coverImage: Media;
   author: { name: string; bio?: LocalizedField; avatar?: Media };
+  /** Hub tab on /actualites — defaults to actualite when missing from older CMS docs. */
+  channel: ArticleChannel;
   category: ArticleCategory;
+  /** Present when channel === 'evenement'. */
+  eventDate?: string;
+  eventLocation?: LocalizedField;
+  eventKind?: ArticleEventKind;
   publishedAt: string;
   readingTime: number;
   metaTitle: LocalizedField;

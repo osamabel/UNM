@@ -3,9 +3,11 @@ import Link from 'next/link';
 import { setRequestLocale } from 'next-intl/server';
 import { SectionWrapper } from '@/components/ui/SectionWrapper';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
+import { PhotoHero } from '@/components/patterns/PhotoHero';
 import { ScrollReveal } from '@/components/patterns/ScrollReveal';
 import { CTABanner } from '@/components/home/CTABanner';
 import { Icon } from '@/components/ui/Icon';
+import { PAGE_HERO_IMAGE } from '@/lib/page-heroes';
 import { cn } from '@/lib/utils';
 import type { Locale } from '@unm/types';
 
@@ -89,33 +91,22 @@ export default function PresidentWordPage({ params }: { params: { locale: Locale
         ]}
       />
 
-      {/* ── Hero: one composition ── */}
-      <section className="relative overflow-hidden border-b border-warm-150/40 bg-soft/80">
-        <div
-          className="pointer-events-none absolute inset-0 opacity-[0.55]"
-          style={{
-            background:
-              'radial-gradient(ellipse 70% 55% at 12% 20%, rgba(181,52,26,0.10), transparent 55%), radial-gradient(ellipse 50% 40% at 88% 75%, rgba(61,26,11,0.06), transparent 50%)',
-          }}
-          aria-hidden
-        />
-        <div className="container-page relative py-14 sm:py-16 lg:py-20">
-          <ScrollReveal>
-            <p className="eyebrow text-primary">{isEn ? "President's word" : 'Mot du Président'}</p>
-            <h1 className="mt-5 max-w-4xl font-display text-[2.15rem] leading-[1.12] text-secondary sm:text-5xl lg:text-[3.35rem]">
-              {isEn
-                ? 'Forming the leaders of tomorrow’s Africa.'
-                : "Former les leaders de l'Afrique de demain."}
-            </h1>
-            <div className="mt-8 flex items-center gap-4" aria-hidden>
-              <span className="h-px w-14 bg-primary/70" />
-              <span className="font-heading text-[11px] font-semibold uppercase tracking-[0.16em] text-secondary/45">
-                UNM
-              </span>
-            </div>
-          </ScrollReveal>
-        </div>
-      </section>
+      <PhotoHero
+        eyebrow={isEn ? "President's word" : 'Mot du Président'}
+        title={
+          isEn
+            ? 'Forming the leaders of tomorrow’s Africa.'
+            : "Former les leaders de l'Afrique de demain."
+        }
+        imageSrc={PAGE_HERO_IMAGE.president}
+        imageAlt={
+          isEn
+            ? 'African graduates — Université Numérique du Maroc'
+            : 'Diplômés africains — Université Numérique du Maroc'
+        }
+        imagePosition="center 28%"
+        className="photo-hero--tall"
+      />
 
       {/* ── Letter: sticky rail + editorial column ── */}
       <SectionWrapper tone="canvas" className="!py-12 sm:!py-16 lg:!py-20">

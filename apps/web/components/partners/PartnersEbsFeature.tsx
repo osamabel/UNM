@@ -71,17 +71,24 @@ export async function PartnersEbsFeature({ locale }: { locale: Locale }) {
         <p className="mt-3 max-w-4xl text-sm leading-relaxed text-secondary/68 sm:text-[0.95rem]">
           {t('allianceLead')}
         </p>
-        <p className="mt-5 text-xs font-semibold uppercase tracking-[0.12em] text-primary">
+
+        <p className="mt-8 text-xs font-semibold uppercase tracking-[0.12em] text-primary">
           {t('principlesLabel')}
         </p>
-        <ul className="alliance-principles mt-3 max-w-3xl">
+        <ul className="mt-4 max-w-3xl space-y-2.5">
           {PRINCIPLES.map((key) => (
-            <li key={key}>{t(key)}</li>
+            <li
+              key={key}
+              className="flex gap-2.5 text-sm leading-relaxed text-secondary/70 sm:text-[0.95rem]"
+            >
+              <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" aria-hidden />
+              <span>{t(key)}</span>
+            </li>
           ))}
         </ul>
 
         <h3 className="mt-10 font-display text-xl text-secondary sm:text-2xl">{t('whyTitle')}</h3>
-        <ul className="mt-6 grid gap-5 sm:grid-cols-2">
+        <ul className="mt-6 grid gap-6 sm:grid-cols-2">
           {WHY.map((item) => (
             <li key={item.title} className="min-w-0">
               <h4 className="font-heading text-sm font-semibold text-secondary sm:text-base">

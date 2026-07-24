@@ -6,7 +6,7 @@ const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://unm.ma';
 // Static pages — emitted in both locales.
 const STATIC = [
   { fr: '/', en: '/en', priority: 1.0 },
-  { fr: '/universite', en: '/en/university', priority: 0.7 },
+  { fr: '/universite/manifeste', en: '/en/university/manifeste', priority: 0.7 },
   { fr: '/facultes', en: '/en/faculties', priority: 0.8 },
   { fr: '/programmes', en: '/en/programs', priority: 0.9 },
   { fr: '/admissions', en: '/en/admissions', priority: 0.95 },

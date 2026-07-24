@@ -1,21 +1,60 @@
 'use client';
 
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState, type ReactNode } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/Button';
-import { Select } from '@/components/ui/Select';
 import { Icon } from '@/components/ui/Icon';
-import type { Faculty, ProgramFormat, ProgramType } from '@unm/types';
 import { Modal } from '@/components/ui/Modal';
+import { cn } from '@/lib/utils';
+import type { ProgramFormat, ProgramType } from '@unm/types';
 
 interface Props {
   faculties: { slug: string; name: string }[];
 }
 
-const TYPES: ProgramType[] = ['DBA', 'MBA', 'Bachelor', 'Certificate'];
+const TYPES: ProgramType[] = ['DBA', 'MBA', 'Certificate'];
 const FORMATS: ProgramFormat[] = ['Présentiel', 'Distanciel', 'Hybride'];
-const LANGS = ['fr', 'en'];
+const LANGS = [
+  { value: 'fr', label: 'FR' },
+  { value: 'en', label: 'EN' },
+] as const;
+
+function FilterChip({
+  selected,
+  onClick,
+  children,
+}: {
+  selected: boolean;
+  onClick: () => void;
+  children: ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      aria-pressed={selected}
+      onClick={onClick}
+      className={cn('program-filter-chip', selected && 'is-active')}
+    >
+      {children}
+    </button>
+  );
+}
+
+function FilterGroup({
+  label,
+  children,
+}: {
+  label: string;
+  children: ReactNode;
+}) {
+  return (
+    <div className="program-filter-group">
+      <p className="program-filter-label">{label}</p>
+      <div className="program-filter-chips">{children}</div>
+    </div>
+  );
+}
 
 export function ProgramFilter({ faculties }: Props) {
   const router = useRouter();
@@ -39,11 +78,19 @@ export function ProgramFilter({ faculties }: Props) {
   const update = useCallback(
     (key: string, value: string) => {
       const next = new URLSearchParams(params.toString());
-      if (value) next.set(key, value);
+      if (value && value !== next.get(key)) next.set(key, value);
       else next.delete(key);
-      router.replace(`?${next.toString()}`, { scroll: false });
+      const q = next.toString();
+      router.replace(q ? `?${q}` : '?', { scroll: false });
     },
     [params, router],
+  );
+
+  const toggle = useCallback(
+    (key: string, value: string) => {
+      update(key, current[key as keyof typeof current] === value ? '' : value);
+    },
+    [current, update],
   );
 
   const reset = useCallback(() => {
@@ -51,63 +98,86 @@ export function ProgramFilter({ faculties }: Props) {
   }, [router]);
 
   const fields = (
-    <div className="grid gap-4">
-      <Select
-        label={t('faculty')}
-        placeholder={t('faculty')}
-        value={current.faculty}
-        onChange={(e) => update('faculty', e.target.value)}
-        options={faculties.map((f) => ({ value: f.slug, label: f.name }))}
-      />
-      <Select
-        label={ti('typeLabel')}
-        placeholder={ti('typeLabel')}
-        value={current.type}
-        onChange={(e) => update('type', e.target.value)}
-        options={TYPES.map((v) => ({ value: v, label: v }))}
-      />
-      <Select
-        label={t('format')}
-        placeholder={t('format')}
-        value={current.format}
-        onChange={(e) => update('format', e.target.value)}
-        options={FORMATS.map((v) => ({ value: v, label: v }))}
-      />
-      <Select
-        label={t('language')}
-        placeholder={t('language')}
-        value={current.language}
-        onChange={(e) => update('language', e.target.value)}
-        options={LANGS.map((v) => ({ value: v, label: v.toUpperCase() }))}
-      />
+    <div className="program-filter-fields">
+      <FilterGroup label={t('faculty')}>
+        {faculties.map((f) => (
+          <FilterChip
+            key={f.slug}
+            selected={current.faculty === f.slug}
+            onClick={() => toggle('faculty', f.slug)}
+          >
+            {f.name.replace(/^UNM\s+/i, '')}
+          </FilterChip>
+        ))}
+      </FilterGroup>
+
+      <FilterGroup label={ti('typeLabel')}>
+        {TYPES.map((v) => (
+          <FilterChip key={v} selected={current.type === v} onClick={() => toggle('type', v)}>
+            {v}
+          </FilterChip>
+        ))}
+      </FilterGroup>
+
+      <FilterGroup label={t('format')}>
+        {FORMATS.map((v) => (
+          <FilterChip
+            key={v}
+            selected={current.format === v}
+            onClick={() => toggle('format', v)}
+          >
+            {v}
+          </FilterChip>
+        ))}
+      </FilterGroup>
+
+      <FilterGroup label={t('language')}>
+        {LANGS.map((v) => (
+          <FilterChip
+            key={v.value}
+            selected={current.language === v.value}
+            onClick={() => toggle('language', v.value)}
+          >
+            {v.label}
+          </FilterChip>
+        ))}
+      </FilterGroup>
+
+      {activeCount > 0 ? (
+        <button type="button" onClick={reset} className="program-filter-reset">
+          <Icon name="close" size={14} />
+          {ti('resetFilters')}
+        </button>
+      ) : null}
     </div>
   );
 
   return (
     <>
       <div className="hidden lg:block">{fields}</div>
+
       <div className="flex items-center justify-between gap-3 lg:hidden">
-        <Button variant="secondary" size="sm" onClick={() => setMobileOpen(true)} className="glass-pill !h-10">
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={() => setMobileOpen(true)}
+          className="program-filter-mobile-trigger"
+        >
           <Icon name="search" size={16} className="text-primary/80" />
           {ti('filters')}
-          {activeCount > 0 && (
-            <span className="ml-0.5 rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-bold text-white">
-              {activeCount}
-            </span>
-          )}
+          {activeCount > 0 ? (
+            <span className="program-filter-badge">{activeCount}</span>
+          ) : null}
         </Button>
-        {activeCount > 0 && (
-          <button
-            type="button"
-            onClick={reset}
-            className="shrink-0 text-sm font-semibold text-primary hover:underline"
-          >
+        {activeCount > 0 ? (
+          <button type="button" onClick={reset} className="program-filter-reset !mt-0">
             {ti('resetFilters')}
           </button>
-        )}
+        ) : null}
       </div>
+
       <Modal open={mobileOpen} onClose={() => setMobileOpen(false)} title={ti('filters')} size="sm">
-        <div className="grid gap-4">{fields}</div>
+        {fields}
         <div className="mt-6 flex gap-3">
           <Button variant="ghost" onClick={reset} fullWidth>
             {ti('resetFilters')}

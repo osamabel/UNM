@@ -67,17 +67,20 @@ function AnimatedStat({
   delay,
   locale,
   compact,
+  tone,
 }: {
   stat: Stat;
   label: string;
   delay: number;
   locale: Locale;
   compact?: boolean;
+  tone?: 'dark' | 'light';
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(false);
   const { value: target, suffix } = parseStatDisplay(stat.value);
   const count = useCountUp(target, active);
+  const light = tone === 'light';
 
   useEffect(() => {
     const el = ref.current;
@@ -104,8 +107,9 @@ function AnimatedStat({
     <div
       ref={ref}
       className={cn(
-        'glass-stat text-center',
-        compact ? 'px-2 py-3 sm:px-3 sm:py-3.5' : 'px-3 py-4 sm:px-4 sm:py-5',
+        'text-center',
+        light ? 'stat-tile-light' : 'glass-stat',
+        compact ? 'px-2.5 py-3.5 sm:px-3 sm:py-4' : 'px-3 py-4 sm:px-4 sm:py-5',
         'transition-all duration-700 ease-smooth motion-reduce:transition-none',
         active ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0',
       )}
@@ -116,18 +120,24 @@ function AnimatedStat({
           name={stat.icon}
           size={compact ? 16 : 18}
           weight="medium"
-          className="text-primary-200"
+          className={light ? 'text-primary' : 'text-primary-200'}
         />
       </span>
       <dd
         className={cn(
-          'font-display font-semibold tabular-nums text-warm-50',
-          compact ? 'text-lg sm:text-xl' : 'text-xl sm:text-2xl',
+          'font-display font-semibold tabular-nums',
+          light ? 'text-secondary' : 'text-warm-50',
+          compact ? 'text-xl sm:text-2xl' : 'text-xl sm:text-2xl',
         )}
       >
         {formatStatValue(count, suffix, locale)}
       </dd>
-      <dt className="mt-0.5 text-[9px] font-medium uppercase tracking-wider text-warm-300 sm:text-[10px]">
+      <dt
+        className={cn(
+          'mt-1 text-[10px] font-medium uppercase tracking-[0.12em]',
+          light ? 'text-secondary/55' : 'text-warm-300',
+        )}
+      >
         {label}
       </dt>
     </div>
@@ -135,7 +145,15 @@ function AnimatedStat({
 }
 
 /** Four key figures — used inside hero panel and optional standalone band. */
-export function HeroStatsGrid({ compact = false, className }: { compact?: boolean; className?: string }) {
+export function HeroStatsGrid({
+  compact = false,
+  className,
+  tone = 'dark',
+}: {
+  compact?: boolean;
+  className?: string;
+  tone?: 'dark' | 'light';
+}) {
   const t = useTranslations('home');
   const locale = useLocale() as Locale;
 
@@ -149,6 +167,7 @@ export function HeroStatsGrid({ compact = false, className }: { compact?: boolea
           delay={i * 80}
           locale={locale}
           compact={compact}
+          tone={tone}
         />
       ))}
     </dl>

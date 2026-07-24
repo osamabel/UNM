@@ -7,7 +7,7 @@ export const Articles: CollectionConfig = {
   admin: {
     useAsTitle: 'title.fr',
     group: 'Contenu',
-    defaultColumns: ['title', 'category', 'publishedAt'],
+    defaultColumns: ['title', 'channel', 'category', 'publishedAt'],
   },
   access: {
     read: () => true,
@@ -31,6 +31,21 @@ export const Articles: CollectionConfig = {
       ],
     },
     {
+      name: 'channel',
+      type: 'select',
+      required: false,
+      defaultValue: 'actualite',
+      index: true,
+      options: [
+        { label: 'Actualités', value: 'actualite' },
+        { label: 'Événements', value: 'evenement' },
+        { label: 'Newsroom / Presse', value: 'newsroom' },
+      ],
+      admin: {
+        description: 'Onglet de la page Actualités unifiée (Actualités · Événements · Newsroom). Défaut : Actualités.',
+      },
+    },
+    {
       name: 'category',
       type: 'select',
       required: true,
@@ -39,6 +54,40 @@ export const Articles: CollectionConfig = {
         { label: 'Recherche', value: 'recherche' },
         { label: 'Partenariats', value: 'partenariats' },
         { label: 'Événements', value: 'evenements' },
+        { label: 'Presse', value: 'presse' },
+      ],
+    },
+    {
+      name: 'eventDate',
+      type: 'date',
+      admin: {
+        condition: (_, siblingData) => siblingData?.channel === 'evenement',
+        date: { pickerAppearance: 'dayAndTime' },
+        description: 'Date / heure de l’événement (affichée sur la carte).',
+      },
+    },
+    {
+      name: 'eventLocation',
+      type: 'group',
+      admin: {
+        condition: (_, siblingData) => siblingData?.channel === 'evenement',
+      },
+      fields: [
+        { name: 'fr', type: 'text', label: 'Lieu (FR)' },
+        { name: 'en', type: 'text', label: 'Location (EN)' },
+      ],
+    },
+    {
+      name: 'eventKind',
+      type: 'select',
+      admin: {
+        condition: (_, siblingData) => siblingData?.channel === 'evenement',
+      },
+      options: [
+        { label: 'Journée Portes Ouvertes', value: 'openDay' },
+        { label: 'Webinaire', value: 'webinar' },
+        { label: 'Masterclass', value: 'masterclass' },
+        { label: 'Autre', value: 'other' },
       ],
     },
     { name: 'publishedAt', type: 'date', required: true, index: true },

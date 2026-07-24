@@ -3,12 +3,13 @@ import type { ReactNode } from 'react';
 import { setRequestLocale } from 'next-intl/server';
 import { SectionWrapper } from '@/components/ui/SectionWrapper';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
-import { PageHeader } from '@/components/patterns/PageHeader';
+import { PhotoHero } from '@/components/patterns/PhotoHero';
 import { ButtonLink } from '@/components/ui/Button';
 import { Icon, IconBox, type IconName } from '@/components/ui/Icon';
 import { JsonLd } from '@/components/shared/JsonLd';
 import { CTABanner } from '@/components/home/CTABanner';
 import { organisationsContent as c } from '@/lib/organisations-content';
+import { PAGE_HERO_IMAGE } from '@/lib/page-heroes';
 import { localized } from '@/lib/utils';
 import type { Locale } from '@unm/types';
 
@@ -109,15 +110,21 @@ export default function OrganisationsPage({ params }: Params) {
         ]}
       />
 
-      <SectionWrapper tone="soft" className="!pb-10 sm:!pb-12">
-        <PageHeader
-          icon="users"
-          eyebrow={localized(c.hero.eyebrow, locale)}
-          title={localized(c.hero.title, locale)}
-          description={localized(c.hero.tagline, locale)}
-          className="border-0 pb-0"
-        />
-        <div className="prose prose-secondary mt-6 max-w-3xl space-y-4 text-secondary/80 sm:mt-8">
+      <PhotoHero
+        eyebrow={localized(c.hero.eyebrow, locale)}
+        title={localized(c.hero.title, locale)}
+        subtitle={localized(c.hero.tagline, locale)}
+        imageSrc={PAGE_HERO_IMAGE.organisations}
+        imageAlt={
+          isEn
+            ? 'African executives — UNM for organizations'
+            : 'Dirigeants africains — UNM pour les organisations'
+        }
+        imagePosition="center 40%"
+      />
+
+      <SectionWrapper tone="canvas" className="!pb-10 sm:!pb-12">
+        <div className="prose prose-secondary max-w-3xl space-y-4 text-secondary/80">
           {c.hero.paragraphs.map((p, i) => (
             <p key={i}>{localized(p, locale)}</p>
           ))}

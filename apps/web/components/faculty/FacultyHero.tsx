@@ -1,17 +1,21 @@
 'use client';
 
+import Image from 'next/image';
 import { useLocale, useTranslations } from 'next-intl';
+import { Breadcrumb } from '@/components/ui/Breadcrumb';
 import { Icon } from '@/components/ui/Icon';
-import { FacultyHeroPanel } from '@/components/faculty/FacultyHeroPanel';
+import { ScrollReveal } from '@/components/patterns/ScrollReveal';
 import { getFacultyCoverSrc } from '@/lib/faculty-images';
+import { facultyPath, localized } from '@/lib/utils';
+import type { BreadcrumbItem } from '@/lib/schema';
 import type { Faculty, Locale } from '@unm/types';
-import { localized } from '@/lib/utils';
 
 interface Props {
   faculty: Faculty;
+  breadcrumbItems?: BreadcrumbItem[];
 }
 
-export function FacultyHero({ faculty }: Props) {
+export function FacultyHero({ faculty, breadcrumbItems }: Props) {
   const locale = useLocale() as Locale;
   const t = useTranslations('facultyPage');
   const ts = useTranslations('facultiesShowcase');
@@ -19,39 +23,62 @@ export function FacultyHero({ faculty }: Props) {
   const count = faculty.programCount ?? 0;
   const programLabel = count > 1 ? ts('programPlural') : ts('programSingular');
   const cover = getFacultyCoverSrc(faculty);
+  const title = localized(faculty.name, locale);
+  const description = localized(faculty.description, locale);
+  const fromCms = cover.startsWith('/cms-media/');
+
+  const crumbs: BreadcrumbItem[] = breadcrumbItems ?? [
+    { name: locale === 'en' ? 'Home' : 'Accueil', url: locale === 'en' ? '/en' : '/' },
+    {
+      name: locale === 'en' ? 'Faculties' : 'Facultés',
+      url: locale === 'en' ? '/en/faculties' : '/facultes',
+    },
+    { name: title, url: facultyPath(faculty.slug, locale) },
+  ];
 
   return (
-    <section className="relative overflow-hidden border-b border-warm-150/50 bg-canvas">
+    <section className="faculty-hero relative flex flex-col overflow-hidden">
+      <Image
+        src={cover}
+        alt={title}
+        fill
+        priority
+        sizes="100vw"
+        className="object-cover object-[center_30%]"
+        unoptimized={fromCms}
+      />
+      <div className="faculty-hero-scrub" aria-hidden />
       <div
-        className="hero-blob -right-20 -top-16 h-64 w-64 motion-reduce:hidden"
-        style={{ backgroundColor: `${accent}14` }}
+        className="faculty-hero-accent"
+        style={{
+          background: `radial-gradient(ellipse 55% 50% at 78% 35%, ${accent}55, transparent 65%)`,
+        }}
         aria-hidden
       />
-      <div
-        className="hero-blob bottom-0 left-0 h-48 w-48 bg-secondary/[0.04] motion-reduce:hidden"
-        aria-hidden
-        style={{ animationDelay: '-6s' }}
-      />
-      <div className="hero-bg pointer-events-none absolute inset-0" aria-hidden />
 
-      <div className="container-page relative min-w-0 py-10 sm:py-14 lg:py-16">
-        <FacultyHeroPanel
-          eyebrow={t('eyebrow')}
-          title={localized(faculty.name, locale)}
-          description={localized(faculty.description, locale)}
-          accent={accent}
-          imageSrc={cover}
-          imageAlt={localized(faculty.name, locale)}
-        >
-          {count > 0 && (
-            <span className="glass-pill inline-flex max-w-full text-xs font-semibold text-secondary/80">
-              <Icon name="library" size={14} className="shrink-0 text-primary" />
-              <span className="truncate">
-                {count} {programLabel}
-              </span>
-            </span>
-          )}
-        </FacultyHeroPanel>
+      <div className="container-page relative z-10 pt-5 sm:pt-6">
+        <Breadcrumb items={crumbs} tone="onDark" />
+      </div>
+
+      <div className="container-page relative z-10 mt-auto grid gap-8 pb-12 pt-10 sm:pb-14 sm:pt-12 lg:grid-cols-12 lg:items-end lg:gap-10 lg:pb-16 lg:pt-16">
+        <div className="min-w-0 lg:col-span-7 xl:col-span-6">
+          <ScrollReveal from="up" duration={900}>
+            <div className="faculty-hero-meta">
+              <p className="faculty-hero-eyebrow">{t('eyebrow')}</p>
+              <span className="faculty-hero-rule" aria-hidden />
+            </div>
+            <h1 className="faculty-hero-title">{title}</h1>
+            <p className="faculty-hero-desc">{description}</p>
+            {count > 0 ? (
+              <ul className="faculty-hero-trust">
+                <li>
+                  <Icon name="library" size={15} className="text-[rgba(255,196,170,0.95)]" />
+                  {count} {programLabel}
+                </li>
+              </ul>
+            ) : null}
+          </ScrollReveal>
+        </div>
       </div>
     </section>
   );

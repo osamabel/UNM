@@ -23,8 +23,13 @@ export function CallbackForm() {
   const tco = useTranslations('contact');
   const [done, setDone] = useState(false);
   const [submitError, setSubmitError] = useState(false);
-  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<Data>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<Data>({
     resolver: zodResolver(schema),
+    mode: 'onBlur',
   });
 
   async function onSubmit(data: Data) {
@@ -44,20 +49,23 @@ export function CallbackForm() {
 
   if (done) {
     return (
-      <div className="py-6 text-center sm:py-8">
+      <div className="contact-form-success">
         <span className="icon-box mx-auto h-14 w-14">
           <Icon name="check-circle" size={28} className="text-primary" />
         </span>
         <p className="mt-4 font-display text-xl text-secondary">{t('thankYou')}</p>
+        <p className="mx-auto mt-2 max-w-sm text-sm text-secondary/60">{tco('callbackSuccessHint')}</p>
       </div>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
+    <form onSubmit={handleSubmit(onSubmit)} className="contact-form-fields" noValidate>
       <Input
         label={tco('name')}
         required
+        autoComplete="name"
+        placeholder={tco('placeholderFullName')}
         {...register('name')}
         error={errors.name && t('errorRequired')}
       />
@@ -65,6 +73,9 @@ export function CallbackForm() {
         label={t('phone')}
         type="tel"
         required
+        autoComplete="tel"
+        placeholder={tco('placeholderPhone')}
+        hint={tco('callbackPhoneHint')}
         {...register('phone')}
         error={errors.phone && t('errorPhone')}
       />
@@ -72,20 +83,34 @@ export function CallbackForm() {
         label={tco('preferredSlot')}
         required
         {...register('slot')}
+        placeholder={tco('placeholderSlot')}
         options={[
           { value: 'morning', label: tco('slotMorning') },
           { value: 'afternoon', label: tco('slotAfternoon') },
           { value: 'evening', label: tco('slotEvening') },
         ]}
+        error={errors.slot && t('errorRequired')}
       />
-      {submitError && (
-        <p role="alert" className="rounded-xl border border-primary/20 bg-primary-50/80 px-4 py-3 text-sm text-primary-800">
+      {submitError ? (
+        <p
+          role="alert"
+          className="rounded-xl border border-primary/20 bg-primary-50/80 px-4 py-3 text-sm text-primary-800"
+        >
           {t('errorGeneric')}
         </p>
-      )}
-      <Button type="submit" loading={isSubmitting} size="lg" trailingIcon={<Icon name="phone" size={18} />}>
-        {tc('submit')}
-      </Button>
+      ) : null}
+      <div className="contact-form-submit">
+        <Button
+          type="submit"
+          loading={isSubmitting}
+          size="lg"
+          className="w-full justify-center sm:w-auto"
+          trailingIcon={<Icon name="phone" size={18} />}
+        >
+          {tco('callbackSubmit')}
+        </Button>
+        <p className="contact-form-submit-hint">{tco('callbackSubmitHint')}</p>
+      </div>
     </form>
   );
 }

@@ -6,7 +6,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import { SectionWrapper } from '@/components/ui/SectionWrapper';
 import { SectionHeader } from '@/components/patterns/SectionHeader';
 import { ScrollReveal } from '@/components/patterns/ScrollReveal';
-import { Icon, IconBox } from '@/components/ui/Icon';
+import { Icon } from '@/components/ui/Icon';
 import type { Locale, Testimonial } from '@unm/types';
 import { localized } from '@/lib/utils';
 import { cn } from '@/lib/utils';
@@ -58,8 +58,8 @@ export function TestimonialsSlider({ testimonials }: Props) {
       <div className="grid min-w-0 items-start gap-8 lg:grid-cols-12 lg:gap-12">
         <ScrollReveal className="min-w-0 lg:col-span-4">
           <SectionHeader
+            index="04"
             eyebrow={t('testimonialsEyebrow')}
-            icon="star"
             title={t('testimonialsTitle')}
             description={t('testimonialsSubtitle')}
             className="!mb-0"
@@ -73,16 +73,7 @@ export function TestimonialsSlider({ testimonials }: Props) {
 
         <div className="min-w-0 lg:col-span-8">
           <ScrollReveal delay={80}>
-            <figure className="card-interactive relative overflow-hidden p-6 sm:p-8 lg:p-10">
-              <div
-                className="pointer-events-none absolute -right-8 -top-8 h-40 w-40 rounded-full bg-primary/10 blur-3xl"
-                aria-hidden
-              />
-              <div
-                className="pointer-events-none absolute -bottom-6 left-1/4 h-28 w-28 rounded-full bg-secondary/5 blur-2xl"
-                aria-hidden
-              />
-
+            <figure className="card-flat relative overflow-hidden p-6 sm:p-8 lg:p-10">
               <div
                 key={current.id}
                 className={cn(
@@ -90,12 +81,12 @@ export function TestimonialsSlider({ testimonials }: Props) {
                   direction === 1 ? 'testimonial-enter-forward' : 'testimonial-enter-back',
                 )}
               >
-                <IconBox name="quote" size="md" className="mb-6" />
-                <blockquote className="font-display text-lg leading-snug text-secondary sm:text-xl lg:text-2xl lg:leading-snug">
+                <Icon name="quote" size={28} className="mb-5 text-primary/70" />
+                <blockquote className="max-w-2xl font-display text-lg leading-snug text-secondary sm:text-xl lg:text-[1.65rem] lg:leading-snug">
                   &ldquo;{localized(current.quote, locale)}&rdquo;
                 </blockquote>
 
-                <figcaption className="mt-8 flex flex-col gap-4 border-t border-warm-150/60 pt-8 sm:flex-row sm:items-center sm:justify-between">
+                <figcaption className="mt-8 flex flex-col gap-4 border-t border-warm-150/70 pt-7 sm:flex-row sm:items-center sm:justify-between">
                   <div className="flex items-center gap-4">
                     {current.avatar?.url ? (
                       <Image
@@ -103,11 +94,11 @@ export function TestimonialsSlider({ testimonials }: Props) {
                         alt=""
                         width={56}
                         height={56}
-                        className="h-14 w-14 shrink-0 rounded-full object-cover ring-2 ring-white/90 shadow-sm"
+                        className="h-14 w-14 shrink-0 rounded-full object-cover ring-2 ring-warm-100"
                       />
                     ) : (
                       <span
-                        className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-primary/10 font-display text-lg text-primary ring-2 ring-white/80"
+                        className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-primary/10 font-display text-lg text-primary"
                         aria-hidden
                       >
                         {current.authorName.charAt(0)}
@@ -123,13 +114,12 @@ export function TestimonialsSlider({ testimonials }: Props) {
                   {(programLabel || current.graduationYear) && (
                     <div className="flex flex-wrap gap-2 sm:justify-end">
                       {programLabel && (
-                        <span className="glass-pill text-xs font-semibold text-secondary/80">
-                          <Icon name="user" size={12} className="text-primary" />
+                        <span className="rounded-full border border-warm-150 bg-warm-50 px-3 py-1 text-xs font-semibold text-secondary/80">
                           {programLabel}
                         </span>
                       )}
                       {current.graduationYear && (
-                        <span className="glass-pill text-xs font-semibold text-secondary/70">
+                        <span className="rounded-full border border-warm-150 bg-warm-50 px-3 py-1 text-xs font-semibold text-secondary/70">
                           {current.graduationYear}
                         </span>
                       )}
@@ -146,7 +136,7 @@ export function TestimonialsSlider({ testimonials }: Props) {
                 type="button"
                 aria-label={locale === 'en' ? 'Previous testimonial' : 'Témoignage précédent'}
                 onClick={prev}
-                className="glass touch-target flex h-11 w-11 items-center justify-center rounded-full text-secondary transition-all duration-300 hover:-translate-y-0.5 hover:text-primary"
+                className="touch-target flex h-11 w-11 items-center justify-center rounded-full border border-warm-150 bg-white text-secondary transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/30 hover:text-primary"
               >
                 <Icon name="chevron-left" size={20} />
               </button>
@@ -170,7 +160,7 @@ export function TestimonialsSlider({ testimonials }: Props) {
                 type="button"
                 aria-label={locale === 'en' ? 'Next testimonial' : 'Témoignage suivant'}
                 onClick={next}
-                className="glass touch-target flex h-11 w-11 items-center justify-center rounded-full text-secondary transition-all duration-300 hover:-translate-y-0.5 hover:text-primary"
+                className="touch-target flex h-11 w-11 items-center justify-center rounded-full border border-warm-150 bg-white text-secondary transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/30 hover:text-primary"
               >
                 <Icon name="chevron-right" size={20} />
               </button>
