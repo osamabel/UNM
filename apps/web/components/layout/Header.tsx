@@ -9,6 +9,8 @@ import { MobileNav } from './MobileNav';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { SearchModal } from '@/components/shared/SearchModal';
 import { ButtonLink } from '@/components/ui/Button';
+import { Icon } from '@/components/ui/Icon';
+import { PORTAL_URL } from '@/lib/portal';
 import { cn } from '@/lib/utils';
 import type { Locale } from '@unm/types';
 
@@ -33,44 +35,42 @@ export function Header() {
         scrolled && 'is-scrolled',
       )}
     >
-      {/*
-        Breakpoints:
-        - < xl: logo + utilities + hamburger
-        - ≥ xl: desktop nav + Apply CTA (premium laptop coverage)
-      */}
       <div
         className={cn(
-          'container-page flex min-w-0 items-center gap-3 sm:gap-4 xl:gap-5',
-          scrolled ? 'h-[4.25rem] sm:h-[4.5rem]' : 'h-[4.5rem] sm:h-[5rem] xl:h-[5.25rem]',
+          'header-bar container-page',
+          scrolled ? 'is-compact' : '',
         )}
       >
         <Link
           href={locale === 'en' ? '/en' : '/'}
           aria-label="UNM — Université Numérique du Maroc"
-          className="flex shrink-0 items-center transition-opacity duration-300 hover:opacity-90"
+          className="header-logo"
         >
           <Logo surface="light" />
         </Link>
 
-        <nav
-          aria-label="Primary"
-          className="hidden min-w-0 flex-1 items-center justify-center overflow-visible xl:flex"
-        >
+        <nav aria-label="Primary" className="header-nav">
           <Nav />
         </nav>
 
-        <div className="ml-auto flex shrink-0 items-center gap-1 sm:gap-1.5 xl:gap-2.5">
+        <div className="header-actions">
           <LanguageSwitcher className="hidden sm:flex" />
-          <span aria-hidden className="hidden h-4 w-px bg-warm-200/80 sm:inline-block" />
+          <span aria-hidden className="header-actions-rule hidden sm:inline-block" />
           <SearchModal />
-          <ButtonLink
-            href={applyHref}
-            size="sm"
-            className="hidden xl:inline-flex"
+          <a
+            href={PORTAL_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={tCommon('portalAccessAria')}
+            className="header-portal-link"
           >
+            <Icon name="laptop" size={15} aria-hidden />
+            <span className="header-portal-label">{tCommon('portalAccess')}</span>
+          </a>
+          <ButtonLink href={applyHref} size="sm" className="header-apply-btn">
             {tCommon('apply')}
           </ButtonLink>
-          <div className="xl:hidden">
+          <div className="header-mobile-trigger">
             <MobileNav />
           </div>
         </div>

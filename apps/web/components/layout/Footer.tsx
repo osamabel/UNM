@@ -7,9 +7,10 @@ import { Logo } from '@/components/layout/Logo';
 import { Icon } from '@/components/ui/Icon';
 import { cn, localized } from '@/lib/utils';
 import { digitsOnly } from '@/lib/site-settings';
+import { PORTAL_URL } from '@/lib/portal';
 import type { Locale, SiteSettings } from '@unm/types';
 
-type FooterLink = { label: string; fr: string; en: string };
+type FooterLink = { label: string; fr: string; en: string; external?: boolean };
 type SocialKey = 'whatsapp' | 'linkedin' | 'facebook' | 'instagram' | 'youtube';
 
 function buildColumns(isEn: boolean): { titleKey: 'university' | 'academic' | 'resources'; links: FooterLink[] }[] {
@@ -36,10 +37,12 @@ function buildColumns(isEn: boolean): { titleKey: 'university' | 'academic' | 'r
         ? [
             { label: 'Programs', fr: '/programmes', en: '/en/programs' },
             { label: 'Admissions', fr: '/admissions', en: '/en/admissions' },
+            { label: 'Portal', fr: PORTAL_URL, en: PORTAL_URL, external: true },
           ]
         : [
             { label: 'Programmes', fr: '/programmes', en: '/en/programs' },
             { label: 'Admissions', fr: '/admissions', en: '/en/admissions' },
+            { label: 'Portail', fr: PORTAL_URL, en: PORTAL_URL, external: true },
           ],
     },
     {
@@ -263,13 +266,27 @@ export function Footer({ settings }: { settings: SiteSettings }) {
                 <nav key={col.titleKey} aria-label={t(col.titleKey)}>
                   <FooterNavTitle>{t(col.titleKey)}</FooterNavTitle>
                   <ul className="space-y-2">
-                    {col.links.map((l) => (
-                      <li key={l.label}>
-                        <Link href={isEn ? l.en : l.fr} className="link-on-dark !text-[0.8125rem]">
-                          {l.label}
-                        </Link>
-                      </li>
-                    ))}
+                    {col.links.map((l) => {
+                      const href = isEn ? l.en : l.fr;
+                      return (
+                        <li key={l.label}>
+                          {l.external ? (
+                            <a
+                              href={href}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="link-on-dark !text-[0.8125rem]"
+                            >
+                              {l.label}
+                            </a>
+                          ) : (
+                            <Link href={href} className="link-on-dark !text-[0.8125rem]">
+                              {l.label}
+                            </Link>
+                          )}
+                        </li>
+                      );
+                    })}
                   </ul>
                 </nav>
               ))}

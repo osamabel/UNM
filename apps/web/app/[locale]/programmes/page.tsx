@@ -19,7 +19,6 @@ export const revalidate = 120;
 interface Search {
   faculty?: string;
   type?: string;
-  format?: string;
   language?: string;
 }
 
@@ -29,7 +28,7 @@ export async function generateMetadata({ params }: { params: { locale: Locale } 
 }
 
 function ActiveFiltersFallback() {
-  return <div className="mb-4 h-9" aria-hidden />;
+  return <div className="programs-active-fallback" aria-hidden />;
 }
 
 export default async function ProgramsIndex({
@@ -55,8 +54,11 @@ export default async function ProgramsIndex({
     name: localized(f.name, params.locale),
   }));
   const hasFilters = Boolean(
-    searchParams.faculty || searchParams.type || searchParams.format || searchParams.language,
+    searchParams.faculty || searchParams.type || searchParams.language,
   );
+  const countLabel = hasFilters
+    ? t('programCountFiltered', { count: programs.length })
+    : t('programCount', { count: programs.length });
 
   return (
     <>
@@ -80,39 +82,16 @@ export default async function ProgramsIndex({
         imagePosition="center 30%"
       />
 
-      <SectionWrapper tone="canvas" className="programs-index !pt-7 sm:!pt-9">
+      <SectionWrapper tone="soft" className="programs-index">
         <div className="programs-layout">
-          <aside className="programs-filters">
-            <div className="programs-filters-panel">
-              <div className="programs-filters-head">
-                <span className="icon-box h-10 w-10 shrink-0">
-                  <Icon name="search" size={18} />
-                </span>
-                <div className="min-w-0">
-                  <p className="programs-filters-title">{t('filters')}</p>
-                  <p className="programs-filters-hint">{t('filtersHint')}</p>
-                </div>
-              </div>
-              <ProgramFilter faculties={facultyOptions} />
-            </div>
-          </aside>
-
-          <div className="programs-results">
-            <div className="programs-toolbar">
-              <p className="programs-count">
-                <span className="programs-count-pill">
-                  {t('programCount', { count: programs.length })}
-                </span>
-                {hasFilters ? (
-                  <span className="programs-count-note">{t('filteredLabel')}</span>
-                ) : null}
-              </p>
-            </div>
-
+          <div className="programs-filter-rail" aria-label={t('filters')}>
+            <ProgramFilter faculties={facultyOptions} countLabel={countLabel} />
             <Suspense fallback={<ActiveFiltersFallback />}>
               <ProgramActiveFilters faculties={facultyOptions} />
             </Suspense>
+          </div>
 
+          <div className="programs-results">
             {programs.length > 0 ? (
               <div className="programs-grid">
                 {programs.map((p) => (
@@ -127,14 +106,12 @@ export default async function ProgramsIndex({
                 ))}
               </div>
             ) : (
-              <div className="programs-empty card-flat">
-                <span className="icon-box mx-auto h-14 w-14">
-                  <Icon name="search" size={28} />
+              <div className="programs-empty">
+                <span className="programs-empty-icon" aria-hidden>
+                  <Icon name="search" size={26} />
                 </span>
-                <p className="mt-5 font-display text-xl text-secondary">{t('empty')}</p>
-                <p className="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-secondary/60">
-                  {t('emptyHint')}
-                </p>
+                <p className="programs-empty-title">{t('empty')}</p>
+                <p className="programs-empty-hint">{t('emptyHint')}</p>
               </div>
             )}
           </div>

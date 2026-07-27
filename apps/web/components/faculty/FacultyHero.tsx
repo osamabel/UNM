@@ -23,8 +23,16 @@ export function FacultyHero({ faculty, breadcrumbItems }: Props) {
   const count = faculty.programCount ?? 0;
   const programLabel = count > 1 ? ts('programPlural') : ts('programSingular');
   const cover = getFacultyCoverSrc(faculty);
-  const title = localized(faculty.name, locale);
-  const description = localized(faculty.description, locale);
+  const isBusinessSchool = faculty.slug === 'business-school';
+  const title = isBusinessSchool
+    ? t('businessSchoolTitle')
+    : localized(faculty.name, locale);
+  const baseDescription = localized(faculty.description, locale);
+  const ebsNote = t('businessSchoolEbsNote');
+  const description =
+    isBusinessSchool && !baseDescription.includes('1967')
+      ? `${baseDescription}\n\n${ebsNote}`
+      : baseDescription;
   const fromCms = cover.startsWith('/cms-media/');
 
   const crumbs: BreadcrumbItem[] = breadcrumbItems ?? [
@@ -68,7 +76,11 @@ export function FacultyHero({ faculty, breadcrumbItems }: Props) {
               <span className="faculty-hero-rule" aria-hidden />
             </div>
             <h1 className="faculty-hero-title">{title}</h1>
-            <p className="faculty-hero-desc">{description}</p>
+            <div className="faculty-hero-desc space-y-4">
+              {description.split('\n\n').map((paragraph) => (
+                <p key={paragraph.slice(0, 48)}>{paragraph}</p>
+              ))}
+            </div>
             {count > 0 ? (
               <ul className="faculty-hero-trust">
                 <li>

@@ -70,13 +70,13 @@ const ITEMS: NavItem[] = [
 // Shared classes for level-1 items: UPPERCASE, narrow tracking.
 // Inspired by HBS / Wharton / INSEAD main nav.
 const L1_LINK =
-  'nav-link !px-2.5 !py-2 !text-[12px] !tracking-[0.06em] whitespace-nowrap xl:!px-3 xl:!text-[12.5px]';
+  'nav-link !px-1.5 !py-2 !text-[11px] !tracking-[0.05em] whitespace-nowrap xl:!px-2 xl:!text-[11.5px] 2xl:!px-2.5 2xl:!text-[12px]';
 
 export function Nav() {
   const locale = useLocale() as Locale;
   const t = useTranslations('nav');
   return (
-    <ul className="flex flex-nowrap items-center justify-center gap-0">
+    <ul className="header-nav-list">
       {ITEMS.map((item) =>
         item.kind === 'leaf' ? (
           <li key={item.key} className="shrink-0">
@@ -178,7 +178,7 @@ function Dropdown({ label, parentHref, items, comingSoonLabel }: DropdownProps) 
       onBlur={scheduleClose}
     >
       <span className="nav-link inline-flex items-center rounded !px-0 !py-0 whitespace-nowrap">
-        <Link href={parentHref} className="rounded-l px-2.5 py-2 xl:px-3">
+        <Link href={parentHref} className="rounded-l px-1.5 py-2 xl:px-2 2xl:px-2.5">
           {label}
         </Link>
         <button

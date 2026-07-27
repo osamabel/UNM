@@ -165,7 +165,24 @@ export async function getPrograms(q: ProgramQuery = {}): Promise<Program[]> {
   const data = await cmsFetch<{ docs: any[] }>(`/programs?${params}`, {
     tag: 'programs',
   });
-  return (data?.docs ?? []).map(normalizeProgram);
+  return sortProgramsByType((data?.docs ?? []).map(normalizeProgram));
+}
+
+/** DBA → MBA → Bachelor → Certificate, then stable by slug. */
+const PROGRAM_TYPE_ORDER: Record<Program['type'], number> = {
+  DBA: 0,
+  MBA: 1,
+  Bachelor: 2,
+  Certificate: 3,
+};
+
+function sortProgramsByType(programs: Program[]): Program[] {
+  return [...programs].sort((a, b) => {
+    const byType =
+      (PROGRAM_TYPE_ORDER[a.type] ?? 99) - (PROGRAM_TYPE_ORDER[b.type] ?? 99);
+    if (byType !== 0) return byType;
+    return a.slug.localeCompare(b.slug);
+  });
 }
 
 export async function getProgram(slug: string): Promise<Program | null> {

@@ -9,6 +9,7 @@ import { ButtonLink } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { LOGO_SRC } from '@/lib/logo';
+import { PORTAL_URL } from '@/lib/portal';
 import type { Locale } from '@unm/types';
 import { cn } from '@/lib/utils';
 
@@ -231,6 +232,17 @@ export function MobileNav() {
                 >
                   {tCommon('apply')}
                 </ButtonLink>
+                <a
+                  href={PORTAL_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={close}
+                  aria-label={tCommon('portalAccessAria')}
+                  className="mobile-nav-portal"
+                >
+                  <Icon name="laptop" size={18} aria-hidden />
+                  <span>{tCommon('portalAccess')}</span>
+                </a>
                 <div className="mobile-nav-lang">
                   <span className="mobile-nav-lang-label">{tNav('language')}</span>
                   <LanguageSwitcher />

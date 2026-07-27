@@ -4,7 +4,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
 import { Badge } from '@/components/ui/Badge';
+import { ButtonLink } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
+import { StaggerReveal } from '@/components/patterns/ScrollReveal';
 import type { Locale, Program } from '@unm/types';
 import { dbaContent } from '@/lib/dba-content';
 import { displayProgramTitle, facultyPath, localized } from '@/lib/utils';
@@ -36,10 +38,13 @@ function diplomaForType(type: Program['type'], isEn: boolean): string {
   }
 }
 
-function shortText(value: string, max = 48): string {
+/** Keep sphere text readable: prefer Bac level when the CMS blurb is a paragraph. */
+function sphereValue(value: string): string {
   const clean = value.replace(/\s+/g, ' ').trim();
-  if (clean.length <= max) return clean;
-  return `${clean.slice(0, max - 1).trimEnd()}…`;
+  if (clean.length <= 42) return clean;
+  const bac = clean.match(/Bac\s*\+?\s*\d+/i);
+  if (bac) return bac[0].replace(/\s+/g, ' ').replace(/\s*\+\s*/, '+');
+  return clean;
 }
 
 function buildSpecs(
@@ -62,19 +67,19 @@ function buildSpecs(
   const schedule = localized(program.schedule, locale);
 
   return [
-    { icon: 'book', label: t('pace'), value: program.format },
-    { icon: 'clock', label: t('duration'), value: program.duration },
+    { icon: 'book', label: t('pace'), value: sphereValue(program.format) },
+    { icon: 'clock', label: t('duration'), value: sphereValue(program.duration) },
     {
       icon: 'shield',
       label: t('access'),
-      value: admission ? shortText(admission) : isEn ? 'On request' : 'Sur demande',
+      value: admission ? sphereValue(admission) : isEn ? 'On request' : 'Sur demande',
     },
     { icon: 'award', label: t('diploma'), value: diplomaForType(program.type, isEn) },
     {
       icon: 'graduation',
       label: t('defence'),
       value: schedule
-        ? shortText(schedule)
+        ? sphereValue(schedule)
         : program.language.map((l) => l.toUpperCase()).join(' · '),
     },
     {
@@ -88,6 +93,7 @@ function buildSpecs(
 export function ProgramHero({ program }: Props) {
   const locale = useLocale() as Locale;
   const t = useTranslations('program');
+  const tc = useTranslations('common');
   const title = displayProgramTitle(localized(program.title, locale), program.type);
   const facLabel = program.faculty?.name ? localized(program.faculty.name, locale) : '';
   const cover = getProgramCoverSrc(program.slug, program.type);
@@ -98,68 +104,92 @@ export function ProgramHero({ program }: Props) {
       : locale === 'en'
         ? 'Programme at a glance'
         : 'Fiche programme';
+  const admissionsHref = `${locale === 'en' ? '/en/admissions' : '/admissions'}?program=${program.slug}`;
+  const vocation = program.vocation ? localized(program.vocation, locale) : '';
 
   return (
-    <section className="program-hero relative overflow-hidden border-b border-warm-150/40 bg-canvas">
-      <div className="container-page relative grid min-w-0 items-center gap-8 py-10 sm:py-12 lg:grid-cols-12 lg:gap-12 lg:py-16">
-        <div className="min-w-0 lg:col-span-6 xl:col-span-5">
-          <div className="flex flex-wrap items-center gap-2">
-            <Badge variant="program-type" type={program.type}>
-              {program.type}
-            </Badge>
-            {program.faculty?.slug && (
-              <Link
-                href={facultyPath(program.faculty.slug, locale)}
-                className="glass-pill text-xs font-semibold text-secondary/75 transition-colors hover:text-primary"
+    <section className="program-hero relative flex flex-col overflow-hidden">
+      <Image
+        src={cover}
+        alt=""
+        fill
+        priority
+        sizes="100vw"
+        className="object-cover object-center"
+        aria-hidden
+      />
+      <div className="program-hero-scrub" aria-hidden />
+      <div className="program-hero-vignette" aria-hidden />
+
+      <div className="container-page relative z-10 min-w-0">
+        <div className="program-hero-stage">
+          <div className="program-hero-copy">
+            <div className="flex flex-wrap items-center gap-2">
+              <Badge variant="program-type" type={program.type}>
+                {program.type}
+              </Badge>
+              {program.faculty?.slug ? (
+                <Link
+                  href={facultyPath(program.faculty.slug, locale)}
+                  className="program-hero-faculty-pill"
+                >
+                  {facLabel.replace(/^UNM\s+/i, '')}
+                </Link>
+              ) : null}
+            </div>
+
+            <h1 className="program-hero-title">{title}</h1>
+
+            {vocation ? <p className="program-hero-desc">{vocation}</p> : null}
+
+            <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+              <ButtonLink
+                href={admissionsHref}
+                size="lg"
+                className="w-full sm:w-auto"
+                trailingIcon={<Icon name="arrow-right" size={18} />}
               >
-                {facLabel.replace(/^UNM\s+/i, '')}
-              </Link>
-            )}
+                {tc('apply')}
+              </ButtonLink>
+              <ButtonLink
+                href="#brochure"
+                variant="ghost"
+                size="lg"
+                className="program-hero-cta-ghost w-full sm:w-auto"
+              >
+                {tc('downloadBrochure')}
+              </ButtonLink>
+            </div>
           </div>
 
-          <h1 className="mt-5 max-w-2xl break-words font-display text-3xl leading-tight text-secondary sm:text-4xl lg:text-[2.55rem] lg:leading-[1.12]">
-            {title}
-          </h1>
-          {program.vocation && localized(program.vocation, locale) && (
-            <p className="mt-5 max-w-xl text-sm leading-relaxed text-secondary/70 sm:text-base">
-              {localized(program.vocation, locale)}
-            </p>
-          )}
-        </div>
-
-        <div className="relative lg:col-span-6 xl:col-span-7">
-          <div className="relative aspect-[16/11] overflow-hidden rounded-2xl shadow-[0_24px_60px_rgba(61,26,11,0.12)]">
-            <Image
-              src={cover}
-              alt={title}
-              fill
-              priority
-              sizes="(max-width: 1024px) 100vw, 55vw"
-              className="object-cover"
-            />
-            <div
-              className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-secondary/20 via-transparent to-transparent"
-              aria-hidden
-            />
-          </div>
-        </div>
-      </div>
-
-      <div className="program-hero-band" aria-label={bandLabel}>
-        <div className="container-page">
-          <dl className="program-hero-band-grid">
-            {specs.map((spec) => (
-              <div key={spec.label} className="program-hero-band-item">
-                <dt>
-                  <span className="program-hero-band-icon" aria-hidden>
-                    <Icon name={spec.icon} size={22} />
-                  </span>
-                  <span className="program-hero-band-label">{spec.label}</span>
-                </dt>
-                <dd className="program-hero-band-value">{spec.value}</dd>
-              </div>
-            ))}
-          </dl>
+          <aside className="program-hero-facts" aria-label={bandLabel}>
+            <div className="program-hero-orbit" aria-hidden />
+            <StaggerReveal
+              className="program-hero-spheres"
+              from="scale"
+              delay={120}
+              stagger={100}
+              duration={880}
+              blur
+              itemClassName="program-hero-sphere-slot"
+            >
+              {specs.map((spec, index) => (
+                <article
+                  key={spec.label}
+                  className={`program-fact-sphere glass-dark program-fact-sphere--${index}`}
+                >
+                  <span className="program-fact-sphere-ring" aria-hidden />
+                  <span className="program-fact-sphere-shine" aria-hidden />
+                  <span className="program-fact-sphere-glow" aria-hidden />
+                  <div className="program-fact-sphere-icon" aria-hidden>
+                    <Icon name={spec.icon} size={15} />
+                  </div>
+                  <p className="program-fact-sphere-value">{spec.value}</p>
+                  <p className="program-fact-sphere-label">{spec.label}</p>
+                </article>
+              ))}
+            </StaggerReveal>
+          </aside>
         </div>
       </div>
     </section>

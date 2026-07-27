@@ -9,6 +9,9 @@ import { HeroFloatCards } from '@/components/home/HeroFloatCards';
 import { cn } from '@/lib/utils';
 import type { Locale, Partner } from '@unm/types';
 
+const HERO_POSTER_SRC = '/hero-home.jpg';
+const HERO_VIDEO_SRC = '/homevideo.mp4';
+
 interface Props {
   partners?: Partner[];
 }
@@ -22,12 +25,47 @@ export function HeroSection({ partners = [] }: Props) {
     : 'Diplômés UNM célébrant leur réussite';
 
   const imgRef = useRef<HTMLImageElement>(null);
-  const [loaded, setLoaded] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [posterReady, setPosterReady] = useState(false);
+  const [videoReady, setVideoReady] = useState(false);
+  const [autoplay, setAutoplay] = useState(true);
 
-  // A cached image can finish before hydration, so its load event never fires.
   useEffect(() => {
-    if (imgRef.current?.complete) setLoaded(true);
+    if (imgRef.current?.complete) setPosterReady(true);
   }, []);
+
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const sync = () => setAutoplay(!mq.matches);
+    sync();
+    mq.addEventListener('change', sync);
+    return () => mq.removeEventListener('change', sync);
+  }, []);
+
+  useEffect(() => {
+    if (!autoplay) return;
+    const video = videoRef.current;
+    if (!video) return;
+
+    video.muted = true;
+    video.defaultMuted = true;
+    video.volume = 0;
+
+    const play = () => {
+      video.muted = true;
+      video.volume = 0;
+      void video.play().catch(() => {
+        /* Poster image stays visible if autoplay is blocked */
+      });
+    };
+
+    if (video.readyState >= 2) play();
+    else video.addEventListener('loadeddata', play, { once: true });
+
+    return () => video.removeEventListener('loadeddata', play);
+  }, [autoplay]);
+
+  const showVideo = autoplay && videoReady;
 
   return (
     <section
@@ -38,19 +76,46 @@ export function HeroSection({ partners = [] }: Props) {
       <div className="absolute inset-0" aria-hidden>
         <Image
           ref={imgRef}
-          src="/hero-home.jpg"
+          src={HERO_POSTER_SRC}
           alt=""
           fill
           priority
           quality={90}
           sizes="100vw"
-          onLoad={() => setLoaded(true)}
+          onLoad={() => setPosterReady(true)}
           className={cn(
-            // opacity only — .hero-bg-image owns transform for the crop framing
-            'hero-bg-image object-cover transition-opacity duration-[1200ms] ease-out motion-reduce:transition-none',
-            loaded ? 'opacity-100' : 'opacity-0',
+            'hero-bg-poster hero-bg-image object-cover transition-opacity duration-[1200ms] ease-out motion-reduce:transition-none',
+            posterReady && !showVideo ? 'opacity-100' : 'opacity-0',
           )}
         />
+
+        {autoplay ? (
+          <video
+            ref={videoRef}
+            className={cn(
+              'hero-bg-video hero-bg-image object-cover transition-opacity duration-[1200ms] ease-out motion-reduce:transition-none',
+              showVideo ? 'opacity-100' : 'opacity-0',
+            )}
+            autoPlay
+            muted
+            defaultMuted
+            loop
+            playsInline
+            preload="auto"
+            poster={HERO_POSTER_SRC}
+            disablePictureInPicture
+            onLoadedData={() => setVideoReady(true)}
+            onCanPlay={() => setVideoReady(true)}
+            onVolumeChange={() => {
+              const video = videoRef.current;
+              if (!video) return;
+              video.muted = true;
+              video.volume = 0;
+            }}
+          >
+            <source src={HERO_VIDEO_SRC} type="video/mp4" />
+          </video>
+        ) : null}
       </div>
 
       <div className="hero-bg-scrub pointer-events-none absolute inset-0" aria-hidden />

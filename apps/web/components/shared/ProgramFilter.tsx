@@ -7,56 +7,55 @@ import { Button } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
 import { Modal } from '@/components/ui/Modal';
 import { cn } from '@/lib/utils';
-import type { ProgramFormat, ProgramType } from '@unm/types';
+import type { ProgramType } from '@unm/types';
 
 interface Props {
   faculties: { slug: string; name: string }[];
+  countLabel?: string;
 }
 
 const TYPES: ProgramType[] = ['DBA', 'MBA', 'Certificate'];
-const FORMATS: ProgramFormat[] = ['Présentiel', 'Distanciel', 'Hybride'];
 const LANGS = [
   { value: 'fr', label: 'FR' },
   { value: 'en', label: 'EN' },
 ] as const;
 
+function shortFacultyName(name: string): string {
+  return name
+    .replace(/^UNM\s+/i, '')
+    .replace(/^School of\s+/i, '')
+    .replace(/^École\s+(de\s+|d[’'])?/i, '')
+    .replace(/\s*&\s*Public Affairs/i, '')
+    .replace(/^Business School.*/i, 'Business School')
+    .replace(/^Governance.*/i, 'Governance')
+    .replace(/^Technology.*/i, 'Technology')
+    .replace(/^Sport Business.*/i, 'Sport Business');
+}
+
 function FilterChip({
   selected,
   onClick,
   children,
+  className,
 }: {
   selected: boolean;
   onClick: () => void;
   children: ReactNode;
+  className?: string;
 }) {
   return (
     <button
       type="button"
       aria-pressed={selected}
       onClick={onClick}
-      className={cn('program-filter-chip', selected && 'is-active')}
+      className={cn('pf-chip', selected && 'is-active', className)}
     >
       {children}
     </button>
   );
 }
 
-function FilterGroup({
-  label,
-  children,
-}: {
-  label: string;
-  children: ReactNode;
-}) {
-  return (
-    <div className="program-filter-group">
-      <p className="program-filter-label">{label}</p>
-      <div className="program-filter-chips">{children}</div>
-    </div>
-  );
-}
-
-export function ProgramFilter({ faculties }: Props) {
+export function ProgramFilter({ faculties, countLabel }: Props) {
   const router = useRouter();
   const params = useSearchParams();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -67,7 +66,6 @@ export function ProgramFilter({ faculties }: Props) {
     () => ({
       faculty: params.get('faculty') ?? '',
       type: params.get('type') ?? '',
-      format: params.get('format') ?? '',
       language: params.get('language') ?? '',
     }),
     [params],
@@ -98,86 +96,86 @@ export function ProgramFilter({ faculties }: Props) {
   }, [router]);
 
   const fields = (
-    <div className="program-filter-fields">
-      <FilterGroup label={t('faculty')}>
-        {faculties.map((f) => (
-          <FilterChip
-            key={f.slug}
-            selected={current.faculty === f.slug}
-            onClick={() => toggle('faculty', f.slug)}
-          >
-            {f.name.replace(/^UNM\s+/i, '')}
-          </FilterChip>
-        ))}
-      </FilterGroup>
+    <div className="pf-bar-groups">
+      <div className="pf-group">
+        <span className="pf-group-label">{ti('typeLabel')}</span>
+        <div className="pf-group-chips">
+          {TYPES.map((v) => (
+            <FilterChip key={v} selected={current.type === v} onClick={() => toggle('type', v)}>
+              {v}
+            </FilterChip>
+          ))}
+        </div>
+      </div>
 
-      <FilterGroup label={ti('typeLabel')}>
-        {TYPES.map((v) => (
-          <FilterChip key={v} selected={current.type === v} onClick={() => toggle('type', v)}>
-            {v}
-          </FilterChip>
-        ))}
-      </FilterGroup>
+      <div className="pf-group">
+        <span className="pf-group-label">{t('language')}</span>
+        <div className="pf-group-chips">
+          {LANGS.map((v) => (
+            <FilterChip
+              key={v.value}
+              selected={current.language === v.value}
+              onClick={() => toggle('language', v.value)}
+            >
+              {v.label}
+            </FilterChip>
+          ))}
+        </div>
+      </div>
 
-      <FilterGroup label={t('format')}>
-        {FORMATS.map((v) => (
-          <FilterChip
-            key={v}
-            selected={current.format === v}
-            onClick={() => toggle('format', v)}
-          >
-            {v}
-          </FilterChip>
-        ))}
-      </FilterGroup>
-
-      <FilterGroup label={t('language')}>
-        {LANGS.map((v) => (
-          <FilterChip
-            key={v.value}
-            selected={current.language === v.value}
-            onClick={() => toggle('language', v.value)}
-          >
-            {v.label}
-          </FilterChip>
-        ))}
-      </FilterGroup>
-
-      {activeCount > 0 ? (
-        <button type="button" onClick={reset} className="program-filter-reset">
-          <Icon name="close" size={14} />
-          {ti('resetFilters')}
-        </button>
-      ) : null}
+      <div className="pf-group pf-group--grow">
+        <span className="pf-group-label">{t('faculty')}</span>
+        <div className="pf-group-chips">
+          {faculties.map((f) => (
+            <FilterChip
+              key={f.slug}
+              selected={current.faculty === f.slug}
+              onClick={() => toggle('faculty', f.slug)}
+            >
+              {shortFacultyName(f.name)}
+            </FilterChip>
+          ))}
+        </div>
+      </div>
     </div>
   );
 
   return (
     <>
-      <div className="hidden lg:block">{fields}</div>
+      <div className="pf-bar-desktop">
+        <div className="pf-bar-scroll">{fields}</div>
+        <div className="pf-bar-meta">
+          {countLabel ? <span className="pf-count">{countLabel}</span> : null}
+          {activeCount > 0 ? (
+            <button type="button" onClick={reset} className="pf-reset">
+              <Icon name="close" size={14} />
+              {ti('resetFilters')}
+            </button>
+          ) : null}
+        </div>
+      </div>
 
-      <div className="flex items-center justify-between gap-3 lg:hidden">
+      <div className="pf-bar-mobile">
         <Button
           variant="secondary"
           size="sm"
           onClick={() => setMobileOpen(true)}
-          className="program-filter-mobile-trigger"
+          className="pf-mobile-trigger"
         >
-          <Icon name="search" size={16} className="text-primary/80" />
+          <Icon name="search" size={16} />
           {ti('filters')}
-          {activeCount > 0 ? (
-            <span className="program-filter-badge">{activeCount}</span>
-          ) : null}
+          {activeCount > 0 ? <span className="pf-badge">{activeCount}</span> : null}
         </Button>
+        {countLabel ? <span className="pf-count">{countLabel}</span> : null}
         {activeCount > 0 ? (
-          <button type="button" onClick={reset} className="program-filter-reset !mt-0">
+          <button type="button" onClick={reset} className="pf-reset">
             {ti('resetFilters')}
           </button>
         ) : null}
       </div>
 
       <Modal open={mobileOpen} onClose={() => setMobileOpen(false)} title={ti('filters')} size="sm">
-        {fields}
+        <div className="pf-modal">{fields}</div>
         <div className="mt-6 flex gap-3">
           <Button variant="ghost" onClick={reset} fullWidth>
             {ti('resetFilters')}

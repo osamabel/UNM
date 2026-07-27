@@ -2,6 +2,7 @@
 
 import { useLocale, useTranslations } from 'next-intl';
 import { ProgramCard } from '@/components/patterns/ProgramCard';
+import { SectionHeader } from '@/components/patterns/SectionHeader';
 import type { Locale, Program } from '@unm/types';
 
 interface Props {
@@ -18,9 +19,8 @@ export function RelatedPrograms({ programs }: Props) {
 
   return (
     <section>
-      <p className="eyebrow">{tf('eyebrow')}</p>
-      <h2 className="mt-3 font-display text-display-md text-secondary">{t('related')}</h2>
-      <ul className="mt-6 grid min-w-0 grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+      <SectionHeader eyebrow={tf('eyebrow')} title={t('related')} />
+      <ul className="mt-8 grid min-w-0 grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
         {programs.map((p) => (
           <li key={p.id} className="min-w-0">
             <ProgramCard

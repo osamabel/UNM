@@ -4,6 +4,8 @@
     "siteTagline": "Executive education in partnership with EBS Paris",
     "apply": "Apply",
     "applyNow": "Apply now",
+    "portalAccess": "Portal",
+    "portalAccessAria": "Open the UNM portal",
     "register": "Register",
     "downloadBrochure": "Download brochure",
     "requestCallback": "Request a callback",
@@ -112,7 +114,8 @@
     "resetFilters": "Reset",
     "applyFilters": "Apply",
     "filteredLabel": "filtered",
-    "programCount": "{count, plural, one {# program} other {# programs}}"
+    "programCount": "{count, plural, one {# program} other {# programs}}",
+    "programCountFiltered": "{count, plural, one {# program found} other {# programs found}}"
   },
   "application": {
     "stepOf": "Step {current} of {total}",
@@ -383,7 +386,9 @@
     "getNotified": "Get notified",
     "backToFaculties": "Back to faculties",
     "programSingular": "programme",
-    "programPlural": "programmes"
+    "programPlural": "programmes",
+    "businessSchoolTitle": "UNM Business School & EBS",
+    "businessSchoolEbsNote": "Since its founding in 1967, EBS Paris has been regarded as a revolutionary school. EBS is a Paris-based business school with a European footprint (Paris, Dublin, Barcelona)."
   },
   "contact": {
     "title": "Contact us",
@@ -469,7 +474,7 @@
     "newsUnm": "UNM news",
     "events": "Events",
     "newsroom": "Newsroom",
-    "facultyBusinessSchool": "Business School",
+    "facultyBusinessSchool": "Business School & EBS",
     "facultyGovernance": "Governance & Public Affairs",
     "facultyTechnology": "Technology",
     "facultySportBusiness": "Sport Business",

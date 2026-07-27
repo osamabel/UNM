@@ -37,10 +37,10 @@ const FACULTIES: FacultySeed[] = [
     displayOrder: 1,
     color: '#B5341A',
     icon: 'business',
-    name: { fr: 'UNM Business School', en: 'UNM Business School' },
+    name: { fr: 'UNM Business School & EBS', en: 'UNM Business School & EBS' },
     description: {
-      fr: "L'UNM Business School constitue la première faculté déployée par l'Université Numérique du Maroc. Elle est développée en partenariat avec European Business School, école de management européenne présente à Paris, Barcelone et Berlin. Elle a pour vocation de former les dirigeants, les managers, les entrepreneurs et les décideurs publics africains, à travers des programmes Executive innovants, internationaux et contextualisés.",
-      en: "UNM Business School is the first faculty deployed by the Digital University of Morocco. It is developed in partnership with European Business School, a European management school with campuses in Paris, Barcelona and Berlin. It is dedicated to training African executives, managers, entrepreneurs and public decision-makers, through innovative, international and contextualised Executive programmes.",
+      fr: "L'UNM Business School constitue la première faculté déployée par l'Université Numérique du Maroc. Elle est développée en partenariat avec European Business School, école de management européenne présente à Paris, Barcelone et Berlin. Elle a pour vocation de former les dirigeants, les managers, les entrepreneurs et les décideurs publics africains, à travers des programmes Executive innovants, internationaux et contextualisés.\n\nEBS Paris est dès sa création en 1967 considérée comme une école révolutionnaire. EBS est une grande école de management parisienne à dimension européenne (Paris, Dublin, Barcelone).",
+      en: "UNM Business School is the first faculty deployed by the Digital University of Morocco. It is developed in partnership with European Business School, a European management school with campuses in Paris, Barcelona and Berlin. It is dedicated to training African executives, managers, entrepreneurs and public decision-makers, through innovative, international and contextualised Executive programmes.\n\nSince its founding in 1967, EBS Paris has been regarded as a revolutionary school. EBS is a Paris-based business school with a European footprint (Paris, Dublin, Barcelona).",
     },
     outcomes: [
       { fr: 'Directeur de business unit', en: 'Business Unit Director' },

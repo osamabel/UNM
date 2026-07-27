@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
+import { SectionHeader } from '@/components/patterns/SectionHeader';
 import { JsonLd } from '@/components/shared/JsonLd';
 import { faqSchema } from '@/lib/schema';
 import type { Locale, ProgramFAQItem } from '@unm/types';
@@ -21,32 +22,33 @@ export function ProgramFAQ({ items }: Props) {
   return (
     <section>
       <JsonLd data={faqSchema(items, locale)} />
-      <p className="eyebrow">{t('faq')}</p>
-      <h2 className="mt-3 font-display text-display-md text-secondary">
-        {locale === 'en' ? 'Common questions' : 'Questions fréquentes'}
-      </h2>
-      <ul className="card-flat mt-6 divide-y divide-warm-150/80 overflow-hidden rounded-xl">
+      <SectionHeader
+        eyebrow={t('faq')}
+        title={locale === 'en' ? 'Common questions' : 'Questions fréquentes'}
+      />
+      <ul className="card-flat mt-8 divide-y divide-warm-150/80 overflow-hidden">
         {items.map((it, i) => {
           const expanded = open === i;
           return (
             <li key={i}>
               <button
+                type="button"
                 onClick={() => setOpen(expanded ? null : i)}
                 aria-expanded={expanded}
-                className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left font-heading text-base font-medium text-secondary transition-colors hover:bg-warm-150/30"
+                className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left font-heading text-base font-medium text-secondary transition-colors hover:bg-warm-150/30 sm:px-6"
               >
                 <span>{localized(it.question, locale)}</span>
                 <Icon
                   name="chevron-down"
-                  size={20}
+                  size={18}
                   className={`shrink-0 text-warm-400 transition-transform duration-300 ease-smooth ${expanded ? 'rotate-180' : ''}`}
                 />
               </button>
-              {expanded && (
-                <p className="border-t border-warm-150/60 px-5 pb-5 pt-0 text-secondary/75 leading-relaxed">
+              {expanded ? (
+                <p className="border-t border-warm-150/60 px-5 pb-5 pt-3 text-sm leading-relaxed text-secondary/75 sm:px-6">
                   {localized(it.answer, locale)}
                 </p>
-              )}
+              ) : null}
             </li>
           );
         })}

@@ -2,17 +2,15 @@ import type { Metadata } from 'next';
 import { setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { ProgramHero } from '@/components/programs/ProgramHero';
-import { ProgramCTAMobile, StickyProgramCTA } from '@/components/programs/StickyProgramCTA';
 import { ProgramCurriculum } from '@/components/programs/ProgramCurriculum';
 import { ProgramNarrative } from '@/components/programs/ProgramNarrative';
-import { CalendarSection } from '@/components/programs/CalendarSection';
-import { TuitionSection } from '@/components/programs/TuitionSection';
 import { ProgramFAQ } from '@/components/programs/ProgramFAQ';
 import { RelatedPrograms } from '@/components/programs/RelatedPrograms';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
 import { SectionWrapper } from '@/components/ui/SectionWrapper';
 import { BrochureDownload } from '@/components/shared/BrochureDownload';
 import { CTABar } from '@/components/shared/CTABar';
+import { CTABanner } from '@/components/home/CTABanner';
 import { JsonLd } from '@/components/shared/JsonLd';
 import { courseSchema } from '@/lib/schema';
 import { getProgram, getPrograms, getRelatedPrograms } from '@/lib/api';
@@ -94,57 +92,75 @@ export default async function ProgramPage({ params }: Params) {
         items={[
           { name: isEn ? 'Home' : 'Accueil', url: isEn ? '/en' : '/' },
           { name: isEn ? 'Programs' : 'Programmes', url: isEn ? '/en/programs' : '/programmes' },
-          { name: localized(program.title, params.locale), url: programPath(program.slug, params.locale) },
+          {
+            name: localized(program.title, params.locale),
+            url: programPath(program.slug, params.locale),
+          },
         ]}
       />
 
       <ProgramHero program={program} />
 
+      {/* Overview — same card-flat language as the rest of the site */}
       <SectionWrapper tone="canvas" className="!pt-8 sm:!pt-10">
-        <div className="min-w-0 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,17.5rem)] lg:items-start lg:gap-12 xl:gap-14">
-          <div className="min-w-0 space-y-6 sm:space-y-8">
-            <ProgramCTAMobile program={program} />
-
-            {program.objectives && program.objectives.length > 0 && (
-              <ProgramNarrative eyebrow={L.obj} title={L.objBody} bullets={program.objectives} />
-            )}
-
-            <ProgramNarrative eyebrow={L.audience} title={L.audienceLabel} body={program.targetAudience} />
-
-            <ProgramNarrative eyebrow={L.outlooks} title={L.outlooksLabel} body={program.careerOutlooks} />
-
-            <ProgramNarrative eyebrow={L.skills} title={L.skillsLabel} body={program.skillsNarrative} />
-
-            <ProgramCurriculum modules={program.curriculum} programType={program.type} />
-
-            <CalendarSection program={program} />
-
-            <ProgramNarrative
-              eyebrow={L.admission}
-              title={L.admissionLabel}
-              body={program.admissionRequirements}
-            />
-
-            <TuitionSection program={program} />
-
-            <ProgramFAQ items={program.faq} />
-
-            <BrochureDownload
-              programSlug={program.slug}
-              programTitle={localized(program.title, params.locale)}
-            />
-          </div>
-
-          <StickyProgramCTA program={program} />
+        <div className="mx-auto max-w-3xl space-y-6 sm:space-y-8">
+          {program.objectives && program.objectives.length > 0 ? (
+            <ProgramNarrative eyebrow={L.obj} title={L.objBody} bullets={program.objectives} />
+          ) : null}
+          <ProgramNarrative
+            eyebrow={L.audience}
+            title={L.audienceLabel}
+            body={program.targetAudience}
+          />
+          <ProgramNarrative
+            eyebrow={L.outlooks}
+            title={L.outlooksLabel}
+            body={program.careerOutlooks}
+          />
+          <ProgramNarrative
+            eyebrow={L.skills}
+            title={L.skillsLabel}
+            body={program.skillsNarrative}
+          />
         </div>
       </SectionWrapper>
 
-      {related.length > 0 && (
-        <SectionWrapper tone="soft">
+      {/* Curriculum */}
+      <SectionWrapper tone="soft">
+        <div className="mx-auto max-w-4xl">
+          <ProgramCurriculum modules={program.curriculum} programType={program.type} />
+        </div>
+      </SectionWrapper>
+
+      {/* Admission + FAQ */}
+      <SectionWrapper tone="canvas">
+        <div className="mx-auto max-w-3xl space-y-8 sm:space-y-10">
+          <ProgramNarrative
+            eyebrow={L.admission}
+            title={L.admissionLabel}
+            body={program.admissionRequirements}
+          />
+          <ProgramFAQ items={program.faq} />
+        </div>
+      </SectionWrapper>
+
+      {/* Brochure */}
+      <SectionWrapper tone="soft" className="!pt-10 sm:!pt-12">
+        <div className="mx-auto max-w-5xl">
+          <BrochureDownload
+            programSlug={program.slug}
+            programTitle={localized(program.title, params.locale)}
+          />
+        </div>
+      </SectionWrapper>
+
+      {related.length > 0 ? (
+        <SectionWrapper tone="canvas">
           <RelatedPrograms programs={related} />
         </SectionWrapper>
-      )}
+      ) : null}
 
+      <CTABanner />
       <CTABar programSlug={program.slug} />
     </>
   );

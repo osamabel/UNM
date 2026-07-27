@@ -10,7 +10,7 @@ interface FacultyOption {
   name: string;
 }
 
-const FILTER_KEYS = ['faculty', 'type', 'format', 'language'] as const;
+const FILTER_KEYS = ['faculty', 'type', 'language'] as const;
 
 export function ProgramActiveFilters({ faculties }: { faculties: FacultyOption[] }) {
   const router = useRouter();
@@ -20,17 +20,19 @@ export function ProgramActiveFilters({ faculties }: { faculties: FacultyOption[]
 
   const chips = useMemo(() => {
     const list: { key: (typeof FILTER_KEYS)[number]; value: string; label: string }[] = [];
+    const type = params.get('type');
+    if (type) list.push({ key: 'type', value: type, label: type });
+    const language = params.get('language');
+    if (language) list.push({ key: 'language', value: language, label: language.toUpperCase() });
     const faculty = params.get('faculty');
     if (faculty) {
       const match = faculties.find((f) => f.slug === faculty);
-      list.push({ key: 'faculty', value: faculty, label: match?.name ?? faculty });
+      list.push({
+        key: 'faculty',
+        value: faculty,
+        label: (match?.name ?? faculty).replace(/^UNM\s+/i, ''),
+      });
     }
-    const type = params.get('type');
-    if (type) list.push({ key: 'type', value: type, label: type });
-    const format = params.get('format');
-    if (format) list.push({ key: 'format', value: format, label: format });
-    const language = params.get('language');
-    if (language) list.push({ key: 'language', value: language, label: language.toUpperCase() });
     return list;
   }, [params, faculties]);
 
@@ -50,38 +52,29 @@ export function ProgramActiveFilters({ faculties }: { faculties: FacultyOption[]
   if (chips.length === 0) return null;
 
   return (
-    <div className="mb-5 flex flex-wrap items-center gap-2">
+    <div className="pf-active">
       <span className="sr-only">{ti('activeFilters')}</span>
-      {chips.map((chip) => (
-        <button
-          key={`${chip.key}-${chip.value}`}
-          type="button"
-          onClick={() => clearOne(chip.key)}
-          className="glass-pill group/chip !h-9 gap-1.5 !py-0 pl-3 pr-2 text-xs font-medium text-secondary/80 hover:!bg-white/90"
-        >
-          <span className="text-secondary/45">
-            {chip.key === 'faculty'
-              ? tp('faculty')
-              : chip.key === 'type'
-                ? ti('typeLabel')
-                : chip.key === 'format'
-                  ? tp('format')
+      <div className="pf-active-chips">
+        {chips.map((chip) => (
+          <button
+            key={`${chip.key}-${chip.value}`}
+            type="button"
+            onClick={() => clearOne(chip.key)}
+            className="pf-active-chip"
+          >
+            <span className="pf-active-key">
+              {chip.key === 'faculty'
+                ? tp('faculty')
+                : chip.key === 'type'
+                  ? ti('typeLabel')
                   : tp('language')}
-            :
-          </span>
-          {chip.label}
-          <Icon
-            name="close"
-            size={14}
-            className="text-secondary/40 transition-colors group-hover/chip:text-primary"
-          />
-        </button>
-      ))}
-      <button
-        type="button"
-        onClick={reset}
-        className="text-xs font-semibold text-primary transition-colors hover:underline"
-      >
+            </span>
+            <span className="pf-active-value">{chip.label}</span>
+            <Icon name="close" size={13} aria-hidden />
+          </button>
+        ))}
+      </div>
+      <button type="button" onClick={reset} className="pf-reset">
         {ti('resetFilters')}
       </button>
     </div>

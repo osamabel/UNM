@@ -4,6 +4,8 @@
     "siteTagline": "Formation Executive en partenariat avec EBS Paris",
     "apply": "Candidater",
     "applyNow": "Postuler maintenant",
+    "portalAccess": "Portail",
+    "portalAccessAria": "Accéder au portail UNM",
     "register": "S'inscrire",
     "downloadBrochure": "Télécharger la brochure",
     "requestCallback": "Être contacté",
@@ -112,7 +114,8 @@
     "resetFilters": "Réinitialiser",
     "applyFilters": "Appliquer",
     "filteredLabel": "filtrés",
-    "programCount": "{count, plural, one {# programme} other {# programmes}}"
+    "programCount": "{count, plural, one {# programme} other {# programmes}}",
+    "programCountFiltered": "{count, plural, one {# programme trouvé} other {# programmes trouvés}}"
   },
   "application": {
     "stepOf": "Étape {current} sur {total}",
@@ -234,7 +237,9 @@
     "getNotified": "Être informé",
     "backToFaculties": "Voir les facultés",
     "programSingular": "programme",
-    "programPlural": "programmes"
+    "programPlural": "programmes",
+    "businessSchoolTitle": "UNM Business School & EBS",
+    "businessSchoolEbsNote": "EBS Paris est dès sa création en 1967 considérée comme une école révolutionnaire. EBS est une grande école de management parisienne à dimension européenne (Paris, Dublin, Barcelone)."
   },
   "facultyGrid": {
     "upcomingHeading": "Prochainement",
@@ -469,7 +474,7 @@
     "newsUnm": "Actualités de l'UNM",
     "events": "Événements",
     "newsroom": "Newsroom",
-    "facultyBusinessSchool": "Business School",
+    "facultyBusinessSchool": "Business School & EBS",
     "facultyGovernance": "Gouvernance & Affaires publiques",
     "facultyTechnology": "Technology",
     "facultySportBusiness": "Sport Business",
