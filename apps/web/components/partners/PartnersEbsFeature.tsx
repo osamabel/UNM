@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
 import { Icon } from '@/components/ui/Icon';
+import { EbsSourceLinks } from '@/components/partners/EbsSourceLinks';
 import { LOGO_ALT, LOGO_SRC } from '@/lib/logo';
 import type { Locale } from '@unm/types';
 
@@ -121,6 +122,8 @@ export async function PartnersEbsFeature({ locale }: { locale: Locale }) {
             </li>
           ))}
         </ul>
+
+        <EbsSourceLinks variant="panel" className="mt-10" />
       </div>
     </article>
   );

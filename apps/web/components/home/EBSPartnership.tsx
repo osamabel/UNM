@@ -6,6 +6,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { SectionWrapper } from "@/components/ui/SectionWrapper";
 import { ScrollReveal } from "@/components/patterns/ScrollReveal";
 import { Icon } from "@/components/ui/Icon";
+import { EbsSourceLinks } from "@/components/partners/EbsSourceLinks";
 import {
   getEbsAllianceLockup,
   type AllianceLogoEntry,
@@ -249,6 +250,10 @@ export function EBSPartnership({ partners = [] }: { partners?: Partner[] }) {
           </li>
         ))}
       </ul>
+
+      <ScrollReveal delay={200} from="up" duration={900}>
+        <EbsSourceLinks variant="home" />
+      </ScrollReveal>
     </SectionWrapper>
   );
 }

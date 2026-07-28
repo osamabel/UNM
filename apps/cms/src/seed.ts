@@ -1184,8 +1184,20 @@ async function run() {
         en: 'The Digital University of Morocco and European Business School Paris launch an academic alliance for African leadership.',
       },
       body: {
-        fr: "<p>L'UNM et EBS Paris s'associent pour créer un écosystème de formation et de recherche à fort impact, ancré dans les réalités africaines et ouvert sur le monde. Ce partenariat couvre l'ensemble de l'offre Executive : DBA, MBA sectoriels et certificats.</p>",
-        en: '<p>UNM and EBS Paris team up to create a high-impact training and research ecosystem, anchored in African realities and open to the world. This partnership covers the entire Executive offering: DBA, sectoral MBAs and certificates.</p>',
+        fr: `<p>L'UNM et EBS Paris s'associent pour créer un écosystème de formation et de recherche à fort impact, ancré dans les réalités africaines et ouvert sur le monde. Ce partenariat couvre l'ensemble de l'offre Executive : DBA, MBA sectoriels et certificats.</p>
+<p>European Business School et l'Université Numérique du Maroc unissent leurs expertises pour proposer une offre d'Executive Education pensée pour les dirigeants, cadres et entrepreneurs africains.</p>
+<p><strong>Pour en savoir plus sur le partenariat :</strong></p>
+<ul>
+<li><a href="https://www.ebs-paris.fr/partenariat-ebs-unm/" target="_blank" rel="noopener noreferrer">Page partenariat EBS &amp; UNM</a> — vision, programmes et pédagogie de l'alliance</li>
+<li><a href="https://www.ebs-paris.fr/news/ebs-sallie-a-lunm-pour-lexecutive-education-en-afrique/" target="_blank" rel="noopener noreferrer">EBS s'allie à l'UNM pour l'Executive Education en Afrique</a> — annonce officielle sur le site EBS Paris</li>
+</ul>`,
+        en: `<p>UNM and EBS Paris team up to create a high-impact training and research ecosystem, anchored in African realities and open to the world. This partnership covers the entire Executive offering: DBA, sectoral MBAs and certificates.</p>
+<p>European Business School and the Digital University of Morocco join forces to deliver an Executive Education offering designed for African executives, managers and entrepreneurs.</p>
+<p><strong>Learn more about the partnership:</strong></p>
+<ul>
+<li><a href="https://www.ebs-paris.fr/partenariat-ebs-unm/" target="_blank" rel="noopener noreferrer">EBS &amp; UNM partnership page</a> — vision, programmes and alliance pedagogy</li>
+<li><a href="https://www.ebs-paris.fr/news/ebs-sallie-a-lunm-pour-lexecutive-education-en-afrique/" target="_blank" rel="noopener noreferrer">EBS partners with UNM for Executive Education in Africa</a> — official announcement on the EBS Paris website</li>
+</ul>`,
       },
     },
     {
