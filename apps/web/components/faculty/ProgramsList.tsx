@@ -7,9 +7,11 @@ import type { Locale, Program } from '@unm/types';
 
 interface Props {
   programs: Program[];
+  /** Anchor id for in-page CTA jumps */
+  id?: string;
 }
 
-export function ProgramsList({ programs }: Props) {
+export function ProgramsList({ programs, id = 'programmes' }: Props) {
   const locale = useLocale() as Locale;
   const t = useTranslations('program');
   const tf = useTranslations('facultyPage');
@@ -20,10 +22,11 @@ export function ProgramsList({ programs }: Props) {
   const programsHref = locale === 'en' ? '/en/programs' : '/programmes';
 
   return (
-    <div>
+    <div id={id} className="faculty-programs scroll-mt-28">
       <SectionHeader
-        eyebrow={tf('eyebrow')}
+        eyebrow={tf('programsEyebrow')}
         title={tf('programsTitle')}
+        description={tf('programsLead')}
         icon="library"
         action={{ label: tf('programsAction'), href: programsHref }}
       />

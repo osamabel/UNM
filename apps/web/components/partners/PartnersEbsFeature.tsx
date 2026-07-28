@@ -26,39 +26,36 @@ export async function PartnersEbsFeature({ locale }: { locale: Locale }) {
   return (
     <article className="relative overflow-hidden rounded-2xl border border-warm-200/60 bg-warm-50/80 shadow-sm">
       <div className="grid min-w-0 lg:grid-cols-12">
-        <div className="partners-ebs-feature-media relative min-h-[300px] sm:min-h-[380px] lg:col-span-5 lg:min-h-full">
+        <div className="partners-ebs-feature-media relative lg:col-span-5 lg:min-h-full">
           <Image
             src={ALLIANCE_BG_SRC}
             alt=""
             fill
             sizes="(max-width: 1024px) 100vw, 42vw"
             className="partners-ebs-feature-bg"
-            priority
             aria-hidden
           />
           <div className="partners-ebs-feature-scrim" aria-hidden />
           <div className="partners-ebs-feature-logos">
-            <div className="partners-ebs-feature-logo-slot">
+            <div className="partners-ebs-feature-logo-slot partners-ebs-feature-logo-slot--ebs">
               <Image
-                src={LOGO_SRC}
-                alt={LOGO_ALT}
-                width={280}
-                height={96}
-                className="partners-ebs-feature-logo-img"
-                priority
+                src={EBS_WORDMARK_SRC}
+                alt="European Business School"
+                width={320}
+                height={130}
+                className="partners-ebs-feature-logo-img partners-ebs-feature-logo-img--ebs"
               />
             </div>
             <span className="partners-ebs-feature-logos-x" aria-hidden>
               ×
             </span>
-            <div className="partners-ebs-feature-logo-slot">
+            <div className="partners-ebs-feature-logo-slot partners-ebs-feature-logo-slot--unm">
               <Image
-                src={EBS_WORDMARK_SRC}
-                alt="European Business School"
-                width={296}
-                height={120}
-                className="partners-ebs-feature-logo-img"
-                priority
+                src={LOGO_SRC}
+                alt={LOGO_ALT}
+                width={320}
+                height={148}
+                className="partners-ebs-feature-logo-img partners-ebs-feature-logo-img--unm"
               />
             </div>
           </div>

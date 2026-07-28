@@ -365,12 +365,20 @@
   },
   "facultyPage": {
     "eyebrow": "Faculty",
+    "programsEyebrow": "Executive offering",
     "programsTitle": "Faculty programmes",
+    "programsLead": "DBA, MBA and certificates designed for working executives and leaders.",
     "programsAction": "All programmes",
     "domainsEyebrow": "Disciplinary scope",
     "domainsTitle": "Domains covered",
+    "domainsLead": "Cross-cutting expertise to lead the transformation of African organisations.",
+    "strengthsEyebrow": "Strengths",
     "strengthsTitle": "Why this faculty",
+    "outcomesEyebrow": "Careers",
     "outcomesTitle": "Outcomes",
+    "heroCtaPrograms": "View programmes",
+    "heroCtaApply": "Apply",
+    "heroTrustAlliance": "EBS × UNM alliance",
     "ctaTitle": "Take the next step",
     "comingSoonBadge": "In preparation",
     "comingSoonNote": "Opening in a future intake — get notified.",
@@ -387,8 +395,7 @@
     "backToFaculties": "Back to faculties",
     "programSingular": "programme",
     "programPlural": "programmes",
-    "businessSchoolTitle": "UNM Business School & EBS",
-    "businessSchoolEbsNote": "Since its founding in 1967, EBS Paris has been regarded as a revolutionary school. EBS is a Paris-based business school with a European footprint (Paris, Dublin, Barcelona)."
+    "businessSchoolTitle": "European Business School & Université Numérique du Maroc"
   },
   "contact": {
     "title": "Contact us",

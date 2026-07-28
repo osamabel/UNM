@@ -21,7 +21,7 @@ function DomainChip({
 
   return (
     <li className="list-none">
-      <ScrollReveal delay={80 + index * 55}>
+      <ScrollReveal delay={60 + index * 40} from="up">
         <span className="domain-chip">
           <Icon name={icon} size={15} className="domain-chip-icon shrink-0" aria-hidden />
           <span>{label}</span>
@@ -38,13 +38,14 @@ export function DomainsSection({ faculty }: { faculty: Faculty }) {
   if (domains.length === 0) return null;
 
   return (
-    <div className="min-w-0">
-      <ScrollReveal>
+    <div className="faculty-domains min-w-0">
+      <ScrollReveal from="up">
         <p className="eyebrow">{t('domainsEyebrow')}</p>
-        <h2 className="mt-3 font-display text-display-md text-secondary">{t('domainsTitle')}</h2>
+        <h2 className="faculty-domains-title">{t('domainsTitle')}</h2>
+        <p className="faculty-domains-lead">{t('domainsLead')}</p>
       </ScrollReveal>
 
-      <ul className="mt-8 flex flex-wrap justify-center gap-2.5 sm:justify-start lg:mt-10 lg:gap-3">
+      <ul className="faculty-domains-list">
         {domains.map((d, i) => (
           <DomainChip key={`${localized(d, 'fr')}-${i}`} domain={d} locale={locale} index={i} />
         ))}

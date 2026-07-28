@@ -2,6 +2,7 @@
 
 import { useLocale, useTranslations } from 'next-intl';
 import { Icon } from '@/components/ui/Icon';
+import { ScrollReveal } from '@/components/patterns/ScrollReveal';
 import type { Faculty, Locale, LocalizedField } from '@unm/types';
 import { localized } from '@/lib/utils';
 
@@ -9,24 +10,16 @@ interface Props {
   faculty: Faculty;
 }
 
-function BulletList({
-  items,
-  iconClass,
-}: {
-  items: LocalizedField[];
-  iconClass: string;
-}) {
+function BulletList({ items }: { items: LocalizedField[] }) {
   const locale = useLocale() as Locale;
   if (items.length === 0) return null;
 
   return (
-    <ul className="mt-6 space-y-3">
+    <ul className="faculty-insight-list">
       {items.map((item, i) => (
-        <li key={i} className="card-flat flex gap-3 p-4">
-          <Icon name="check-circle" size={18} className={iconClass} />
-          <span className="text-sm leading-relaxed text-secondary/80">
-            {localized(item, locale)}
-          </span>
+        <li key={`${localized(item, 'fr')}-${i}`} className="faculty-insight-item">
+          <Icon name="check-circle" size={18} className="faculty-insight-icon" />
+          <span>{localized(item, locale)}</span>
         </li>
       ))}
     </ul>
@@ -35,24 +28,28 @@ function BulletList({
 
 export function StrengthsSection({ faculty }: Props) {
   const t = useTranslations('facultyPage');
-  const hasStrengths = (faculty.strengths?.length ?? 0) > 0;
-  const hasOutcomes = (faculty.outcomes?.length ?? 0) > 0;
+  const strengths = faculty.strengths ?? [];
+  const outcomes = faculty.outcomes ?? [];
+  const hasStrengths = strengths.length > 0;
+  const hasOutcomes = outcomes.length > 0;
   if (!hasStrengths && !hasOutcomes) return null;
 
   return (
-    <div className="grid gap-10 lg:grid-cols-2 lg:gap-12">
-      {hasStrengths && (
-        <div>
-          <h2 className="font-display text-display-md text-secondary">{t('strengthsTitle')}</h2>
-          <BulletList items={faculty.strengths ?? []} iconClass="mt-0.5 shrink-0 text-primary" />
-        </div>
-      )}
-      {hasOutcomes && (
-        <div>
-          <h2 className="font-display text-display-md text-secondary">{t('outcomesTitle')}</h2>
-          <BulletList items={faculty.outcomes ?? []} iconClass="mt-0.5 shrink-0 text-secondary/70" />
-        </div>
-      )}
+    <div className="faculty-insights">
+      {hasStrengths ? (
+        <ScrollReveal from="up" className="faculty-insights-col">
+          <p className="eyebrow">{t('strengthsEyebrow')}</p>
+          <h2 className="faculty-insights-title">{t('strengthsTitle')}</h2>
+          <BulletList items={strengths} />
+        </ScrollReveal>
+      ) : null}
+      {hasOutcomes ? (
+        <ScrollReveal from="up" delay={100} className="faculty-insights-col">
+          <p className="eyebrow">{t('outcomesEyebrow')}</p>
+          <h2 className="faculty-insights-title">{t('outcomesTitle')}</h2>
+          <BulletList items={outcomes} />
+        </ScrollReveal>
+      ) : null}
     </div>
   );
 }
