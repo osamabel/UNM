@@ -42,23 +42,6 @@
     "home": "Accueil",
     "skipToContent": "Aller au contenu"
   },
-  "renovation": {
-    "eyebrow": "En cours",
-    "title": "Site en cours de rénovation",
-    "message": "Nous travaillons actuellement à l’amélioration de votre expérience. Merci de votre patience.",
-    "splashEyebrow": "Mise à jour en cours",
-    "splashTitle": "Le site est en cours de rénovation",
-    "splashSubtitle": "Nous préparons une nouvelle expérience numérique plus rapide, plus élégante et plus intuitive afin de mieux accompagner votre parcours académique.",
-    "splashLine1": "Nous préparons une expérience plus rapide, plus claire et plus belle.",
-    "splashLine2": "Merci de votre patience — bientôt de retour.",
-    "splashStatus": "Travaux en cours • Réouverture prochaine",
-    "splashContact": "Nous contacter",
-    "splashHint": "Le site sera rouvert dès la fin de la mise à jour.",
-    "splashFooter": "© Université Numérique du Maroc",
-    "splashContinue": "Continuer",
-    "cta": "J’ai compris",
-    "close": "Fermer"
-  },
   "breadcrumb": {
     "home": "Accueil"
   },
