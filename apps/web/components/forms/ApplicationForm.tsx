@@ -111,8 +111,23 @@ export function ApplicationForm({ programs }: Props) {
       const fd = new FormData();
       Object.entries(data).forEach(([k, v]) => fd.append(k, String(v)));
       const res = await fetch('/api/applications', { method: 'POST', body: fd });
-      if (!res.ok) throw new Error();
-      const body = (await res.json()) as { referenceId?: string };
+      const body = (await res.json().catch(() => ({}))) as {
+        referenceId?: string;
+        error?: string;
+      };
+      if (!res.ok) {
+        const code = body.error ?? 'unknown';
+        if (code === 'rate_limited') setSubmitError(t('errorRateLimited'));
+        else if (code === 'program_not_found') setSubmitError(ta('errorProgram'));
+        else if (code.startsWith('missing:') || code === 'consent_required') {
+          setSubmitError(t('errorRequired'));
+        } else if (code === 'invalid_email') setSubmitError(t('errorEmail'));
+        else if (code === 'invalid_phone') setSubmitError(t('errorPhone'));
+        else if (code === 'persist_failed' || code === 'cms_unconfigured') {
+          setSubmitError(ta('errorPersist'));
+        } else setSubmitError(t('errorGeneric'));
+        return;
+      }
       setReferenceId(body.referenceId ?? null);
       setSubmitted(true);
     } catch {

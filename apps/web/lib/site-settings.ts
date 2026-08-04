@@ -8,7 +8,7 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   contact: {
     phone: '+212 6 62 62 62 19',
     whatsapp: '+212662626219',
-    email: 'contact@unm.ma',
+    email: 'contact@unm-university.com',
     address: {
       fr: 'Borj Menara I, Av. Abdelkrim El Khattabi, Marrakech, Maroc',
       en: 'Borj Menara I, Av. Abdelkrim El Khattabi, Marrakech, Morocco',

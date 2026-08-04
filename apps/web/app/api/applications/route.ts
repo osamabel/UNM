@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { Resend } from 'resend';
+import { getMailFrom, getNotificationRecipients, applicationNotificationMail } from '@/lib/mail';
 import { getClientIp, rateLimit } from '@/lib/rate-limit';
 import { PHONE_VALUE_RE } from '@/lib/phone-countries';
 
@@ -90,17 +91,27 @@ export async function POST(req: Request) {
   }
   const created = await cmsRes.json();
 
-  if (process.env.RESEND_API_KEY && process.env.LEAD_NOTIFICATION_EMAIL) {
+  const recipients = getNotificationRecipients();
+  if (process.env.RESEND_API_KEY && recipients.length > 0) {
     const resend = new Resend(process.env.RESEND_API_KEY);
-    const name = `${payload.firstName} ${payload.lastName}`;
-    await resend.emails
-      .send({
-        from: 'UNM <noreply@unm.ma>',
-        to: process.env.LEAD_NOTIFICATION_EMAIL,
-        subject: `Nouvelle candidature — ${programSlug}`,
-        text: `Candidature reçue pour ${programSlug} de ${name} (${payload.country}).\nEmail: ${payload.email}\nTéléphone: ${payload.phone}`,
-      })
-      .catch(() => null);
+    const mail = applicationNotificationMail({
+      firstName: String(payload.firstName),
+      lastName: String(payload.lastName),
+      email: String(payload.email),
+      phone: String(payload.phone),
+      country: String(payload.country),
+      programSlug,
+      highestDegree: String(payload.highestDegree),
+      experienceLevel: String(payload.experienceLevel),
+    });
+    const { error } = await resend.emails.send({
+      from: getMailFrom(),
+      to: recipients,
+      subject: `Nouvelle candidature — ${programSlug}`,
+      html: mail.html,
+      text: mail.text,
+    });
+    if (error) console.error('[applications] resend error:', error);
   }
 
   const id = created?.doc?.id ?? created?.id ?? null;

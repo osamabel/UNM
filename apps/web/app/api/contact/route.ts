@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { Resend } from 'resend';
+import { getMailFrom, getNotificationRecipients, contactNotificationMail } from '@/lib/mail';
 import { getClientIp, rateLimit } from '@/lib/rate-limit';
 
 export const runtime = 'nodejs';
@@ -26,17 +27,22 @@ export async function POST(req: Request) {
   } catch {
     return NextResponse.json({ error: 'invalid_payload' }, { status: 400 });
   }
-  if (process.env.RESEND_API_KEY && process.env.LEAD_NOTIFICATION_EMAIL) {
+  const recipients = getNotificationRecipients();
+  if (process.env.RESEND_API_KEY && recipients.length > 0) {
     const resend = new Resend(process.env.RESEND_API_KEY);
-    await resend.emails
-      .send({
-        from: 'UNM <noreply@unm.ma>',
-        to: process.env.LEAD_NOTIFICATION_EMAIL,
-        reply_to: data.email,
-        subject: `Contact — ${data.subject}`,
-        text: `${data.firstName} ${data.lastName} (${data.email})\n\n${data.message}`,
-      })
-      .catch(() => null);
+    const mail = contactNotificationMail(data);
+    const { error } = await resend.emails.send({
+      from: getMailFrom(),
+      to: recipients,
+      reply_to: data.email,
+      subject: `Contact — ${data.subject}`,
+      html: mail.html,
+      text: mail.text,
+    });
+    if (error) {
+      console.error('[contact] resend error:', error);
+      return NextResponse.json({ error: 'email_failed', detail: error }, { status: 502 });
+    }
   }
   return NextResponse.json({ ok: true });
 }

@@ -136,6 +136,8 @@
     "placeholderSelect": "Select",
     "placeholderProgram": "Choose a programme",
     "submitHint": "No attachments at this stage. Response within 48h.",
+    "errorProgram": "Programme not found. Please choose a programme from the list.",
+    "errorPersist": "We could not save your application. Please try again or contact Admissions.",
     "faculty": "Faculty",
     "program": "Desired programme",
     "experienceLevel": "Experience level",
@@ -590,6 +592,7 @@
     "consent": "I agree my data is processed according to the privacy policy.",
     "thankYou": "Thank you! Our team will reach out within 48h.",
     "errorGeneric": "An error occurred. Please try again.",
+    "errorRateLimited": "Too many attempts. Please try again in an hour.",
     "errorRequired": "Required field",
     "errorEmail": "Invalid email address",
     "errorPhone": "Invalid phone number"

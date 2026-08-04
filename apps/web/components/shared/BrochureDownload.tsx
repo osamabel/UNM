@@ -68,7 +68,13 @@ export function BrochureDownload({ programSlug, programTitle }: Props) {
             </span>
             <p className="brochure-success-title">{t('thankYou')}</p>
             <p className="brochure-success-hint">{tp('brochureHint')}</p>
-            <a href={downloadUrl} className="brochure-success-action" download>
+            <a
+              href={downloadUrl}
+              className="brochure-success-action"
+              download
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <Button
                 fullWidth
                 size="lg"

@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { Resend } from 'resend';
+import { getBrochurePublicUrl } from '@/lib/brochures';
+import { getMailFrom, getNotificationRecipients, leadNotificationMail } from '@/lib/mail';
 import { getClientIp, rateLimit } from '@/lib/rate-limit';
 
 export const runtime = 'nodejs';
@@ -42,36 +44,60 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'consent_required' }, { status: 400 });
   }
 
-  // 1. Persist to CMS
-  const cmsRes = await fetch(`${process.env.CMS_API_URL}/leads`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      ...(process.env.CMS_API_TOKEN
-        ? { Authorization: `Bearer ${process.env.CMS_API_TOKEN}` }
-        : {}),
-    },
-    body: JSON.stringify({
-      ...data,
-      status: 'new',
-      consentTimestamp: new Date().toISOString(),
-    }),
-  });
+  const brochureUrl = getBrochurePublicUrl(data.programSlug);
+  let leadId: string | number | null = null;
 
-  if (!cmsRes.ok) {
-    return NextResponse.json({ error: 'persist_failed' }, { status: 502 });
+  // 1. Persist to CMS (non-blocking for brochure downloads)
+  try {
+    const cmsRes = await fetch(`${process.env.CMS_API_URL}/leads`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(process.env.CMS_API_TOKEN
+          ? { Authorization: `Bearer ${process.env.CMS_API_TOKEN}` }
+          : {}),
+      },
+      body: JSON.stringify({
+        ...data,
+        status: 'new',
+        consentTimestamp: new Date().toISOString(),
+      }),
+    });
+    if (cmsRes.ok) {
+      const created = await cmsRes.json();
+      leadId = created?.doc?.id ?? created?.id ?? null;
+    } else if (data.source !== 'brochure') {
+      return NextResponse.json({ error: 'persist_failed' }, { status: 502 });
+    } else {
+      console.error('[leads] CMS persist failed for brochure lead:', cmsRes.status);
+    }
+  } catch (err) {
+    if (data.source !== 'brochure') {
+      return NextResponse.json({ error: 'persist_failed' }, { status: 502 });
+    }
+    console.error('[leads] CMS persist error:', err);
   }
-  const created = await cmsRes.json();
 
   // 2. Notify admissions team
-  if (process.env.RESEND_API_KEY && process.env.LEAD_NOTIFICATION_EMAIL) {
+  const recipients = getNotificationRecipients();
+  if (process.env.RESEND_API_KEY && recipients.length > 0) {
     const resend = new Resend(process.env.RESEND_API_KEY);
-    await resend.emails.send({
-      from: 'UNM <noreply@unm.ma>',
-      to: process.env.LEAD_NOTIFICATION_EMAIL,
+    const mail = leadNotificationMail({
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email || undefined,
+      phone: data.phone || undefined,
+      programSlug: data.programSlug,
+      source: data.source,
+    });
+    const { error } = await resend.emails.send({
+      from: getMailFrom(),
+      to: recipients,
       subject: `Nouveau lead — ${data.programSlug}`,
-      text: `Lead reçu :\n\n${JSON.stringify(data, null, 2)}`,
-    }).catch(() => null);
+      html: mail.html,
+      text: mail.text,
+    });
+    if (error) console.error('[leads] resend error:', error);
   }
 
   // 3. Fire-and-forget CRM webhook
@@ -83,8 +109,5 @@ export async function POST(req: Request) {
     }).catch(() => null);
   }
 
-  return NextResponse.json(
-    { id: created?.doc?.id ?? null, brochureUrl: created?.doc?.brochureUrl ?? null },
-    { status: 201 },
-  );
+  return NextResponse.json({ id: leadId, brochureUrl }, { status: 201 });
 }

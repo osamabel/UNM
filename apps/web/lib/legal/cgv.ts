@@ -184,7 +184,7 @@ export const cgv: LegalDocument = {
         {
           type: 'definitions',
           items: [
-            { term: t('Courriel', 'Email'), value: t('contact@unm.ma', 'contact@unm.ma') },
+            { term: t('Courriel', 'Email'), value: t('contact@unm-university.com', 'contact@unm-university.com') },
             { term: t('Téléphone', 'Phone'), value: t('+212 6 62 62 62 19', '+212 6 62 62 62 19') },
             { term: t('Adresse', 'Address'), value: t('Campus Marrakech — Borj Menara I, Av. Abdelkrim El Khattabi', 'Marrakech Campus — Borj Menara I, Av. Abdelkrim El Khattabi') },
           ],

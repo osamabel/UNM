@@ -1337,7 +1337,7 @@ async function run() {
       contact: {
         phone: '+212 6 62 62 62 19',
         whatsapp: '+212 6 62 62 62 19',
-        email: 'contact@unm.ma',
+        email: 'contact@unm-university.com',
         address: {
           fr: 'Campus Marrakech — Borj Menara I, Av. Abdelkrim El Khattabi · Campus Laâyoune — N°8, Al Bouchra, Av. Alfourssane',
           en: 'Marrakech Campus — Borj Menara I, Av. Abdelkrim El Khattabi · Laâyoune Campus — N°8, Al Bouchra, Av. Alfourssane',
