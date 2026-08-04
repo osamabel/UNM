@@ -16,33 +16,52 @@ const schema = z.object({
 });
 
 export async function POST(req: Request) {
-  const ip = getClientIp(req);
-  const rl = await rateLimit(`contact:${ip}`, 5, 60 * 60 * 1000);
-  if (!rl.allowed) {
-    return NextResponse.json({ error: 'rate_limited' }, { status: 429 });
-  }
-  let data;
   try {
-    data = schema.parse(await req.json());
-  } catch {
-    return NextResponse.json({ error: 'invalid_payload' }, { status: 400 });
-  }
-  const recipients = getNotificationRecipients();
-  if (process.env.RESEND_API_KEY && recipients.length > 0) {
-    const resend = new Resend(process.env.RESEND_API_KEY);
-    const mail = contactNotificationMail(data);
-    const { error } = await resend.emails.send({
-      from: getMailFrom(),
-      to: recipients,
-      reply_to: data.email,
-      subject: `Contact — ${data.subject}`,
-      html: mail.html,
-      text: mail.text,
-    });
-    if (error) {
-      console.error('[contact] resend error:', error);
-      return NextResponse.json({ error: 'email_failed', detail: error }, { status: 502 });
+    const ip = getClientIp(req);
+    const rl = await rateLimit(`contact:${ip}`, 5, 60 * 60 * 1000);
+    if (!rl.allowed) {
+      return NextResponse.json({ error: 'rate_limited' }, { status: 429 });
     }
+
+    let data;
+    try {
+      data = schema.parse(await req.json());
+    } catch {
+      return NextResponse.json({ error: 'invalid_payload' }, { status: 400 });
+    }
+
+    const recipients = getNotificationRecipients();
+    if (process.env.RESEND_API_KEY && recipients.length > 0) {
+      try {
+        const resend = new Resend(process.env.RESEND_API_KEY);
+        const mail = contactNotificationMail(data);
+        const { error } = await resend.emails.send({
+          from: getMailFrom(),
+          to: recipients,
+          reply_to: data.email,
+          subject: `Contact — ${data.subject}`,
+          html: mail.html,
+          text: mail.text,
+        });
+        if (error) {
+          console.error('[contact] resend error:', error);
+          return NextResponse.json({ error: 'email_failed', detail: error }, { status: 502 });
+        }
+      } catch (err) {
+        console.error('[contact] resend throw:', err);
+        return NextResponse.json(
+          { error: 'email_failed', detail: err instanceof Error ? err.message : 'send_failed' },
+          { status: 502 },
+        );
+      }
+    }
+
+    return NextResponse.json({ ok: true });
+  } catch (err) {
+    console.error('[contact] unhandled:', err);
+    return NextResponse.json(
+      { error: 'server_error', detail: err instanceof Error ? err.message : 'unknown' },
+      { status: 500 },
+    );
   }
-  return NextResponse.json({ ok: true });
 }

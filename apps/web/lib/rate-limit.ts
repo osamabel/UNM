@@ -1,5 +1,5 @@
 // Token-bucket rate limit per IP. Backed by Upstash REST in production,
-// falls back to an in-memory map in development.
+// falls back to an in-memory map in development (or if Upstash fails).
 
 interface Bucket {
   remaining: number;
@@ -16,31 +16,8 @@ export interface RateLimitResult {
   resetAt: number;
 }
 
-export async function rateLimit(
-  key: string,
-  limit = 5,
-  windowMs = 60 * 60 * 1000,
-): Promise<RateLimitResult> {
+function memoryRateLimit(key: string, limit: number, windowMs: number): RateLimitResult {
   const now = Date.now();
-  if (UPSTASH_URL && UPSTASH_TOKEN) {
-    const ttlSeconds = Math.ceil(windowMs / 1000);
-    const r = await fetch(`${UPSTASH_URL}/pipeline`, {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${UPSTASH_TOKEN}` },
-      body: JSON.stringify([
-        ['INCR', `rl:${key}`],
-        ['EXPIRE', `rl:${key}`, ttlSeconds, 'NX'],
-      ]),
-    }).then((res) => res.json());
-    const count = Number(r?.[0]?.result ?? 0);
-    return {
-      allowed: count <= limit,
-      remaining: Math.max(0, limit - count),
-      resetAt: now + windowMs,
-    };
-  }
-
-  // Dev fallback
   const existing = memoryStore.get(key);
   if (!existing || existing.resetAt < now) {
     memoryStore.set(key, { remaining: limit - 1, resetAt: now + windowMs });
@@ -51,6 +28,46 @@ export async function rateLimit(
   }
   existing.remaining -= 1;
   return { allowed: true, remaining: existing.remaining, resetAt: existing.resetAt };
+}
+
+export async function rateLimit(
+  key: string,
+  limit = 5,
+  windowMs = 60 * 60 * 1000,
+): Promise<RateLimitResult> {
+  const now = Date.now();
+  if (UPSTASH_URL && UPSTASH_TOKEN) {
+    try {
+      const ttlSeconds = Math.ceil(windowMs / 1000);
+      const res = await fetch(`${UPSTASH_URL}/pipeline`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${UPSTASH_TOKEN}` },
+        body: JSON.stringify([
+          ['INCR', `rl:${key}`],
+          ['EXPIRE', `rl:${key}`, ttlSeconds, 'NX'],
+        ]),
+      });
+      if (!res.ok) {
+        console.error('[rate-limit] Upstash HTTP', res.status);
+        return memoryRateLimit(key, limit, windowMs);
+      }
+      const r = await res.json();
+      const count = Number(r?.[0]?.result ?? 0);
+      if (!Number.isFinite(count) || count <= 0) {
+        return memoryRateLimit(key, limit, windowMs);
+      }
+      return {
+        allowed: count <= limit,
+        remaining: Math.max(0, limit - count),
+        resetAt: now + windowMs,
+      };
+    } catch (err) {
+      console.error('[rate-limit] Upstash error, falling back to memory:', err);
+      return memoryRateLimit(key, limit, windowMs);
+    }
+  }
+
+  return memoryRateLimit(key, limit, windowMs);
 }
 
 export function getClientIp(req: Request): string {
