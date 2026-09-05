@@ -27,6 +27,8 @@ export function ProgramCurriculum({ modules, programType }: Props) {
     g.items.push(m);
   }
   const hasGrouping = groups.some((g) => g.key !== '__nogroup__');
+  // Group labels render an h3, so module titles sit one level deeper when grouped.
+  const ModuleTitle = hasGrouping ? 'h4' : 'h3';
 
   const isEn = locale === 'en';
   const intro =
@@ -55,22 +57,38 @@ export function ProgramCurriculum({ modules, programType }: Props) {
                 {g.label}
               </h3>
             ) : null}
-            <ol className="grid min-w-0 gap-3 sm:grid-cols-2">
-              {g.items.map((m) => (
-                <li key={m.code} className="card-flat px-4 py-4 sm:px-5 sm:py-5">
-                  <p className="font-sans text-[10px] font-semibold uppercase tracking-[0.12em] text-primary">
-                    {m.code}
-                  </p>
-                  <p className="mt-1.5 font-display text-lg leading-snug text-secondary">
-                    {localized(m.title, locale)}
-                  </p>
-                  {m.description && localized(m.description, locale) ? (
-                    <p className="mt-2 text-sm leading-relaxed text-secondary/65">
-                      {localized(m.description, locale)}
-                    </p>
-                  ) : null}
-                </li>
-              ))}
+            <ol className="grid min-w-0 items-stretch gap-4 sm:grid-cols-2">
+              {g.items.map((m) => {
+                const description = m.description ? localized(m.description, locale) : '';
+                return (
+                  <li
+                    key={m.code}
+                    className="group card-flat flex h-full flex-col overflow-hidden px-5 py-5 sm:px-6 sm:py-6"
+                  >
+                    <span
+                      className="absolute inset-y-0 left-0 w-[3px] bg-gradient-to-b from-primary/70 via-primary/25 to-transparent opacity-0 transition-opacity duration-300 ease-smooth group-hover:opacity-100"
+                      aria-hidden
+                    />
+
+                    <div className="flex items-center gap-3">
+                      <span className="inline-flex h-7 min-w-[1.75rem] items-center justify-center rounded-full border border-primary/20 bg-primary/[0.07] px-2 font-sans text-[11px] font-semibold uppercase tabular-nums tracking-[0.08em] text-primary">
+                        {m.code}
+                      </span>
+                      <span className="h-px flex-1 bg-warm-150/80" aria-hidden />
+                    </div>
+
+                    <ModuleTitle className="mt-3.5 font-display text-[1.0625rem] font-medium leading-[1.3] tracking-[-0.01em] text-secondary">
+                      {localized(m.title, locale)}
+                    </ModuleTitle>
+
+                    {description ? (
+                      <p className="mt-2.5 font-sans text-[0.8125rem] leading-[1.65] text-secondary/60">
+                        {description}
+                      </p>
+                    ) : null}
+                  </li>
+                );
+              })}
             </ol>
           </div>
         ))}
