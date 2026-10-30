@@ -20,7 +20,7 @@ import { cn } from '@/lib/utils';
 
 type NavKey =
   | 'home' | 'university' | 'faculties' | 'programs'
-  | 'admissions' | 'contact' | 'organisations'
+  | 'admissions' | 'orientation' | 'contact' | 'organisations'
   | 'manifesto' | 'presidentWord' | 'partners' | 'newsUnm' | 'events' | 'newsroom'
   | 'facultyBusinessSchool' | 'facultyGovernance' | 'facultyTechnology' | 'facultySportBusiness'
   | 'programDba' | 'programMba' | 'programCertificate';
@@ -56,6 +56,7 @@ const PROGRAMS_SUB: LeafItem[] = [
   { kind: 'leaf', key: 'programDba',         fr: '/programmes?type=DBA',         en: '/en/programs?type=DBA' },
   { kind: 'leaf', key: 'programMba',         fr: '/programmes?type=MBA',         en: '/en/programs?type=MBA' },
   { kind: 'leaf', key: 'programCertificate', fr: '/programmes?type=Certificate', en: '/en/programs?type=Certificate' },
+  { kind: 'leaf', key: 'orientation',        fr: '/orientation',                 en: '/en/orientation' },
 ];
 
 const ITEMS: NavItem[] = [

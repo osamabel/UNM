@@ -10,6 +10,7 @@ const STATIC = [
   { fr: '/facultes', en: '/en/faculties', priority: 0.8 },
   { fr: '/programmes', en: '/en/programs', priority: 0.9 },
   { fr: '/admissions', en: '/en/admissions', priority: 0.95 },
+  { fr: '/orientation', en: '/en/orientation', priority: 0.85 },
   { fr: '/actualites', en: '/en/news', priority: 0.6 },
   { fr: '/partenaires', en: '/en/partners', priority: 0.5 },
   { fr: '/contact', en: '/en/contact', priority: 0.5 },

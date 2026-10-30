@@ -464,12 +464,91 @@
     "callbackSuccessHint": "Votre demande de rappel est enregistrée.",
     "breadcrumb": "Contact"
   },
+  "orientation": {
+    "metaTitle": "Orientation — Trouvez votre formation",
+    "metaDescription": "Répondez à quelques questions pour découvrir le MBA ou DBA UNM le mieux adapté à votre profil et à vos objectifs.",
+    "breadcrumb": "Orientation",
+    "heroEyebrow": "Orientation",
+    "heroTitle": "Trouvez la formation qui vous correspond",
+    "heroSubtitle": "Trois questions pour matcher votre expérience et vos ambitions avec nos programmes Executive MBA et DBA.",
+    "stepOf": "Étape {current} sur {total}",
+    "profileTitle": "Votre profil",
+    "profileLead": "Indiquez votre expérience et votre diplôme le plus élevé.",
+    "experienceLabel": "Années d'expérience professionnelle",
+    "experience": {
+      "0-5": "0 – 5 ans",
+      "5-10": "5 – 10 ans",
+      "10-15": "10 – 15 ans",
+      "15+": "15 ans et plus"
+    },
+    "diplomaLabel": "Diplôme le plus élevé",
+    "diploma": {
+      "bac3": "Bac+3 / Licence",
+      "bac5": "Bac+5 / Master",
+      "doctorat": "Doctorat"
+    },
+    "domainTitle": "Votre domaine",
+    "domainLead": "Quel thématique vous intéresse le plus ?",
+    "domains": {
+      "finance": "Finance, banque & assurance",
+      "marketing": "Marketing & communication",
+      "projects": "Management de projets",
+      "strategy": "Stratégie & intelligence économique",
+      "tourism": "Tourisme & hospitality",
+      "public": "Gouvernance & secteur public",
+      "mining": "Ressources minières",
+      "research": "Recherche / DBA"
+    },
+    "goalTitle": "Votre objectif",
+    "goalLead": "Que visez-vous avec cette formation ?",
+    "goals": {
+      "leadership": {
+        "title": "Leadership & direction",
+        "hint": "Prendre ou consolider un poste de direction"
+      },
+      "specialization": {
+        "title": "Spécialisation métier",
+        "hint": "Approfondir une expertise sectorielle"
+      },
+      "doctorate": {
+        "title": "Doctorat professionnel",
+        "hint": "DBA — recherche appliquée et expertise"
+      }
+    },
+    "continue": "Continuer",
+    "back": "Retour",
+    "seeResults": "Voir mes programmes",
+    "restart": "Recommencer",
+    "resultsTitle": "Programmes recommandés",
+    "resultsLead": "Voici les formations Executive qui correspondent le mieux à vos réponses.",
+    "fallbackTitle": "Options les plus proches",
+    "fallbackLead": "Aucun match exact — voici des programmes Executive à explorer.",
+    "closestFit": "Option proche de votre profil",
+    "empty": "Aucun programme disponible pour le moment. Contactez Admissions pour être orienté.",
+    "contactCta": "Contacter Admissions",
+    "leadTitle": "Recevoir un accompagnement",
+    "leadLead": "Laissez vos coordonnées — l’équipe Admissions vous recontacte sous 48 h.",
+    "leadSubmit": "Envoyer ma demande",
+    "applyCta": "Candidater maintenant",
+    "reasons": {
+      "domain": "Correspond à votre domaine",
+      "goalDoctorate": "Aligné avec un objectif doctorat",
+      "goalMba": "Aligné avec un MBA Executive",
+      "experienceSenior": "Profil senior adapté au DBA",
+      "experienceMba": "Expérience adaptée au MBA",
+      "diplomaDoctorat": "Diplôme compatible DBA",
+      "diplomaMba": "Diplôme compatible MBA",
+      "researchDba": "Orientation recherche / DBA",
+      "fallback": "Option proche"
+    }
+  },
   "nav": {
     "home": "Accueil",
     "university": "L'Université",
     "faculties": "Facultés",
     "programs": "Programmes",
     "admissions": "Admissions",
+    "orientation": "Orientation",
     "news": "Actualités",
     "partners": "Partenaires",
     "contact": "Contact",

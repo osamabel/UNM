@@ -126,6 +126,7 @@ check_page "/programmes/dba-business-administration"       "Doctorate"
 
 # Other top-level pages
 check_page "/admissions"   "Admissions"
+check_page "/orientation"  "Orientation"
 check_page "/contact"      "Marrakech"
 check_page "/universite"   "EBS Paris"
 check_page "/partenaires"  "European Business School"
@@ -236,6 +237,7 @@ echo "$TOPNAV" | /usr/bin/grep -q 'Technology'                            && ok 
 echo "$TOPNAV" | /usr/bin/grep -q 'href="/facultes/school-of-technology"' && ko "Technology rendered as a link" "expected aria-disabled span" || ok "Technology not a clickable link (coming-soon)"
 echo "$TOPNAV" | /usr/bin/grep -q 'Sport Business'                                && ok "faculties submenu has Sport Business label"       || ko "faculties submenu Sport Business label" "missing"
 echo "$TOPNAV" | /usr/bin/grep -q 'href="/facultes/school-of-sport-business"'     && ko "Sport Business rendered as a link" "expected aria-disabled span" || ok "Sport Business not a clickable link (coming-soon)"
+echo "$TOPNAV" | /usr/bin/grep -q 'href="/orientation"' && ok "programs submenu has Orientation" || ko "programs submenu Orientation" "missing in nav"
 
 # ─── TopBar (utility) ────────────────────────────────────────────
 # The TopBar lives outside <nav aria-label="Primary">.

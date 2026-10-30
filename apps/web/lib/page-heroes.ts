@@ -36,6 +36,7 @@ export const PAGE_HERO_IMAGE = {
   // not boardroomBright: that photo is the Business School card on this page
   faculties: AFRICAN_HERO.leadership,
   admissions: AFRICAN_HERO.training,
+  orientation: AFRICAN_HERO.seminar,
   contact: AFRICAN_HERO.boardroom,
   news: AFRICAN_HERO.seminar,
   organisations: AFRICAN_HERO.boardroomBright,

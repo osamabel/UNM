@@ -464,12 +464,91 @@
     "callbackSuccessHint": "Your callback request is registered.",
     "breadcrumb": "Contact"
   },
+  "orientation": {
+    "metaTitle": "Orientation — Find your programme",
+    "metaDescription": "Answer a few questions to discover the UNM MBA or DBA that best fits your profile and goals.",
+    "breadcrumb": "Orientation",
+    "heroEyebrow": "Orientation",
+    "heroTitle": "Find the programme that fits you",
+    "heroSubtitle": "Three questions to match your experience and ambitions with our Executive MBA and DBA programmes.",
+    "stepOf": "Step {current} of {total}",
+    "profileTitle": "Your profile",
+    "profileLead": "Tell us about your experience and highest diploma.",
+    "experienceLabel": "Years of professional experience",
+    "experience": {
+      "0-5": "0 – 5 years",
+      "5-10": "5 – 10 years",
+      "10-15": "10 – 15 years",
+      "15+": "15+ years"
+    },
+    "diplomaLabel": "Highest diploma",
+    "diploma": {
+      "bac3": "Bachelor (Bac+3)",
+      "bac5": "Master (Bac+5)",
+      "doctorat": "Doctorate"
+    },
+    "domainTitle": "Your domain",
+    "domainLead": "Which theme interests you most?",
+    "domains": {
+      "finance": "Finance, banking & insurance",
+      "marketing": "Marketing & communication",
+      "projects": "Project management",
+      "strategy": "Strategy & economic intelligence",
+      "tourism": "Tourism & hospitality",
+      "public": "Governance & public sector",
+      "mining": "Mining resources",
+      "research": "Research / DBA"
+    },
+    "goalTitle": "Your goal",
+    "goalLead": "What do you want from this programme?",
+    "goals": {
+      "leadership": {
+        "title": "Leadership & direction",
+        "hint": "Take or strengthen a leadership role"
+      },
+      "specialization": {
+        "title": "Career specialization",
+        "hint": "Deepen sector expertise"
+      },
+      "doctorate": {
+        "title": "Professional doctorate",
+        "hint": "DBA — applied research and expertise"
+      }
+    },
+    "continue": "Continue",
+    "back": "Back",
+    "seeResults": "See my programmes",
+    "restart": "Start over",
+    "resultsTitle": "Recommended programmes",
+    "resultsLead": "These Executive programmes best match your answers.",
+    "fallbackTitle": "Closest options",
+    "fallbackLead": "No exact match — here are Executive programmes worth exploring.",
+    "closestFit": "Close fit for your profile",
+    "empty": "No programme available right now. Contact Admissions for guidance.",
+    "contactCta": "Contact Admissions",
+    "leadTitle": "Get personal guidance",
+    "leadLead": "Leave your details — Admissions will reply within 48 hours.",
+    "leadSubmit": "Send my request",
+    "applyCta": "Apply now",
+    "reasons": {
+      "domain": "Matches your domain",
+      "goalDoctorate": "Aligned with a doctorate goal",
+      "goalMba": "Aligned with an Executive MBA",
+      "experienceSenior": "Senior profile suited to DBA",
+      "experienceMba": "Experience suited to MBA",
+      "diplomaDoctorat": "Diploma compatible with DBA",
+      "diplomaMba": "Diploma compatible with MBA",
+      "researchDba": "Research / DBA focus",
+      "fallback": "Closest option"
+    }
+  },
   "nav": {
     "home": "Home",
     "university": "University",
     "faculties": "Faculties",
     "programs": "Programs",
     "admissions": "Admissions",
+    "orientation": "Orientation",
     "news": "News",
     "partners": "Partners",
     "contact": "Contact",

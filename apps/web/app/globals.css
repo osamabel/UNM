@@ -7420,3 +7420,314 @@
     transition: none;
   }
 }
+
+/* ── Orientation wizard ─────────────────────────────────────────── */
+.orientation-page {
+  --ori-ink: var(--unm-secondary, #3d1a0b);
+  --ori-muted: rgba(61, 26, 11, 0.62);
+  --ori-line: rgba(61, 26, 11, 0.12);
+  --ori-chip: #fffaf5;
+  --ori-chip-border: rgba(61, 26, 11, 0.14);
+  --ori-selected: rgba(166, 55, 22, 0.1);
+  --ori-selected-border: rgba(166, 55, 22, 0.55);
+}
+
+.orientation-wizard {
+  max-width: 46rem;
+  margin-inline: auto;
+}
+
+.orientation-progress {
+  margin-bottom: 1.75rem;
+}
+
+.orientation-progress-label {
+  margin: 0 0 0.65rem;
+  font-family: var(--font-heading, system-ui, sans-serif);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ori-muted);
+}
+
+.orientation-progress-track {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.orientation-progress-dot {
+  height: 0.28rem;
+  flex: 1;
+  border-radius: 999px;
+  background: rgba(61, 26, 11, 0.12);
+  transition: background 180ms ease;
+}
+
+.orientation-progress-dot.is-active {
+  background: var(--unm-primary, #a63716);
+}
+
+.orientation-panel-title {
+  margin: 0;
+  font-family: var(--font-display, Georgia, serif);
+  font-size: clamp(1.45rem, 3vw, 1.9rem);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--ori-ink);
+}
+
+.orientation-panel-lead {
+  margin: 0.55rem 0 0;
+  max-width: 42ch;
+  font-size: 0.975rem;
+  line-height: 1.55;
+  color: var(--ori-muted);
+}
+
+.orientation-field-label {
+  margin: 1.5rem 0 0.65rem;
+  font-family: var(--font-heading, system-ui, sans-serif);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ori-ink);
+}
+
+.orientation-chip-grid {
+  display: grid;
+  gap: 0.65rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.orientation-chip-grid--wide {
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 640px) {
+  .orientation-chip-grid--wide {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.orientation-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.2rem;
+  text-align: left;
+  padding: 0.85rem 1rem;
+  border-radius: 0.85rem;
+  border: 1px solid var(--ori-chip-border);
+  background: var(--ori-chip);
+  color: var(--ori-ink);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.3;
+  cursor: pointer;
+  transition:
+    border-color 160ms ease,
+    background 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.orientation-chip:hover {
+  border-color: rgba(166, 55, 22, 0.35);
+}
+
+.orientation-chip.is-selected {
+  border-color: var(--ori-selected-border);
+  background: var(--ori-selected);
+  box-shadow: inset 0 0 0 1px rgba(166, 55, 22, 0.15);
+}
+
+.orientation-chip-title {
+  font-weight: 700;
+}
+
+.orientation-chip-hint {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--ori-muted);
+}
+
+.orientation-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1.75rem;
+}
+
+.orientation-results-list {
+  list-style: none;
+  margin: 1.5rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.orientation-result-card {
+  width: 100%;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.9rem;
+  text-align: left;
+  padding: 1rem 1.1rem;
+  border-radius: 1rem;
+  border: 1px solid var(--ori-chip-border);
+  background: #fff;
+  cursor: pointer;
+  transition:
+    border-color 160ms ease,
+    background 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.orientation-result-card:hover {
+  border-color: rgba(166, 55, 22, 0.35);
+}
+
+.orientation-result-card.is-selected {
+  border-color: var(--ori-selected-border);
+  background: var(--ori-selected);
+  box-shadow: 0 8px 24px rgba(61, 26, 11, 0.06);
+}
+
+.orientation-result-rank {
+  font-family: var(--font-display, Georgia, serif);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: rgba(166, 55, 22, 0.75);
+  line-height: 1;
+  padding-top: 0.15rem;
+}
+
+.orientation-result-type {
+  margin: 0;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--unm-primary, #a63716);
+}
+
+.orientation-result-title {
+  margin: 0.2rem 0 0;
+  font-family: var(--font-display, Georgia, serif);
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--ori-ink);
+}
+
+.orientation-result-reasons {
+  margin: 0.35rem 0 0;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: var(--ori-muted);
+}
+
+.orientation-result-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.55rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--unm-primary, #a63716);
+  text-decoration: none;
+}
+
+.orientation-result-link:hover {
+  text-decoration: underline;
+}
+
+.orientation-results-grid {
+  display: none;
+}
+
+@media (min-width: 900px) {
+  .orientation-results-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+    margin-top: 1.25rem;
+  }
+}
+
+.orientation-empty {
+  margin-top: 1.5rem;
+  display: grid;
+  gap: 1rem;
+  justify-items: start;
+  padding: 1.25rem;
+  border-radius: 1rem;
+  border: 1px dashed var(--ori-line);
+  background: rgba(255, 250, 245, 0.7);
+}
+
+.orientation-empty p {
+  margin: 0;
+  color: var(--ori-muted);
+  line-height: 1.5;
+}
+
+.orientation-lead {
+  margin-top: 2rem;
+  padding: 1.35rem 1.25rem 1.5rem;
+  border-radius: 1.1rem;
+  border: 1px solid var(--ori-line);
+  background: linear-gradient(180deg, #fffaf5 0%, #fff 100%);
+}
+
+.orientation-lead-title {
+  margin: 0;
+  font-family: var(--font-display, Georgia, serif);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--ori-ink);
+}
+
+.orientation-lead-lead {
+  margin: 0.4rem 0 1.1rem;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--ori-muted);
+}
+
+.orientation-lead-form {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.orientation-consent {
+  display: flex;
+  gap: 0.65rem;
+  align-items: flex-start;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: var(--ori-muted);
+}
+
+.orientation-lead-success {
+  display: grid;
+  gap: 0.85rem;
+  justify-items: start;
+}
+
+.orientation-lead-success p {
+  margin: 0;
+  font-weight: 600;
+  color: var(--ori-ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orientation-chip,
+  .orientation-result-card,
+  .orientation-progress-dot {
+    transition: none;
+  }
+}

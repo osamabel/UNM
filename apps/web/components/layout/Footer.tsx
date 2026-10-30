@@ -37,11 +37,13 @@ function buildColumns(isEn: boolean): { titleKey: 'university' | 'academic' | 'r
         ? [
             { label: 'Programs', fr: '/programmes', en: '/en/programs' },
             { label: 'Admissions', fr: '/admissions', en: '/en/admissions' },
+            { label: 'Orientation', fr: '/orientation', en: '/en/orientation' },
             { label: 'Portal', fr: PORTAL_URL, en: PORTAL_URL, external: true },
           ]
         : [
             { label: 'Programmes', fr: '/programmes', en: '/en/programs' },
             { label: 'Admissions', fr: '/admissions', en: '/en/admissions' },
+            { label: 'Orientation', fr: '/orientation', en: '/en/orientation' },
             { label: 'Portail', fr: PORTAL_URL, en: PORTAL_URL, external: true },
           ],
     },
