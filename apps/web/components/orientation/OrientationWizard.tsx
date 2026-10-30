@@ -1,11 +1,11 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { useSearchParams } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
 import { Button, ButtonLink } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -21,9 +21,10 @@ import {
   type OrientationGoal,
   type OrientationMatch,
 } from '@/lib/orientation-match';
+import { buildOrientationResultsHref, parseOrientationAnswers } from '@/lib/orientation-url';
 import type { Locale, Program } from '@unm/types';
 
-type Step = 'profile' | 'domain' | 'goal' | 'results';
+type Step = 'profile' | 'goal' | 'domain' | 'success' | 'results';
 
 const EXPERIENCE: ExperienceBand[] = ['0-5', '5-10', '10-15', '15+'];
 const DIPLOMAS: DiplomaLevel[] = ['bac3', 'bac5', 'doctorat'];
@@ -50,10 +51,11 @@ const leadSchema = z.object({
 type LeadData = z.infer<typeof leadSchema>;
 
 interface Props {
-  programs: Program[];
+  programs?: Program[];
+  mode?: 'page' | 'embed';
 }
 
-function ChoiceChip({
+function OptionCard({
   selected,
   onClick,
   children,
@@ -66,7 +68,7 @@ function ChoiceChip({
     <button
       type="button"
       onClick={onClick}
-      className={cn('orientation-chip', selected && 'is-selected')}
+      className={cn('orientation-option-card', selected && 'is-selected')}
       aria-pressed={selected}
     >
       {children}
@@ -74,20 +76,69 @@ function ChoiceChip({
   );
 }
 
-export function OrientationWizard({ programs }: Props) {
+function SegmentedSelect<T extends string>({
+  label,
+  value,
+  options,
+  onChange,
+  getLabel,
+}: {
+  label: string;
+  value: T | null;
+  options: readonly T[];
+  onChange: (next: T) => void;
+  getLabel: (option: T) => string;
+}) {
+  return (
+    <div className="orientation-control">
+      <p className="orientation-field-label">{label}</p>
+      <div
+        className="orientation-segment"
+        role="radiogroup"
+        aria-label={label}
+      >
+        {options.map((option) => {
+          const selected = value === option;
+          return (
+            <button
+              key={option}
+              type="button"
+              role="radio"
+              aria-checked={selected}
+              className={cn('orientation-segment-btn', selected && 'is-selected')}
+              onClick={() => onChange(option)}
+            >
+              {getLabel(option)}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+export function OrientationWizard({ programs = [], mode = 'page' }: Props) {
   const locale = useLocale() as Locale;
   const isEn = locale === 'en';
+  const router = useRouter();
   const t = useTranslations('orientation');
   const tf = useTranslations('forms');
   const tp = useTranslations('program');
   const tProg = useTranslations('programsIndex');
   const params = useSearchParams();
+  const embed = mode === 'embed';
 
-  const [step, setStep] = useState<Step>('profile');
-  const [experience, setExperience] = useState<ExperienceBand | null>(null);
-  const [diploma, setDiploma] = useState<DiplomaLevel | null>(null);
-  const [domain, setDomain] = useState<OrientationDomain | null>(null);
-  const [goal, setGoal] = useState<OrientationGoal | null>(null);
+  const fromQuery = useMemo(() => parseOrientationAnswers(params), [params]);
+
+  const [step, setStep] = useState<Step>(() =>
+    !embed && fromQuery ? 'results' : 'profile',
+  );
+  const [experience, setExperience] = useState<ExperienceBand | null>(
+    () => fromQuery?.experience ?? '5-10',
+  );
+  const [diploma, setDiploma] = useState<DiplomaLevel | null>(() => fromQuery?.diploma ?? 'bac5');
+  const [domain, setDomain] = useState<OrientationDomain | null>(() => fromQuery?.domain ?? null);
+  const [goal, setGoal] = useState<OrientationGoal | null>(() => fromQuery?.goal ?? null);
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
   const [leadDone, setLeadDone] = useState(false);
   const [leadError, setLeadError] = useState<string | null>(null);
@@ -98,9 +149,9 @@ export function OrientationWizard({ programs }: Props) {
       : null;
 
   const matches: OrientationMatch[] = useMemo(() => {
-    if (!answers) return [];
+    if (!answers || embed) return [];
     return matchOrientationPrograms(programs, answers, 3);
-  }, [programs, answers]);
+  }, [programs, answers, embed]);
 
   const {
     register,
@@ -116,9 +167,19 @@ export function OrientationWizard({ programs }: Props) {
     },
   });
 
-  const stepIndex = step === 'profile' ? 1 : step === 'domain' ? 2 : step === 'goal' ? 3 : 4;
+  const stepIndex =
+    step === 'profile' ? 1 : step === 'goal' ? 2 : step === 'domain' || step === 'success' ? 3 : 4;
+  const progressTotal = 4;
+  const progressPct = Math.min(stepIndex, progressTotal) / progressTotal;
   const admissionsBase = isEn ? '/en/admissions' : '/admissions';
   const contactUrl = isEn ? '/en/contact' : '/contact';
+
+  useEffect(() => {
+    if (step !== 'success' || !answers) return;
+    const href = buildOrientationResultsHref(locale, answers);
+    const timer = window.setTimeout(() => router.push(href), 1400);
+    return () => window.clearTimeout(timer);
+  }, [step, answers, locale, router]);
 
   function reasonLabel(key: string): string {
     try {
@@ -126,6 +187,18 @@ export function OrientationWizard({ programs }: Props) {
     } catch {
       return key;
     }
+  }
+
+  function goBack() {
+    if (step === 'goal') setStep('profile');
+    else if (step === 'domain') setStep('goal');
+    else if (step === 'results') setStep('domain');
+  }
+
+  function goToResults() {
+    setSelectedSlug(null);
+    if (embed) setStep('success');
+    else setStep('results');
   }
 
   async function onLeadSubmit(data: LeadData) {
@@ -157,8 +230,8 @@ export function OrientationWizard({ programs }: Props) {
 
   function restart() {
     setStep('profile');
-    setExperience(null);
-    setDiploma(null);
+    setExperience('5-10');
+    setDiploma('bac5');
     setDomain(null);
     setGoal(null);
     setSelectedSlug(null);
@@ -166,88 +239,71 @@ export function OrientationWizard({ programs }: Props) {
     setLeadError(null);
   }
 
+  const showBack = step !== 'profile' && step !== 'success';
+
   return (
-    <div className="orientation-wizard">
-      <div className="orientation-progress" aria-label={t('stepOf', { current: stepIndex, total: 4 })}>
-        <p className="orientation-progress-label">
-          {t('stepOf', { current: stepIndex, total: 4 })}
-        </p>
-        <div className="orientation-progress-track" aria-hidden>
-          {[1, 2, 3, 4].map((n) => (
-            <span key={n} className={cn('orientation-progress-dot', n <= stepIndex && 'is-active')} />
-          ))}
-        </div>
-      </div>
+    <div className={cn('orientation-wizard', embed && 'orientation-wizard--embed')}>
+      {step !== 'success' && (
+        <header className="orientation-card-header">
+          <div className="orientation-card-header-row">
+            <div>
+              <p className="orientation-card-kicker">{t('homeCardTitle')}</p>
+              <p className="orientation-card-step">
+                {t('stepOf', { current: Math.min(stepIndex, progressTotal), total: progressTotal })}
+                {step === 'results' ? ` · ${t('breadcrumb')}` : ''}
+              </p>
+            </div>
+            {showBack && (
+              <button
+                type="button"
+                className="orientation-back-btn"
+                onClick={goBack}
+                aria-label={t('back')}
+              >
+                <Icon name="chevron-left" size={18} />
+              </button>
+            )}
+          </div>
+          <div className="orientation-progress-bar" aria-hidden>
+            <span className="orientation-progress-bar-fill" style={{ width: `${progressPct * 100}%` }} />
+          </div>
+        </header>
+      )}
 
       {step === 'profile' && (
         <section className="orientation-panel" aria-labelledby="ori-profile-title">
           <h2 id="ori-profile-title" className="orientation-panel-title">
             {t('profileTitle')}
           </h2>
-          <p className="orientation-panel-lead">{t('profileLead')}</p>
 
-          <p className="orientation-field-label">{t('experienceLabel')}</p>
-          <div className="orientation-chip-grid">
-            {EXPERIENCE.map((band) => (
-              <ChoiceChip
-                key={band}
-                selected={experience === band}
-                onClick={() => setExperience(band)}
-              >
-                {t(`experience.${band}`)}
-              </ChoiceChip>
-            ))}
+          <div className="orientation-fields">
+            <SegmentedSelect
+              label={t('diplomaLabel')}
+              value={diploma}
+              options={DIPLOMAS}
+              onChange={setDiploma}
+              getLabel={(d) => t(`diploma.${d}`)}
+            />
+            <SegmentedSelect
+              label={t('experienceLabel')}
+              value={experience}
+              options={EXPERIENCE}
+              onChange={setExperience}
+              getLabel={(band) => t(`experience.${band}`)}
+            />
           </div>
 
-          <p className="orientation-field-label">{t('diplomaLabel')}</p>
-          <div className="orientation-chip-grid">
-            {DIPLOMAS.map((d) => (
-              <ChoiceChip key={d} selected={diploma === d} onClick={() => setDiploma(d)}>
-                {t(`diploma.${d}`)}
-              </ChoiceChip>
-            ))}
-          </div>
-
-          <div className="orientation-actions">
+          <div className="orientation-actions orientation-actions--stack">
             <Button
               type="button"
               size="lg"
+              fullWidth
               disabled={!experience || !diploma}
-              onClick={() => setStep('domain')}
-              trailingIcon={<Icon name="arrow-right" size={18} />}
-            >
-              {t('continue')}
-            </Button>
-          </div>
-        </section>
-      )}
-
-      {step === 'domain' && (
-        <section className="orientation-panel" aria-labelledby="ori-domain-title">
-          <h2 id="ori-domain-title" className="orientation-panel-title">
-            {t('domainTitle')}
-          </h2>
-          <p className="orientation-panel-lead">{t('domainLead')}</p>
-          <div className="orientation-chip-grid orientation-chip-grid--wide">
-            {DOMAINS.map((d) => (
-              <ChoiceChip key={d} selected={domain === d} onClick={() => setDomain(d)}>
-                {t(`domains.${d}`)}
-              </ChoiceChip>
-            ))}
-          </div>
-          <div className="orientation-actions">
-            <Button type="button" variant="ghost" onClick={() => setStep('profile')}>
-              {t('back')}
-            </Button>
-            <Button
-              type="button"
-              size="lg"
-              disabled={!domain}
               onClick={() => setStep('goal')}
-              trailingIcon={<Icon name="arrow-right" size={18} />}
             >
               {t('continue')}
             </Button>
+            <p className="orientation-hint">{t('profileHint')}</p>
           </div>
         </section>
       )}
@@ -257,53 +313,103 @@ export function OrientationWizard({ programs }: Props) {
           <h2 id="ori-goal-title" className="orientation-panel-title">
             {t('goalTitle')}
           </h2>
-          <p className="orientation-panel-lead">{t('goalLead')}</p>
-          <div className="orientation-chip-grid orientation-chip-grid--wide">
+          <div className="orientation-option-grid">
             {GOALS.map((g) => (
-              <ChoiceChip key={g} selected={goal === g} onClick={() => setGoal(g)}>
-                <span className="orientation-chip-title">{t(`goals.${g}.title`)}</span>
-                <span className="orientation-chip-hint">{t(`goals.${g}.hint`)}</span>
-              </ChoiceChip>
+              <OptionCard
+                key={g}
+                selected={goal === g}
+                onClick={() => {
+                  setGoal(g);
+                  setStep('domain');
+                }}
+              >
+                <span className="orientation-option-title">{t(`goals.${g}.title`)}</span>
+                <span className="orientation-option-hint">{t(`goals.${g}.hint`)}</span>
+              </OptionCard>
             ))}
           </div>
-          <div className="orientation-actions">
-            <Button type="button" variant="ghost" onClick={() => setStep('domain')}>
-              {t('back')}
-            </Button>
-            <Button
-              type="button"
-              size="lg"
-              disabled={!goal}
-              onClick={() => {
-                setSelectedSlug(null);
-                setStep('results');
-              }}
-              trailingIcon={<Icon name="arrow-right" size={18} />}
-            >
+          <p className="orientation-hint">{t('goalHint')}</p>
+        </section>
+      )}
+
+      {step === 'domain' && (
+        <section className="orientation-panel" aria-labelledby="ori-domain-title">
+          <h2 id="ori-domain-title" className="orientation-panel-title">
+            {t('domainTitle')}
+          </h2>
+          <label className="orientation-select-wrap">
+            <span className="orientation-field-label">{t('domainSelectLabel')}</span>
+            <div className="orientation-select-shell">
+              <select
+                className="orientation-select"
+                value={domain ?? ''}
+                onChange={(e) => setDomain((e.target.value || null) as OrientationDomain | null)}
+              >
+                <option value="">{t('domainPlaceholder')}</option>
+                {DOMAINS.map((d) => (
+                  <option key={d} value={d}>
+                    {t(`domains.${d}`)}
+                  </option>
+                ))}
+              </select>
+              <Icon name="chevron-down" size={18} className="orientation-select-chevron" />
+            </div>
+          </label>
+          <div className="orientation-actions orientation-actions--stack">
+            <Button type="button" size="lg" fullWidth disabled={!domain} onClick={goToResults}>
               {t('seeResults')}
             </Button>
+            <p className="orientation-hint">{t('domainHint')}</p>
           </div>
         </section>
       )}
 
-      {step === 'results' && (
-        <section className="orientation-panel" aria-labelledby="ori-results-title">
-          <h2 id="ori-results-title" className="orientation-panel-title">
-            {matches.some((m) => m.fallback) ? t('fallbackTitle') : t('resultsTitle')}
-          </h2>
-          <p className="orientation-panel-lead">
-            {matches.some((m) => m.fallback) ? t('fallbackLead') : t('resultsLead')}
-          </p>
+      {step === 'success' && (
+        <section className="orientation-success" aria-live="polite">
+          <Icon name="check-circle" size={40} className="text-primary" />
+          <h2 className="orientation-success-title">{t('successTitle')}</h2>
+          <p className="orientation-success-lead">{t('successLead')}</p>
+          {answers && (
+            <ButtonLink
+              href={buildOrientationResultsHref(locale, answers)}
+              size="lg"
+              fullWidth
+              trailingIcon={<Icon name="arrow-right" size={18} />}
+            >
+              {t('successCta')}
+            </ButtonLink>
+          )}
+        </section>
+      )}
 
+      {step === 'results' && !embed && (
+        <section className="orientation-panel" aria-labelledby="ori-results-title">
           {matches.length === 0 ? (
-            <div className="orientation-empty">
-              <p>{t('empty')}</p>
-              <ButtonLink href={contactUrl} size="lg">
-                {t('contactCta')}
-              </ButtonLink>
-            </div>
+            <>
+              <h2 id="ori-results-title" className="orientation-panel-title">
+                {t('emptyTitle')}
+              </h2>
+              <div className="orientation-empty-callout">
+                <p className="orientation-empty-eyebrow">{t('emptyEyebrow')}</p>
+                <p className="orientation-empty-title">{t('emptyHighlight')}</p>
+                <p className="orientation-empty-body">{t('empty')}</p>
+              </div>
+              <div className="orientation-actions orientation-actions--split">
+                <ButtonLink href={contactUrl} size="lg">
+                  {t('waitlistCta')}
+                </ButtonLink>
+                <p className="orientation-hint">{t('emptyHint')}</p>
+              </div>
+            </>
           ) : (
             <>
+              <h2 id="ori-results-title" className="orientation-panel-title">
+                {matches.some((m) => m.fallback) ? t('fallbackTitle') : t('resultsTitle')}
+              </h2>
+              <p className="orientation-panel-lead">
+                {matches.some((m) => m.fallback) ? t('fallbackLead') : t('resultsLead')}
+              </p>
+
               <ul className="orientation-results-list">
                 {matches.map((m, i) => {
                   const title = displayProgramTitle(localized(m.program.title, locale), m.program.type);
@@ -440,9 +546,6 @@ export function OrientationWizard({ programs }: Props) {
           <div className="orientation-actions">
             <Button type="button" variant="ghost" onClick={restart}>
               {t('restart')}
-            </Button>
-            <Button type="button" variant="ghost" onClick={() => setStep('goal')}>
-              {t('back')}
             </Button>
           </div>
         </section>

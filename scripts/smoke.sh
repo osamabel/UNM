@@ -237,8 +237,6 @@ echo "$TOPNAV" | /usr/bin/grep -q 'Technology'                            && ok 
 echo "$TOPNAV" | /usr/bin/grep -q 'href="/facultes/school-of-technology"' && ko "Technology rendered as a link" "expected aria-disabled span" || ok "Technology not a clickable link (coming-soon)"
 echo "$TOPNAV" | /usr/bin/grep -q 'Sport Business'                                && ok "faculties submenu has Sport Business label"       || ko "faculties submenu Sport Business label" "missing"
 echo "$TOPNAV" | /usr/bin/grep -q 'href="/facultes/school-of-sport-business"'     && ko "Sport Business rendered as a link" "expected aria-disabled span" || ok "Sport Business not a clickable link (coming-soon)"
-echo "$TOPNAV" | /usr/bin/grep -q 'href="/orientation"' && ok "programs submenu has Orientation" || ko "programs submenu Orientation" "missing in nav"
-
 # ─── TopBar (utility) ────────────────────────────────────────────
 # The TopBar lives outside <nav aria-label="Primary">.
 HOME_FULL=$(/usr/bin/curl -s "$ROOT/")

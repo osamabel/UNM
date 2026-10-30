@@ -471,24 +471,35 @@
     "heroEyebrow": "Orientation",
     "heroTitle": "Trouvez la formation qui vous correspond",
     "heroSubtitle": "Trois questions pour matcher votre expérience et vos ambitions avec nos programmes Executive MBA et DBA.",
+    "homeAside": "Encore hésitant·e entre plusieurs parcours ?",
+    "homeTitle": "On trouve ensemble la formation qui vous ressemble.",
+    "homeLead": "Répondez sans pression — on croise votre expérience et votre ambition avec nos MBA et DBA Executive.",
+    "homeStart": "Je commence",
+    "homeNote": "Deux minutes, aucune inscription requise pour voir les suggestions.",
+    "homeCardTitle": "Parlons de vous",
+    "successTitle": "C’est noté",
+    "successLead": "On ouvre vos formations les plus proches — vous pourrez affiner ensuite.",
+    "successCta": "Voir mes suggestions",
     "stepOf": "Étape {current} sur {total}",
-    "profileTitle": "Votre profil",
-    "profileLead": "Indiquez votre expérience et votre diplôme le plus élevé.",
-    "experienceLabel": "Années d'expérience professionnelle",
+    "profileTitle": "D’abord, un peu de contexte.",
+    "profileHint": "Choisissez ce qui se rapproche le plus — vous pourrez ajuster plus tard.",
+    "experienceLabel": "Expérience",
     "experience": {
-      "0-5": "0 – 5 ans",
-      "5-10": "5 – 10 ans",
-      "10-15": "10 – 15 ans",
-      "15+": "15 ans et plus"
+      "0-5": "0–5 ans",
+      "5-10": "5–10 ans",
+      "10-15": "10–15 ans",
+      "15+": "15 ans +"
     },
-    "diplomaLabel": "Diplôme le plus élevé",
+    "diplomaLabel": "Diplôme",
     "diploma": {
-      "bac3": "Bac+3 / Licence",
-      "bac5": "Bac+5 / Master",
+      "bac3": "Bac+3",
+      "bac5": "Bac+5",
       "doctorat": "Doctorat"
     },
-    "domainTitle": "Votre domaine",
-    "domainLead": "Quel thématique vous intéresse le plus ?",
+    "domainTitle": "Et de quel côté tire votre curiosité ?",
+    "domainSelectLabel": "Domaine",
+    "domainPlaceholder": "Choisissez un domaine",
+    "domainHint": "Prenez celui qui vous parle le plus aujourd’hui.",
     "domains": {
       "finance": "Finance, banque & assurance",
       "marketing": "Marketing & communication",
@@ -499,32 +510,37 @@
       "mining": "Ressources minières",
       "research": "Recherche / DBA"
     },
-    "goalTitle": "Votre objectif",
-    "goalLead": "Que visez-vous avec cette formation ?",
+    "goalTitle": "Qu’est-ce qui vous motive le plus ?",
+    "goalHint": "Une seule intention suffit pour démarrer.",
     "goals": {
       "leadership": {
-        "title": "Leadership & direction",
-        "hint": "Prendre ou consolider un poste de direction"
+        "title": "Prendre plus de responsabilités",
+        "hint": "Direction, management, vision"
       },
       "specialization": {
-        "title": "Spécialisation métier",
-        "hint": "Approfondir une expertise sectorielle"
+        "title": "Approfondir mon métier",
+        "hint": "Expertise sectorielle concrète"
       },
       "doctorate": {
-        "title": "Doctorat professionnel",
-        "hint": "DBA — recherche appliquée et expertise"
+        "title": "Aller vers un DBA",
+        "hint": "Recherche appliquée, doctorat professionnel"
       }
     },
     "continue": "Continuer",
     "back": "Retour",
-    "seeResults": "Voir mes programmes",
+    "seeResults": "Voir mes suggestions",
     "restart": "Recommencer",
     "resultsTitle": "Programmes recommandés",
     "resultsLead": "Voici les formations Executive qui correspondent le mieux à vos réponses.",
     "fallbackTitle": "Options les plus proches",
     "fallbackLead": "Aucun match exact — voici des programmes Executive à explorer.",
     "closestFit": "Option proche de votre profil",
-    "empty": "Aucun programme disponible pour le moment. Contactez Admissions pour être orienté.",
+    "emptyTitle": "Aucun programme ne correspond exactement à vos critères.",
+    "emptyEyebrow": "Orientation personnalisée",
+    "emptyHighlight": "Aucun programme ne correspond actuellement à votre profil",
+    "empty": "Poursuivez votre inscription afin d’être informé(e) dès qu’une formation adaptée à votre profil et à votre projet sera disponible.",
+    "emptyHint": "Vous pouvez aussi modifier vos réponses avec la flèche retour.",
+    "waitlistCta": "M'enregistrer auprès d'Admissions",
     "contactCta": "Contacter Admissions",
     "leadTitle": "Recevoir un accompagnement",
     "leadLead": "Laissez vos coordonnées — l’équipe Admissions vous recontacte sous 48 h.",

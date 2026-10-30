@@ -4,6 +4,7 @@ import { HeroSection } from '@/components/home/HeroSection';
 import { EBSPartnership } from '@/components/home/EBSPartnership';
 import { FacultyGrid } from '@/components/home/FacultyGrid';
 import { FeaturedPrograms } from '@/components/home/FeaturedPrograms';
+import { OrientationHomeSection } from '@/components/home/OrientationHomeSection';
 import { PartnerLogos } from '@/components/home/PartnerLogos';
 import { CTABanner } from '@/components/home/CTABanner';
 import { getFaculties, getPartners } from '@/lib/api';
@@ -18,6 +19,7 @@ export default async function HomePage({ params }: { params: { locale: Locale } 
     <div className="home-page flex flex-col">
       <HeroSection partners={partners} />
       <EBSPartnership partners={partners} />
+      <OrientationHomeSection />
       <FeaturedPrograms />
       <FacultyGrid faculties={faculties} />
       <PartnerLogos partners={partners} />

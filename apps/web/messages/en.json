@@ -471,24 +471,35 @@
     "heroEyebrow": "Orientation",
     "heroTitle": "Find the programme that fits you",
     "heroSubtitle": "Three questions to match your experience and ambitions with our Executive MBA and DBA programmes.",
+    "homeAside": "Torn between a few programmes?",
+    "homeTitle": "Let’s find the path that feels like you.",
+    "homeLead": "Answer at your own pace — we match your experience and ambition with our Executive MBA and DBA.",
+    "homeStart": "I’m in",
+    "homeNote": "About two minutes. No sign-up needed to see suggestions.",
+    "homeCardTitle": "Tell us about you",
+    "successTitle": "Got it",
+    "successLead": "Opening the programmes closest to you — you can refine next.",
+    "successCta": "See my suggestions",
     "stepOf": "Step {current} of {total}",
-    "profileTitle": "Your profile",
-    "profileLead": "Tell us about your experience and highest diploma.",
-    "experienceLabel": "Years of professional experience",
+    "profileTitle": "First, a little context.",
+    "profileHint": "Pick whatever feels closest — you can refine later.",
+    "experienceLabel": "Experience",
     "experience": {
-      "0-5": "0 – 5 years",
-      "5-10": "5 – 10 years",
-      "10-15": "10 – 15 years",
-      "15+": "15+ years"
+      "0-5": "0–5 yrs",
+      "5-10": "5–10 yrs",
+      "10-15": "10–15 yrs",
+      "15+": "15+ yrs"
     },
-    "diplomaLabel": "Highest diploma",
+    "diplomaLabel": "Diploma",
     "diploma": {
-      "bac3": "Bachelor (Bac+3)",
-      "bac5": "Master (Bac+5)",
+      "bac3": "Bac+3",
+      "bac5": "Bac+5",
       "doctorat": "Doctorate"
     },
-    "domainTitle": "Your domain",
-    "domainLead": "Which theme interests you most?",
+    "domainTitle": "Where is your curiosity pulling you?",
+    "domainSelectLabel": "Field",
+    "domainPlaceholder": "Pick a field",
+    "domainHint": "Choose whatever speaks to you most right now.",
     "domains": {
       "finance": "Finance, banking & insurance",
       "marketing": "Marketing & communication",
@@ -499,32 +510,37 @@
       "mining": "Mining resources",
       "research": "Research / DBA"
     },
-    "goalTitle": "Your goal",
-    "goalLead": "What do you want from this programme?",
+    "goalTitle": "What pulls you most?",
+    "goalHint": "One intention is enough to get started.",
     "goals": {
       "leadership": {
-        "title": "Leadership & direction",
-        "hint": "Take or strengthen a leadership role"
+        "title": "Take on more responsibility",
+        "hint": "Leadership, management, vision"
       },
       "specialization": {
-        "title": "Career specialization",
-        "hint": "Deepen sector expertise"
+        "title": "Go deeper in my craft",
+        "hint": "Concrete sector expertise"
       },
       "doctorate": {
-        "title": "Professional doctorate",
-        "hint": "DBA — applied research and expertise"
+        "title": "Move toward a DBA",
+        "hint": "Applied research, professional doctorate"
       }
     },
     "continue": "Continue",
     "back": "Back",
-    "seeResults": "See my programmes",
+    "seeResults": "See my suggestions",
     "restart": "Start over",
     "resultsTitle": "Recommended programmes",
     "resultsLead": "These Executive programmes best match your answers.",
     "fallbackTitle": "Closest options",
     "fallbackLead": "No exact match — here are Executive programmes worth exploring.",
     "closestFit": "Close fit for your profile",
-    "empty": "No programme available right now. Contact Admissions for guidance.",
+    "emptyTitle": "No programme exactly matches your criteria.",
+    "emptyEyebrow": "Personalised orientation",
+    "emptyHighlight": "No programme currently matches your profile",
+    "empty": "Continue your registration to be notified when a programme adapted to your profile and project becomes available.",
+    "emptyHint": "You can also change your answers with the back arrow.",
+    "waitlistCta": "Register with Admissions",
     "contactCta": "Contact Admissions",
     "leadTitle": "Get personal guidance",
     "leadLead": "Leave your details — Admissions will reply within 48 hours.",
