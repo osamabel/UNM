@@ -7736,8 +7736,18 @@
 .orientation-home {
   position: relative;
   overflow: clip;
+  scroll-margin-top: 6.5rem;
   background:
     linear-gradient(115deg, #f7f1ea 0%, #fff8f1 46%, #f3ebe3 100%);
+}
+
+.orientation-home:focus {
+  outline: none;
+}
+
+.orientation-home:focus-visible {
+  outline: 2px solid rgba(166, 55, 22, 0.35);
+  outline-offset: 4px;
 }
 
 .orientation-home-media {

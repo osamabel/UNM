@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useRef } from 'react';
+import { Suspense, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { SectionWrapper } from '@/components/ui/SectionWrapper';
@@ -9,6 +9,8 @@ import { Button } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
 import { OrientationWizard } from '@/components/orientation/OrientationWizard';
 import { AFRICAN_HERO } from '@/lib/page-heroes';
+
+const HOME_ORIENTATION_FOCUS_KEY = 'unm:home-orientation-focus';
 
 function WizardSkeleton() {
   return (
@@ -26,9 +28,40 @@ function WizardSkeleton() {
   );
 }
 
+function scrollOrientationIntoFocus(section: HTMLElement) {
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  section.scrollIntoView({
+    behavior: reduceMotion ? 'auto' : 'smooth',
+    block: 'start',
+  });
+  section.focus({ preventScroll: true });
+  if (window.location.hash !== '#orientation') {
+    window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}#orientation`);
+  }
+}
+
 export function OrientationHomeSection() {
   const t = useTranslations('orientation');
+  const sectionRef = useRef<HTMLElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const hash = window.location.hash;
+    if (hash && hash !== '#orientation') return;
+
+    const alreadyFocused = sessionStorage.getItem(HOME_ORIENTATION_FOCUS_KEY) === '1';
+    if (alreadyFocused && hash !== '#orientation') return;
+
+    sessionStorage.setItem(HOME_ORIENTATION_FOCUS_KEY, '1');
+
+    const run = () => scrollOrientationIntoFocus(section);
+    // Wait a tick so hero/layout paint before we scroll.
+    const timer = window.setTimeout(run, hash === '#orientation' ? 0 : 280);
+    return () => window.clearTimeout(timer);
+  }, []);
 
   function startOrientation() {
     cardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -41,7 +74,13 @@ export function OrientationHomeSection() {
   }
 
   return (
-    <section id="orientation" className="orientation-home" aria-labelledby="orientation-home-title">
+    <section
+      ref={sectionRef}
+      id="orientation"
+      className="orientation-home"
+      aria-labelledby="orientation-home-title"
+      tabIndex={-1}
+    >
       <div className="orientation-home-media" aria-hidden>
         <Image
           src={AFRICAN_HERO.seminar}
